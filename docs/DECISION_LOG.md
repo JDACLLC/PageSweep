@@ -1,5 +1,25 @@
 # Decision Log
 
+## Bound lazy-load stabilization and page growth — 2026-08-12
+
+### Context
+
+Modern pages can load images and expand sections after scrolling. A fixed delay can capture incomplete content, while waiting for full network inactivity or following all height growth can hang on animated pages and infinite feeds.
+
+### Decision
+
+After each scroll, require at least 550 milliseconds between captures, sample document height and visible image readiness, decode visible completed images when possible, and stop waiting after 1,600 milliseconds. Allow the initial page boundary to grow by at most 20 percent or 5,000 CSS pixels, whichever is smaller.
+
+### Alternatives
+
+- Use one fixed delay for every page.
+- Wait indefinitely for all page requests and images.
+- Follow every increase in document height.
+
+### Consequences
+
+Normal lazy-loaded content gets a bounded opportunity to render, Chrome's screenshot rate is respected, and dynamic feeds cannot extend capture forever. Content that loads after the timeout or beyond the growth cap remains a documented V1 boundary.
+
 ## Use controlled scroll-and-stitch capture — 2026-08-12
 
 ### Context
@@ -77,4 +97,3 @@ Keep normal captures at their source device-pixel scale. When native canvas dime
 ### Consequences
 
 V1 reliably preserves the entire page as one PNG, but exceptionally tall pages can be less sharp when enlarged. Full-resolution tiled encoding remains a future option.
-

@@ -43,7 +43,7 @@ Owns Chrome API calls and capture-session coordination. It prevents concurrent c
 
 ### `src/capture.js`
 
-Runs in the active webpage. It measures document and viewport geometry, fixes the capture boundary, temporarily disables smooth scrolling, visits each target position, requests a frame, and restores the original scroll position and inline styles in `finally` cleanup. Fixed and sticky elements remain visible for their first on-screen capture and are then hidden with `visibility`, preserving page layout while preventing repeated appearances.
+Runs in the active webpage. It measures document and viewport geometry, establishes a bounded capture boundary, temporarily disables smooth scrolling, visits each target position, waits for layout and visible images to settle, requests a frame, and restores the original scroll position and inline styles in `finally` cleanup. Fixed and sticky elements remain visible for their first on-screen capture and are then hidden with `visibility`, preserving page layout while preventing repeated appearances.
 
 ### `offscreen.html` and `src/stitch.js`
 
@@ -65,5 +65,5 @@ Provide a temporary DOM environment for image decoding and canvas composition. F
 ## Current boundaries
 
 - V1 captures one active tab after an explicit toolbar click.
-- The initial document height establishes a finite boundary; infinite feeds are not followed indefinitely.
+- The initial document height establishes a finite boundary. Modest lazy-load growth is accepted up to 20 percent or 5,000 CSS pixels, whichever is smaller; infinite feeds are not followed indefinitely.
 - Page manipulation and output file management are intentionally separate, allowing future capture metadata to be routed elsewhere without changing page logic.

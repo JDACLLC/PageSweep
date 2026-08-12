@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Added
 
+- Bounded layout stabilization and visible-image decoding before each viewport capture.
 - Manifest V3 extension shell and toolbar action.
 - Active-tab logging and injected page measurement.
 - Single visible-viewport PNG capture and filename generation.
@@ -16,6 +17,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- The finite capture boundary can grow by up to 20 percent or 5,000 CSS pixels, whichever is smaller, when lazy-loaded content modestly expands the page.
 - Fixed and sticky elements remain visible for their first captured occurrence, then use temporary layout-preserving suppression in later frames.
 - Each captured frame now contributes only the vertical region not covered by the next frame. The final frame is cropped exactly at the fixed document boundary.
 - Viewport frames are transferred to the offscreen stitcher one at a time to stay below Chrome's 64 MiB extension-message limit.
@@ -31,6 +33,5 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Known limitations
 
-- Lazy-loaded content receives a fixed settling delay but does not yet use the planned bounded stabilization strategy.
 - Exceptionally tall captures may have reduced resolution.
 - Capture progress is visible only through scrolling and service-worker console messages.

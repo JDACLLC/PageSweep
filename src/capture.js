@@ -18,18 +18,16 @@
     body?.clientWidth ?? 0,
   );
 
-  const documentHeight = Math.max(
-    documentElement.scrollHeight,
-    documentElement.offsetHeight,
-    documentElement.clientHeight,
-    body?.scrollHeight ?? 0,
-    body?.offsetHeight ?? 0,
-    body?.clientHeight ?? 0,
-  );
+  const initialDocumentHeight = getDocumentHeight();
+  const maximumBoundaryGrowth = Math.min(5000, initialDocumentHeight * 0.2);
+  const maximumCaptureBoundary = initialDocumentHeight + maximumBoundaryGrowth;
+  let captureBoundaryHeight = initialDocumentHeight;
+  let maximumObservedHeight = initialDocumentHeight;
+  let stabilizationTimeouts = 0;
 
   const measurements = {
     documentWidth,
-    documentHeight,
+    documentHeight: initialDocumentHeight,
     viewportWidth: window.innerWidth,
     viewportContentWidth: documentElement.clientWidth,
     viewportHeight: window.innerHeight,
@@ -38,25 +36,28 @@
     devicePixelRatio: window.devicePixelRatio,
   };
 
-  const maximumScrollY = Math.max(0, documentHeight - window.innerHeight);
-  const targetPositions = [];
-
-  for (let targetY = 0; targetY < maximumScrollY; targetY += window.innerHeight) {
-    targetPositions.push(targetY);
-  }
-
-  if (targetPositions.at(-1) !== maximumScrollY) {
-    targetPositions.push(maximumScrollY);
-  }
-
   let captureCount = 0;
+  let targetY = 0;
+  const maximumCaptureCount = Math.ceil(maximumCaptureBoundary / window.innerHeight) + 2;
 
   try {
     documentElement.style.setProperty("scroll-behavior", "auto", "important");
 
-    for (const targetY of targetPositions) {
+    while (captureCount < maximumCaptureCount) {
       window.scrollTo(originalScrollX, targetY);
-      await waitForScrollToSettle();
+      const stabilization = await waitForPageToSettle();
+
+      if (stabilization.timedOut) {
+        stabilizationTimeouts += 1;
+      }
+
+      const observedHeight = getDocumentHeight();
+      maximumObservedHeight = Math.max(maximumObservedHeight, observedHeight);
+      captureBoundaryHeight = Math.max(
+        captureBoundaryHeight,
+        Math.min(observedHeight, maximumCaptureBoundary),
+      );
+
       suppressPreviouslyCapturedRepeatElements();
       await waitForStylePaint();
       const response = await chrome.runtime.sendMessage({
@@ -71,11 +72,23 @@
 
       recordVisibleRepeatElements();
       captureCount += 1;
+
+      const maximumScrollY = Math.max(0, captureBoundaryHeight - window.innerHeight);
+      if (window.scrollY >= maximumScrollY - 0.5) {
+        break;
+      }
+
+      const nextTargetY = Math.min(window.scrollY + window.innerHeight, maximumScrollY);
+      if (nextTargetY <= window.scrollY + 0.5) {
+        break;
+      }
+
+      targetY = nextTargetY;
     }
   } finally {
     window.scrollTo(originalScrollX, originalScrollY);
     restoreRepeatElements();
-    await waitForScrollToSettle();
+    await waitForStylePaint();
 
     if (originalScrollBehavior) {
       documentElement.style.setProperty(
@@ -90,6 +103,12 @@
 
   return {
     ...measurements,
+    documentHeight: captureBoundaryHeight,
+    initialDocumentHeight,
+    maximumObservedHeight,
+    boundaryGrowth: captureBoundaryHeight - initialDocumentHeight,
+    boundaryGrowthWasCapped: maximumObservedHeight > maximumCaptureBoundary,
+    stabilizationTimeouts,
     captureCount,
     fixedAndStickyElementsFound: repeatElements.length,
     fixedAndStickyElementsCaptured: capturedRepeatElements.size,
@@ -98,14 +117,76 @@
     restoredScrollY: window.scrollY,
   };
 
-  async function waitForScrollToSettle() {
+  function getDocumentHeight() {
+    return Math.max(
+      documentElement.scrollHeight,
+      documentElement.offsetHeight,
+      documentElement.clientHeight,
+      body?.scrollHeight ?? 0,
+      body?.offsetHeight ?? 0,
+      body?.clientHeight ?? 0,
+    );
+  }
+
+  async function waitForPageToSettle() {
+    const minimumWait = 550;
+    const maximumWait = 1600;
+    const startedAt = performance.now();
+    let previousHeight = getDocumentHeight();
+    let stableSamples = 0;
+
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-    // Keeping captures below two calls per second avoids Chrome's screenshot rate limit.
-    await new Promise((resolve) => setTimeout(resolve, 550));
+
+    while (performance.now() - startedAt < maximumWait) {
+      await delay(100);
+      const currentHeight = getDocumentHeight();
+      const pendingVisibleImages = getVisibleImages().filter((image) => !image.complete).length;
+
+      if (Math.abs(currentHeight - previousHeight) < 1 && pendingVisibleImages === 0) {
+        stableSamples += 1;
+      } else {
+        stableSamples = 0;
+      }
+
+      previousHeight = currentHeight;
+
+      if (performance.now() - startedAt >= minimumWait && stableSamples >= 2) {
+        break;
+      }
+    }
+
+    const remainingTime = Math.max(0, maximumWait - (performance.now() - startedAt));
+    await decodeVisibleImages(Math.min(remainingTime, 300));
+    await waitForStylePaint();
+
+    return { timedOut: performance.now() - startedAt >= maximumWait };
   }
 
   async function waitForStylePaint() {
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  }
+
+  async function decodeVisibleImages(timeout) {
+    const decodePromises = getVisibleImages()
+      .filter((image) => image.complete && typeof image.decode === "function")
+      .map((image) => image.decode().catch(() => undefined));
+
+    if (decodePromises.length === 0 || timeout <= 0) {
+      return;
+    }
+
+    await Promise.race([
+      Promise.allSettled(decodePromises),
+      delay(timeout),
+    ]);
+  }
+
+  function getVisibleImages() {
+    return [...document.images].filter((image) => isVisibleInViewport(image));
+  }
+
+  function delay(milliseconds) {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
   }
 
   function findFixedAndStickyElements() {

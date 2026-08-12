@@ -4,7 +4,7 @@
 |---:|:---:|---|---|
 | 1 | P0 | Complete | Correct final-frame overlap and crop the stitched output accurately. |
 | 2 | P0 | Complete | Prevent fixed and sticky elements from repeating in every frame. |
-| 3 | P1 | Planned | Add bounded render settling for lazy-loaded content. |
+| 3 | P1 | Testing | Add bounded render settling for lazy-loaded content. |
 | 4 | P1 | Planned | Harden failure cleanup and page-state restoration. |
 | 5 | P1 | Planned | Run and record the ten-category real-world test matrix. |
 | 6 | P2 | Planned | Complete installation, usage, permissions, and limitations documentation. |

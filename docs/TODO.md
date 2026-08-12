@@ -2,11 +2,10 @@
 
 ## In Progress
 
-- Nothing. Ready to begin Stage 9.
+- Stage 9 browser validation: lazy-load and render stabilization.
 
 ## Up Next
 
-- Stage 9: improve bounded lazy-load and render stabilization.
 - Stage 10: harden error handling and state restoration.
 
 ## Waiting On
@@ -15,6 +14,7 @@
 
 ## Recently Done
 
+- Implement bounded layout settling, visible-image decoding, and modest capture-boundary growth.
 - Stage 8: validate fixed and sticky element suppression, restoration, and scrollbar exclusion.
 - Implement first-visible-occurrence handling for fixed and sticky elements.
 - Stage 7: validate final-viewport overlap and boundary cropping on a very long page.
