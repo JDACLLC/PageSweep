@@ -50,19 +50,34 @@ chrome.action.onClicked.addListener(async (tab) => {
     console.log("Full Page Capture multi-frame capture complete", captureDetails);
 
     const stitchedImage = await stitchCapturedFrames(lastCapturedFrames, captureDetails);
-    const filename = createScreenshotFilename(tab.url);
-    const downloadId = await chrome.downloads.download({
-      url: stitchedImage.dataUrl,
-      filename,
-      saveAs: false,
-    });
 
-    console.log("Full Page Capture stitched PNG downloaded", {
-      downloadId,
-      filename,
-      width: stitchedImage.width,
-      height: stitchedImage.height,
-    });
+    if (stitchedImage.wasDownscaled) {
+      console.warn("Full Page Capture reduced this exceptionally large page to fit Chrome's PNG canvas limits.", {
+        sourceScale: stitchedImage.sourceScale,
+        outputScale: stitchedImage.outputScale,
+        outputWidth: stitchedImage.width,
+        outputHeight: stitchedImage.height,
+      });
+    }
+
+    try {
+      const filename = createScreenshotFilename(tab.url);
+      const downloadId = await chrome.downloads.download({
+        url: stitchedImage.url,
+        filename,
+        saveAs: false,
+      });
+
+      console.log("Full Page Capture stitched PNG downloaded", {
+        downloadId,
+        filename,
+        width: stitchedImage.width,
+        height: stitchedImage.height,
+        outputScale: stitchedImage.outputScale,
+      });
+    } finally {
+      await releaseStitchedImage();
+    }
   } catch (error) {
     console.error("Full Page Capture could not capture this page.", error);
   } finally {
@@ -127,18 +142,56 @@ async function stitchCapturedFrames(frames, captureDetails) {
   await ensureOffscreenDocument();
 
   try {
-    const response = await chrome.runtime.sendMessage({
+    const startResponse = await sendOffscreenMessage({
       target: "offscreen",
-      type: "stitch-frames",
-      frames,
+      type: "stitch-start",
+      firstFrame: frames[0],
       captureDetails,
     });
 
-    if (!response?.ok) {
-      throw new Error(response?.error || "The image stitching operation failed.");
+    for (const frame of frames) {
+      await sendOffscreenMessage({
+        target: "offscreen",
+        type: "stitch-add-frame",
+        frame,
+      });
     }
 
-    return response.image;
+    const finishResponse = await sendOffscreenMessage({
+      target: "offscreen",
+      type: "stitch-finish",
+    });
+
+    return {
+      ...finishResponse.image,
+      width: startResponse.width,
+      height: startResponse.height,
+      outputScale: startResponse.outputScale,
+      sourceScale: startResponse.sourceScale,
+      wasDownscaled: startResponse.wasDownscaled,
+    };
+  } catch (error) {
+    await closeOffscreenDocument();
+    throw error;
+  }
+}
+
+async function sendOffscreenMessage(message) {
+  const response = await chrome.runtime.sendMessage(message);
+
+  if (!response?.ok) {
+    throw new Error(response?.error || "The image stitching operation failed.");
+  }
+
+  return response;
+}
+
+async function releaseStitchedImage() {
+  try {
+    await sendOffscreenMessage({
+      target: "offscreen",
+      type: "stitch-release",
+    });
   } finally {
     await closeOffscreenDocument();
   }

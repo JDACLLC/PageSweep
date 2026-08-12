@@ -57,4 +57,11 @@ After changing extension files, open `chrome://extensions` and click the reload 
 10. Check the image from top to bottom for missing regions, blank gaps, and obvious seams.
 11. Inspect `Full Page Capture multi-frame capture complete` and verify that `captureCount` matches `framesStoredInMemory`.
 
+Very tall pages that exceed Chrome's native canvas limits are downscaled to the highest safe resolution so the complete page can still be exported as one PNG.
+
+## Known limitations
+
+- Exceptionally tall pages may be downscaled because Chrome cannot export a single canvas beyond its native dimension and memory limits. The extension logs a warning with the source and output scale when this happens.
+- A visible capture-progress indicator is planned for a later stage. The current version reports progress in the extension service worker console.
+
 Test from both the top of a page and a position partway down a long page.
