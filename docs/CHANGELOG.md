@@ -25,6 +25,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Fixed
 
+- Prevented lazy-load layout shifts and Chrome scroll anchoring from leaving the page at the bottom after capture.
 - Excluded the browser's vertical scrollbar from stitched output so its thumb does not repeat along the right edge.
 - Prevented fixed navigation, sticky headers, floating controls, and similar elements from repeating throughout the stitched PNG.
 - Removed duplicated bottom content and overdraw caused by a partially overlapping final viewport.

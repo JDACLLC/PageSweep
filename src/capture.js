@@ -5,6 +5,13 @@
   const originalScrollY = window.scrollY;
   const originalScrollBehavior = documentElement.style.getPropertyValue("scroll-behavior");
   const originalScrollBehaviorPriority = documentElement.style.getPropertyPriority("scroll-behavior");
+  const scrollAnchoringStyles = [documentElement, body]
+    .filter(Boolean)
+    .map((element) => ({
+      element,
+      value: element.style.getPropertyValue("overflow-anchor"),
+      priority: element.style.getPropertyPriority("overflow-anchor"),
+    }));
   const repeatElements = findFixedAndStickyElements();
   const capturedRepeatElements = new Set();
   let repeatElementSuppressions = 0;
@@ -42,6 +49,9 @@
 
   try {
     documentElement.style.setProperty("scroll-behavior", "auto", "important");
+    for (const scrollAnchoringStyle of scrollAnchoringStyles) {
+      scrollAnchoringStyle.element.style.setProperty("overflow-anchor", "none", "important");
+    }
 
     while (captureCount < maximumCaptureCount) {
       window.scrollTo(originalScrollX, targetY);
@@ -86,9 +96,7 @@
       targetY = nextTargetY;
     }
   } finally {
-    window.scrollTo(originalScrollX, originalScrollY);
     restoreRepeatElements();
-    await waitForStylePaint();
 
     if (originalScrollBehavior) {
       documentElement.style.setProperty(
@@ -99,6 +107,20 @@
     } else {
       documentElement.style.removeProperty("scroll-behavior");
     }
+
+    for (const scrollAnchoringStyle of scrollAnchoringStyles) {
+      if (scrollAnchoringStyle.value) {
+        scrollAnchoringStyle.element.style.setProperty(
+          "overflow-anchor",
+          scrollAnchoringStyle.value,
+          scrollAnchoringStyle.priority,
+        );
+      } else {
+        scrollAnchoringStyle.element.style.removeProperty("overflow-anchor");
+      }
+    }
+
+    await restoreOriginalScrollPosition();
   }
 
   return {
@@ -187,6 +209,32 @@
 
   function delay(milliseconds) {
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  }
+
+  async function restoreOriginalScrollPosition() {
+    const restoreDeadline = performance.now() + 750;
+
+    do {
+      window.scrollTo(originalScrollX, originalScrollY);
+      await waitForStylePaint();
+
+      if (
+        Math.abs(window.scrollX - originalScrollX) < 0.5
+        && Math.abs(window.scrollY - originalScrollY) < 0.5
+      ) {
+        await delay(100);
+
+        if (
+          Math.abs(window.scrollX - originalScrollX) < 0.5
+          && Math.abs(window.scrollY - originalScrollY) < 0.5
+        ) {
+          return;
+        }
+      }
+    } while (performance.now() < restoreDeadline);
+
+    window.scrollTo(originalScrollX, originalScrollY);
+    await waitForStylePaint();
   }
 
   function findFixedAndStickyElements() {

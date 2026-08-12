@@ -61,6 +61,7 @@ Use this checklist before declaring a capture stage complete and before a releas
 - `stabilizationTimeouts` reports viewports that reached the hard timeout.
 - The extension still respects Chrome's screenshot rate limit.
 - Short static pages do not incur an unbounded wait.
+- Lazy-load layout shifts do not override restoration of the original scroll position.
 
 ## Full V1 test matrix
 
