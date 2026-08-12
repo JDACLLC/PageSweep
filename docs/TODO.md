@@ -2,10 +2,11 @@
 
 ## In Progress
 
-- Stage 10 browser validation: error handling and cleanup.
+- Stage 11: complete the remaining real-world page categories and record evidence.
 
 ## Up Next
 
+- Finish Stage 10 unsupported-page confirmation as part of the Stage 11 failure matrix.
 
 ## Waiting On
 
@@ -13,6 +14,7 @@
 
 ## Recently Done
 
+- Validate successful cleanup and immediate session reuse on Google News and CNN.
 - Implement stage-specific errors and independent cleanup of page and extension resources.
 - Stage 9: validate lazy-loaded image capture, bounded settling, and scroll restoration.
 - Implement bounded layout settling, visible-image decoding, and modest capture-boundary growth.

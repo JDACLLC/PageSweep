@@ -46,6 +46,7 @@ GoFullPage_ReplacementTool/
 - [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) explains installation, usage, and current limitations.
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) describes the capture and stitching design.
 - [`docs/E2E_SMOKE_PROTOCOL.md`](docs/E2E_SMOKE_PROTOCOL.md) defines browser acceptance tests.
+- [`docs/REAL_WORLD_TEST_MATRIX.md`](docs/REAL_WORLD_TEST_MATRIX.md) records Stage 11 page-by-page results.
 - [`docs/TODO.md`](docs/TODO.md) and [`docs/TRIAGE.md`](docs/TRIAGE.md) track current and planned work.
 - [`docs/CHANGELOG.md`](docs/CHANGELOG.md) and [`docs/DECISION_LOG.md`](docs/DECISION_LOG.md) record what changed and why.
 - [`docs/DOC_PROTOCOL.md`](docs/DOC_PROTOCOL.md) defines how these documents stay current.

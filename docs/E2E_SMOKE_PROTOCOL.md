@@ -77,6 +77,8 @@ Use this checklist before declaring a capture stage complete and before a releas
 
 ## Full V1 test matrix
 
+Detailed evidence and remaining steps are maintained in `REAL_WORLD_TEST_MATRIX.md`.
+
 | Category | Result | Observed issue | Expected behavior | Fix |
 |---|---|---|---|---|
 | Simple static page | Not run | — | Complete PNG | — |

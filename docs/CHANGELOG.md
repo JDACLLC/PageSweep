@@ -15,6 +15,7 @@ All notable changes to this project are documented here. The project uses semant
 - Rate-limited multi-frame capture with frame diagnostics.
 - Offscreen canvas stitching and automatic PNG download.
 - Project documentation protocol, work tracking, architecture, decisions, smoke testing, and optional user guide.
+- A real-world test matrix that separates verified results, qualified passes, and unrun cases.
 
 ### Changed
 
