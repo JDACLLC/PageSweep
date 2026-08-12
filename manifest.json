@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Full Page Capture",
+  "description": "Capture an entire webpage as a single PNG.",
+  "version": "0.1.0",
+  "action": {
+    "default_title": "Capture full page"
+  },
+  "background": {
+    "service_worker": "src/background.js"
+  }
+}
