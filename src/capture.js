@@ -45,7 +45,7 @@
     targetPositions.push(maximumScrollY);
   }
 
-  const visitedPositions = [];
+  let captureCount = 0;
 
   try {
     documentElement.style.setProperty("scroll-behavior", "auto", "important");
@@ -53,7 +53,17 @@
     for (const targetY of targetPositions) {
       window.scrollTo(originalScrollX, targetY);
       await waitForScrollToSettle();
-      visitedPositions.push(window.scrollY);
+      const response = await chrome.runtime.sendMessage({
+        type: "capture-visible-frame",
+        expectedY: targetY,
+        scrollY: window.scrollY,
+      });
+
+      if (!response?.ok) {
+        throw new Error(response?.error || "The viewport capture failed.");
+      }
+
+      captureCount += 1;
     }
   } finally {
     window.scrollTo(originalScrollX, originalScrollY);
@@ -72,13 +82,14 @@
 
   return {
     ...measurements,
-    visitedPositions,
+    captureCount,
     restoredScrollX: window.scrollX,
     restoredScrollY: window.scrollY,
   };
 
   async function waitForScrollToSettle() {
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // Keeping captures below two calls per second avoids Chrome's screenshot rate limit.
+    await new Promise((resolve) => setTimeout(resolve, 550));
   }
 })();
