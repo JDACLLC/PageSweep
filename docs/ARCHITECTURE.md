@@ -57,7 +57,7 @@ Provide a temporary DOM environment for image decoding and canvas composition. F
 4. At each target, the page settles and requests a visible-tab capture.
 5. The service worker stores the PNG data URL and frame metadata.
 6. After page cleanup, the service worker opens the offscreen document.
-7. The stitcher receives and draws frames individually.
+7. The stitcher receives frames individually and draws only each frame's unique region, ending the final frame at the fixed document boundary.
 8. The stitcher exports a PNG Blob URL.
 9. The service worker starts the download using a sanitized timestamped filename.
 10. The temporary Blob URL and offscreen document are released.
@@ -67,4 +67,3 @@ Provide a temporary DOM environment for image decoding and canvas composition. F
 - V1 captures one active tab after an explicit toolbar click.
 - The initial document height establishes a finite boundary; infinite feeds are not followed indefinitely.
 - Page manipulation and output file management are intentionally separate, allowing future capture metadata to be routed elsewhere without changing page logic.
-

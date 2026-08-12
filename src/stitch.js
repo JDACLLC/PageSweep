@@ -97,11 +97,17 @@ async function addFrame(frame) {
   const destinationY = Math.round(frame.scrollY * stitchState.outputScale);
   const remainingHeight = stitchState.outputHeight - destinationY;
   const scaledFrameWidth = frame.width * (stitchState.outputScale / stitchState.inputScaleX);
-  const scaledFrameHeight = frame.height * (stitchState.outputScale / stitchState.inputScaleY);
+  const uniqueEndY = Math.round(
+    (frame.scrollY + frame.uniqueHeight) * stitchState.outputScale,
+  );
+  const uniqueOutputHeight = uniqueEndY - destinationY;
   const drawWidth = Math.min(scaledFrameWidth, stitchState.outputWidth);
-  const drawHeight = Math.min(scaledFrameHeight, remainingHeight);
+  const drawHeight = Math.min(uniqueOutputHeight, remainingHeight);
   const sourceWidth = drawWidth * (stitchState.inputScaleX / stitchState.outputScale);
-  const sourceHeight = drawHeight * (stitchState.inputScaleY / stitchState.outputScale);
+  const sourceHeight = Math.min(
+    frame.uniqueHeight * stitchState.inputScaleY,
+    frame.height,
+  );
 
   if (drawHeight > 0) {
     stitchState.context.drawImage(

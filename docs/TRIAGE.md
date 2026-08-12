@@ -2,7 +2,7 @@
 
 | ID | Priority | Status | Item |
 |---:|:---:|---|---|
-| 1 | P0 | Up next | Correct final-frame overlap and crop the stitched output accurately. |
+| 1 | P0 | Testing | Correct final-frame overlap and crop the stitched output accurately. |
 | 2 | P0 | Planned | Prevent fixed and sticky elements from repeating in every frame. |
 | 3 | P1 | Planned | Add bounded render settling for lazy-loaded content. |
 | 4 | P1 | Planned | Harden failure cleanup and page-state restoration. |
@@ -19,4 +19,3 @@
 ## Parking Lot
 
 Items excluded from V1 remain documented here until intentionally scheduled: annotations, cropping UI, editing, cloud upload, screenshot library, accounts, OCR, AI analysis, PDF export, Evidence Flow integration, options dashboard, crawling, and multi-tab capture.
-

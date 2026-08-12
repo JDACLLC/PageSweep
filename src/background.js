@@ -149,11 +149,24 @@ async function stitchCapturedFrames(frames, captureDetails) {
       captureDetails,
     });
 
-    for (const frame of frames) {
+    for (let frameIndex = 0; frameIndex < frames.length; frameIndex += 1) {
+      const frame = frames[frameIndex];
+      const nextFrame = frames[frameIndex + 1];
+      const uniqueHeight = nextFrame
+        ? nextFrame.scrollY - frame.scrollY
+        : captureDetails.documentHeight - frame.scrollY;
+
+      if (uniqueHeight <= 0 || uniqueHeight > captureDetails.viewportHeight + 1) {
+        throw new Error(`Frame ${frameIndex + 1} has an invalid unique height (${uniqueHeight}px).`);
+      }
+
       await sendOffscreenMessage({
         target: "offscreen",
         type: "stitch-add-frame",
-        frame,
+        frame: {
+          ...frame,
+          uniqueHeight,
+        },
       });
     }
 

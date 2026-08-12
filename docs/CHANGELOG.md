@@ -16,19 +16,19 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Each captured frame now contributes only the vertical region not covered by the next frame. The final frame is cropped exactly at the fixed document boundary.
 - Viewport frames are transferred to the offscreen stitcher one at a time to stay below Chrome's 64 MiB extension-message limit.
 - Exceptionally tall pages are uniformly downscaled to the highest safe canvas resolution while preserving the complete page.
 
 ### Fixed
 
+- Removed duplicated bottom content and overdraw caused by a partially overlapping final viewport.
 - Prevented oversized multi-frame messages from aborting stitching.
 - Prevented PNG export failure when a page exceeds Chrome's native canvas limits.
 
 ### Known limitations
 
-- Final overlapping viewport correction has not yet been implemented.
 - Fixed and sticky page elements may repeat in multiple frames.
 - Lazy-loaded content receives a fixed settling delay but does not yet use the planned bounded stabilization strategy.
 - Exceptionally tall captures may have reduced resolution.
 - Capture progress is visible only through scrolling and service-worker console messages.
-
