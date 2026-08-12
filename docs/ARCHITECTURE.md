@@ -39,7 +39,7 @@ No persistent host permission or `<all_urls>` access is requested.
 
 ### `src/background.js`
 
-Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, stores viewport frames in memory, reads PNG dimensions, controls the offscreen stitch session, downloads the result, and logs actionable failures.
+Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, reads PNG dimensions, controls the offscreen stitch session, downloads the result, and logs failures by stage. Its final cleanup clears frame memory and closes temporary documents even after an earlier operation fails.
 
 ### `src/capture.js`
 

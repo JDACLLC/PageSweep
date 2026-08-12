@@ -31,6 +31,7 @@
   let captureBoundaryHeight = initialDocumentHeight;
   let maximumObservedHeight = initialDocumentHeight;
   let stabilizationTimeouts = 0;
+  const cleanupErrors = [];
 
   const measurements = {
     documentWidth,
@@ -96,31 +97,33 @@
       targetY = nextTargetY;
     }
   } finally {
-    restoreRepeatElements();
-
-    if (originalScrollBehavior) {
-      documentElement.style.setProperty(
-        "scroll-behavior",
-        originalScrollBehavior,
-        originalScrollBehaviorPriority,
-      );
-    } else {
-      documentElement.style.removeProperty("scroll-behavior");
-    }
-
-    for (const scrollAnchoringStyle of scrollAnchoringStyles) {
-      if (scrollAnchoringStyle.value) {
-        scrollAnchoringStyle.element.style.setProperty(
-          "overflow-anchor",
-          scrollAnchoringStyle.value,
-          scrollAnchoringStyle.priority,
+    await runCleanupStep("fixed and sticky element styles", () => restoreRepeatElements());
+    await runCleanupStep("smooth scrolling style", () => {
+      if (originalScrollBehavior) {
+        documentElement.style.setProperty(
+          "scroll-behavior",
+          originalScrollBehavior,
+          originalScrollBehaviorPriority,
         );
       } else {
-        scrollAnchoringStyle.element.style.removeProperty("overflow-anchor");
+        documentElement.style.removeProperty("scroll-behavior");
       }
-    }
+    });
+    await runCleanupStep("scroll anchoring styles", () => {
+      for (const scrollAnchoringStyle of scrollAnchoringStyles) {
+        if (scrollAnchoringStyle.value) {
+          scrollAnchoringStyle.element.style.setProperty(
+            "overflow-anchor",
+            scrollAnchoringStyle.value,
+            scrollAnchoringStyle.priority,
+          );
+        } else {
+          scrollAnchoringStyle.element.style.removeProperty("overflow-anchor");
+        }
+      }
+    });
 
-    await restoreOriginalScrollPosition();
+    await runCleanupStep("original scroll position", () => restoreOriginalScrollPosition());
   }
 
   return {
@@ -135,6 +138,7 @@
     fixedAndStickyElementsFound: repeatElements.length,
     fixedAndStickyElementsCaptured: capturedRepeatElements.size,
     repeatElementSuppressions,
+    cleanupErrors,
     restoredScrollX: window.scrollX,
     restoredScrollY: window.scrollY,
   };
@@ -209,6 +213,16 @@
 
   function delay(milliseconds) {
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  }
+
+  async function runCleanupStep(name, cleanup) {
+    try {
+      await cleanup();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      cleanupErrors.push({ name, message });
+      console.warn(`Full Page Capture could not restore ${name}.`, error);
+    }
   }
 
   async function restoreOriginalScrollPosition() {

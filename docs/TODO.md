@@ -2,11 +2,10 @@
 
 ## In Progress
 
-- Nothing. Ready to begin Stage 10.
+- Stage 10 browser validation: error handling and cleanup.
 
 ## Up Next
 
-- Stage 10: harden error handling and state restoration.
 
 ## Waiting On
 
@@ -14,6 +13,7 @@
 
 ## Recently Done
 
+- Implement stage-specific errors and independent cleanup of page and extension resources.
 - Stage 9: validate lazy-loaded image capture, bounded settling, and scroll restoration.
 - Implement bounded layout settling, visible-image decoding, and modest capture-boundary growth.
 - Stage 8: validate fixed and sticky element suppression, restoration, and scrollbar exclusion.

@@ -63,6 +63,17 @@ Use this checklist before declaring a capture stage complete and before a releas
 - Short static pages do not incur an unbounded wait.
 - Lazy-load layout shifts do not override restoration of the original scroll position. **Passed after the scroll-anchoring correction.**
 
+## Stage 10 acceptance checks
+
+- Clicking the extension on `chrome://extensions` logs a clean unsupported-page message and does not scroll or download.
+- A successful capture reports an empty `cleanupErrors` array.
+- Starting from a non-zero position restores the exact X and Y coordinates.
+- Smooth-scrolling and scroll-anchoring inline styles match their original values after capture.
+- Fixed and sticky element visibility matches its original state after capture.
+- A failed capture does not prevent the next toolbar click from starting a new capture.
+- Frame memory and the temporary offscreen document are released after success and failure.
+- Errors identify whether failure occurred during page capture, image stitching, or PNG download.
+
 ## Full V1 test matrix
 
 | Category | Result | Observed issue | Expected behavior | Fix |

@@ -1,5 +1,4 @@
 let activeCapture = null;
-let lastCapturedFrames = [];
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type !== "capture-visible-frame") {
@@ -25,6 +24,14 @@ chrome.action.onClicked.addListener(async (tab) => {
     return;
   }
 
+  if (!isSupportedPageUrl(tab.url)) {
+    console.error("Full Page Capture cannot access this browser-controlled page.", {
+      url: tab.url,
+      supportedSchemes: ["http:", "https:"],
+    });
+    return;
+  }
+
   if (activeCapture) {
     console.warn("Full Page Capture is already capturing a page.");
     return;
@@ -35,6 +42,7 @@ chrome.action.onClicked.addListener(async (tab) => {
       tabId: tab.id,
       windowId: tab.windowId,
       frames: [],
+      stage: "page capture",
     };
 
     const [injectionResult] = await chrome.scripting.executeScript({
@@ -42,14 +50,20 @@ chrome.action.onClicked.addListener(async (tab) => {
       files: ["src/capture.js"],
     });
 
-    lastCapturedFrames = activeCapture.frames;
+    const capturedFrames = activeCapture.frames;
     const captureDetails = {
       ...injectionResult.result,
-      framesStoredInMemory: lastCapturedFrames.length,
+      framesStoredInMemory: capturedFrames.length,
     };
+
+    if (!injectionResult?.result || capturedFrames.length === 0) {
+      throw new Error("Page capture returned no usable frames.");
+    }
+
     console.log("Full Page Capture multi-frame capture complete", captureDetails);
 
-    const stitchedImage = await stitchCapturedFrames(lastCapturedFrames, captureDetails);
+    activeCapture.stage = "image stitching";
+    const stitchedImage = await stitchCapturedFrames(capturedFrames, captureDetails);
 
     if (stitchedImage.wasDownscaled) {
       console.warn("Full Page Capture reduced this exceptionally large page to fit Chrome's PNG canvas limits.", {
@@ -61,6 +75,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     }
 
     try {
+      activeCapture.stage = "PNG download";
       const filename = createScreenshotFilename(tab.url);
       const downloadId = await chrome.downloads.download({
         url: stitchedImage.url,
@@ -79,8 +94,20 @@ chrome.action.onClicked.addListener(async (tab) => {
       await releaseStitchedImage();
     }
   } catch (error) {
-    console.error("Full Page Capture could not capture this page.", error);
+    const stage = activeCapture?.stage || "startup";
+    console.error(`Full Page Capture failed during ${stage}.`, {
+      message: getErrorMessage(error),
+      url: tab.url,
+      tabId: tab.id,
+      capturedFrames: activeCapture?.frames.length ?? 0,
+      error,
+    });
   } finally {
+    if (activeCapture?.frames) {
+      activeCapture.frames.length = 0;
+    }
+
+    await safelyCloseOffscreenDocument();
     activeCapture = null;
   }
 });
@@ -184,7 +211,7 @@ async function stitchCapturedFrames(frames, captureDetails) {
       wasDownscaled: startResponse.wasDownscaled,
     };
   } catch (error) {
-    await closeOffscreenDocument();
+    await safelyCloseOffscreenDocument();
     throw error;
   }
 }
@@ -234,6 +261,31 @@ async function closeOffscreenDocument() {
   if (contexts.length > 0) {
     await chrome.offscreen.closeDocument();
   }
+}
+
+async function safelyCloseOffscreenDocument() {
+  try {
+    await closeOffscreenDocument();
+  } catch (error) {
+    console.warn("Full Page Capture could not close its temporary stitching document.", error);
+  }
+}
+
+function isSupportedPageUrl(pageUrl) {
+  if (!pageUrl) {
+    return false;
+  }
+
+  try {
+    const protocol = new URL(pageUrl).protocol;
+    return protocol === "http:" || protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function getErrorMessage(error) {
+  return error instanceof Error ? error.message : String(error);
 }
 
 function createScreenshotFilename(pageUrl) {

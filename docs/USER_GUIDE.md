@@ -35,7 +35,7 @@ The filename uses the website hostname and capture time, such as `example.com_20
 > **Tip:** Keep the target tab visible until the capture finishes because Chrome captures the visible tab.
 
 > **Common issue:** No file downloads.  
-> **Solution:** Open the extension's service-worker console from `chrome://extensions` and check the latest error.
+> **Solution:** Confirm the page uses a normal `http` or `https` address. Then open the extension's service-worker console from `chrome://extensions` and check which capture stage reported the error.
 
 > **Common issue:** An exceptionally tall screenshot looks less sharp when enlarged.  
 > **Solution:** Chrome limits the size of one export canvas. V1 preserves the complete page at the highest safe uniform resolution and logs a warning when it must reduce resolution.
