@@ -65,7 +65,7 @@ Use this checklist before declaring a capture stage complete and before a releas
 
 ## Stage 10 acceptance checks
 
-- Clicking the extension on `chrome://extensions` logs a clean unsupported-page message and does not scroll or download.
+- Clicking the extension on `chrome://extensions` logs a clean unsupported-page message and does not scroll or download. **Passed 2026-08-12.**
 - A successful capture reports an empty `cleanupErrors` array.
 - Starting from a non-zero position restores the exact X and Y coordinates.
 - Smooth-scrolling and scroll-anchoring inline styles match their original values after capture.

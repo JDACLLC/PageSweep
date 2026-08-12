@@ -39,6 +39,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Validated
 
+- Confirmed protected Chrome pages fail cleanly without scrolling or downloading.
 - Completed the ten-category real-world capture matrix, including static, article, marketing, documentation, sticky, lazy-loaded, floating-control, exceptionally tall, short, and responsive-app pages.
 
 ### Known limitations

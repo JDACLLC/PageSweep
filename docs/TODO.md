@@ -2,11 +2,10 @@
 
 ## In Progress
 
-- Nothing. Stage 11 is complete; Stage 10 still needs unsupported-page console confirmation.
+- Nothing. Ready to begin Stage 12.
 
 ## Up Next
 
-- Finish Stage 10 unsupported-page confirmation as part of the Stage 11 failure matrix.
 - Stage 12: finalize README, installation, usage, permissions, and limitations documentation.
 
 ## Waiting On
@@ -15,6 +14,7 @@
 
 ## Recently Done
 
+- Stage 10: validate clean rejection of a browser-controlled page.
 - Stage 11: complete the ten-category real-world capture matrix.
 - Validate fixed header, sticky sidebar, floating chat control, and fixed footer behavior with a controlled fixture.
 - Validate successful cleanup and immediate session reuse on Google News and CNN.

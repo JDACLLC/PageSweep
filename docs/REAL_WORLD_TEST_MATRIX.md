@@ -22,7 +22,7 @@ This matrix records browser-tested evidence for substantially different page typ
 - Google News completed with `cleanupErrors: []` and `outputScale: 2`.
 - A subsequent CNN capture completed immediately, confirming the prior capture session was released.
 - Lazy-loading demo returned to its original top position after the scroll-anchoring correction.
-- Unsupported browser-controlled page behavior still requires explicit confirmation.
+- Unsupported browser-controlled page behavior passed: `chrome://extensions` produced a clean explanatory console error with no capture attempt.
 
 ## Remaining test sequence
 
