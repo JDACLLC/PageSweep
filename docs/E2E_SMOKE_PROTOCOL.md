@@ -36,10 +36,10 @@ Use this checklist before declaring a capture stage complete and before a releas
 ## Stage 7 acceptance checks
 
 - Page height evenly divisible by the viewport height.
-- Page height not evenly divisible by the viewport height.
+- Page height not evenly divisible by the viewport height. **Passed 2026-08-12 on a very long page.**
 - Final remaining region smaller than half a viewport.
 - Page shorter than one viewport.
-- No duplicated bottom content, missing strip, blank gap, or visible overlap seam.
+- No duplicated bottom content, missing strip, blank gap, or visible overlap seam. **Passed in the recorded very-long-page test.**
 
 ## Full V1 test matrix
 
@@ -66,4 +66,3 @@ Capture the full console error and record:
 - Whether the page state was restored.
 - Whether a partial or incorrect file downloaded.
 - Smallest correction applied and regression page retested.
-

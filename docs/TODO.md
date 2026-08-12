@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Stage 7 browser validation: final-viewport overlap and cropping.
+- Nothing. Ready to begin Stage 8.
 
 ## Up Next
 
@@ -16,6 +16,7 @@
 
 ## Recently Done
 
+- Stage 7: validate final-viewport overlap and boundary cropping on a very long page.
 - Implement unique-region cropping for every captured frame.
 - Stage 6: stitch viewport frames and download one PNG.
 - Fix frame transfer beyond Chrome's 64 MiB message limit.
