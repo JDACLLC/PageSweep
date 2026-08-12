@@ -43,9 +43,25 @@ chrome.action.onClicked.addListener(async (tab) => {
     });
 
     lastCapturedFrames = activeCapture.frames;
-    console.log("Full Page Capture multi-frame capture complete", {
+    const captureDetails = {
       ...injectionResult.result,
       framesStoredInMemory: lastCapturedFrames.length,
+    };
+    console.log("Full Page Capture multi-frame capture complete", captureDetails);
+
+    const stitchedImage = await stitchCapturedFrames(lastCapturedFrames, captureDetails);
+    const filename = createScreenshotFilename(tab.url);
+    const downloadId = await chrome.downloads.download({
+      url: stitchedImage.dataUrl,
+      filename,
+      saveAs: false,
+    });
+
+    console.log("Full Page Capture stitched PNG downloaded", {
+      downloadId,
+      filename,
+      width: stitchedImage.width,
+      height: stitchedImage.height,
     });
   } catch (error) {
     console.error("Full Page Capture could not capture this page.", error);
@@ -105,4 +121,73 @@ function readUint32(bytes, offset) {
     + bytes.charCodeAt(offset + 2) * 0x100
     + bytes.charCodeAt(offset + 3)
   );
+}
+
+async function stitchCapturedFrames(frames, captureDetails) {
+  await ensureOffscreenDocument();
+
+  try {
+    const response = await chrome.runtime.sendMessage({
+      target: "offscreen",
+      type: "stitch-frames",
+      frames,
+      captureDetails,
+    });
+
+    if (!response?.ok) {
+      throw new Error(response?.error || "The image stitching operation failed.");
+    }
+
+    return response.image;
+  } finally {
+    await closeOffscreenDocument();
+  }
+}
+
+async function ensureOffscreenDocument() {
+  const documentUrl = chrome.runtime.getURL("offscreen.html");
+  const contexts = await chrome.runtime.getContexts({
+    contextTypes: ["OFFSCREEN_DOCUMENT"],
+    documentUrls: [documentUrl],
+  });
+
+  if (contexts.length === 0) {
+    await chrome.offscreen.createDocument({
+      url: "offscreen.html",
+      reasons: ["BLOBS"],
+      justification: "Stitch captured viewport images into one PNG using a canvas.",
+    });
+  }
+}
+
+async function closeOffscreenDocument() {
+  const contexts = await chrome.runtime.getContexts({
+    contextTypes: ["OFFSCREEN_DOCUMENT"],
+  });
+
+  if (contexts.length > 0) {
+    await chrome.offscreen.closeDocument();
+  }
+}
+
+function createScreenshotFilename(pageUrl) {
+  const hostname = new URL(pageUrl).hostname || "webpage";
+  const timestamp = new Date();
+  const date = [
+    timestamp.getFullYear(),
+    padNumber(timestamp.getMonth() + 1),
+    padNumber(timestamp.getDate()),
+  ].join("-");
+  const time = [
+    padNumber(timestamp.getHours()),
+    padNumber(timestamp.getMinutes()),
+    padNumber(timestamp.getSeconds()),
+  ].join("-");
+  const safeHostname = hostname.replace(/[<>:"/\\|?*\s]+/g, "_");
+
+  return `${safeHostname}_${date}_${time}.png`;
+}
+
+function padNumber(value) {
+  return String(value).padStart(2, "0");
 }
