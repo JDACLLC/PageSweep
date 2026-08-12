@@ -49,6 +49,7 @@ Use this checklist before declaring a capture stage complete and before a releas
 - Fixed footer appears once.
 - Sticky sidebar that first becomes visible below the first viewport appears once at its first visible location.
 - Suppressed elements do not cause content to shift or collapse.
+- Browser scrollbar thumbs do not repeat along the stitched image edge.
 - A capture started partway down the page still restores the exact scroll position and all temporary visibility changes.
 
 ## Full V1 test matrix

@@ -40,7 +40,7 @@ function startStitch(firstFrame, captureDetails) {
   const scaleY = firstFrame.height / captureDetails.viewportHeight;
   const capturedDocumentWidth = Math.min(
     captureDetails.documentWidth,
-    captureDetails.viewportWidth,
+    captureDetails.viewportContentWidth ?? captureDetails.viewportWidth,
   );
   const dimensionScaleLimit = Math.min(
     MAX_CANVAS_DIMENSION / capturedDocumentWidth,

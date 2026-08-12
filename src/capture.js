@@ -31,6 +31,7 @@
     documentWidth,
     documentHeight,
     viewportWidth: window.innerWidth,
+    viewportContentWidth: documentElement.clientWidth,
     viewportHeight: window.innerHeight,
     scrollX: originalScrollX,
     scrollY: originalScrollY,
