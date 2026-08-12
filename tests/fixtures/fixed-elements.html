@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Full Page Capture fixed-element fixture</title>
+    <style>
+      * { box-sizing: border-box; }
+      html { color: #172033; font: 16px/1.55 system-ui, sans-serif; }
+      body { margin: 0; background: #f4f6fb; }
+      header { position: sticky; top: 0; z-index: 3; padding: 18px 28px; color: white; background: #263b80; }
+      main { width: min(1040px, calc(100% - 48px)); margin: 0 auto; padding: 42px 0 120px; }
+      .hero { min-height: 720px; padding: 48px; border-radius: 24px; background: white; box-shadow: 0 12px 35px #23346418; }
+      .layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 32px; margin-top: 32px; }
+      article { padding: 36px; border-radius: 20px; background: white; }
+      article section { min-height: 620px; padding-bottom: 32px; border-bottom: 1px solid #d8deeb; }
+      aside { align-self: start; position: sticky; top: 86px; padding: 24px; border-radius: 18px; background: #dfe7ff; }
+      .chat { position: fixed; right: 24px; bottom: 72px; z-index: 5; padding: 15px 20px; border: 0; border-radius: 999px; color: white; background: #087f5b; box-shadow: 0 8px 26px #0004; font: inherit; font-weight: 700; }
+      footer { position: fixed; right: 0; bottom: 0; left: 0; z-index: 4; padding: 12px; text-align: center; color: white; background: #172033; }
+      @media (max-width: 720px) { .layout { grid-template-columns: 1fr; } aside { position: sticky; top: 86px; } }
+    </style>
+  </head>
+  <body>
+    <header><strong>Sticky header — should appear once</strong></header>
+    <main>
+      <section class="hero">
+        <h1>Fixed and sticky element test</h1>
+        <p>This controlled fixture verifies that persistent interface elements appear once in a full-page capture and return after capture.</p>
+        <p>Scroll begins below after this deliberately tall introduction.</p>
+      </section>
+      <div class="layout">
+        <article>
+          <section><h2>Section one</h2><p>Unique content region one.</p></section>
+          <section><h2>Section two</h2><p>Unique content region two.</p></section>
+          <section><h2>Section three</h2><p>Unique content region three.</p></section>
+          <section><h2>Final section</h2><p>The image should finish here without a duplicate footer.</p></section>
+        </article>
+        <aside>
+          <strong>Delayed sticky sidebar</strong>
+          <p>This begins below the first viewport and should appear once at its first visible position.</p>
+        </aside>
+      </div>
+    </main>
+    <button class="chat" type="button">Chat with us</button>
+    <footer>Fixed footer — should appear once</footer>
+  </body>
+</html>

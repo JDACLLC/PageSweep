@@ -79,6 +79,8 @@ Use this checklist before declaring a capture stage complete and before a releas
 
 Detailed evidence and remaining steps are maintained in `REAL_WORLD_TEST_MATRIX.md`.
 
+The controlled fixed-element regression fixture is `tests/fixtures/fixed-elements.html`.
+
 | Category | Result | Observed issue | Expected behavior | Fix |
 |---|---|---|---|---|
 | Simple static page | Not run | — | Complete PNG | — |

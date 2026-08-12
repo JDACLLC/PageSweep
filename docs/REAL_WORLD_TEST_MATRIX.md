@@ -6,15 +6,15 @@ This matrix records browser-tested evidence for substantially different page typ
 
 | # | Page type | Test page | Result | Observed issue | Expected behavior | Fix or follow-up |
 |---:|---|---|---|---|---|---|
-| 1 | Simple static page | Pending | Not run | — | One correctly bounded PNG and restored position | Test `https://example.com/` |
+| 1 | Simple static page | Example Domain | Pass | None | One correctly bounded PNG and restored position | One frame, full device-pixel output, `cleanupErrors: []` |
 | 2 | Long article | CNN article | Pass | Initial overlay-scrollbar marks before correction | Complete article, one PNG, restored position | Added reversible overlay-scrollbar suppression; rerun recommended for final regression evidence |
-| 3 | Marketing website | Pending | Not run | — | Complete page without missing sections | Test a finite public product landing page |
+| 3 | Marketing website | Spawn.page | Pass | None visible | Complete page without missing sections | Eight contiguous frames, full device-pixel output, `cleanupErrors: []` |
 | 4 | Documentation site | Position Sticky demo | Pass | Initial overlay-scrollbar marks before correction | Complete documentation-style page with stable layout | Overlay-scrollbar suppression added |
 | 5 | Sticky navigation | Position Sticky demo | Pass | Navigation would normally repeat | Sticky navigation appears once | First-visible-occurrence suppression |
 | 6 | Lazy-loaded images | Native 100-image lazy-loading demo | Pass with limitation | Exceptional height required downscaling; initial restoration regression | Images render throughout, capture terminates, page returns to start | Bounded settling, image decoding, safe downscaling, and verified scroll restoration |
-| 7 | Floating chat UI | Pending | Not run | — | Floating control appears once and is restored afterward | Use a finite page with a visible fixed chat control |
+| 7 | Floating chat UI | Controlled fixture pending | Not run | PageWidgets resolved to an unrelated Plesk default page | Floating control appears once and is restored afterward | Test `tests/fixtures/fixed-elements.html` |
 | 8 | Very long webpage | Bored Panda | Pass with limitation | Native canvas could not export full Retina dimensions | Complete page in one PNG | Per-frame messaging and safe uniform downscaling |
-| 9 | Page shorter than viewport | Pending | Not run | — | One frame with no blank extension or crop | Test `https://example.com/` in a tall browser window |
+| 9 | Page shorter than viewport | Example Domain | Pass | None | One frame with no stitching gap or crop | One frame at `1810 x 1942`, `outputScale: 2` |
 | 10 | Complex responsive web app | Google News | Pass | No cleanup errors; full device-pixel output | Complete finite dashboard state and reusable session | `cleanupErrors: []`; immediate CNN capture also succeeded |
 
 ## Stage 10 cleanup evidence
@@ -40,9 +40,10 @@ This matrix records browser-tested evidence for substantially different page typ
 
 ### Floating chat control
 
-1. Open a finite page with a visible fixed chat button.
+1. Open `tests/fixtures/fixed-elements.html` in Chrome. File-URL access must be enabled for the extension.
 2. Capture it once.
-3. Confirm the button appears once, page content does not shift, and the button returns to its original visible state afterward.
+3. Confirm the sticky header, delayed sticky sidebar, chat button, and fixed footer each appear once.
+4. Confirm page content does not shift and all four elements return to their original visible state afterward.
 
 ### Unsupported page
 
@@ -50,4 +51,3 @@ This matrix records browser-tested evidence for substantially different page typ
 2. Click **Full Page Capture**.
 3. Confirm the service-worker console reports that the browser-controlled page cannot be accessed.
 4. Confirm the page does not scroll and no file downloads.
-

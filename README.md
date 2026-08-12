@@ -51,6 +51,8 @@ GoFullPage_ReplacementTool/
 - [`docs/CHANGELOG.md`](docs/CHANGELOG.md) and [`docs/DECISION_LOG.md`](docs/DECISION_LOG.md) record what changed and why.
 - [`docs/DOC_PROTOCOL.md`](docs/DOC_PROTOCOL.md) defines how these documents stay current.
 
+Controlled browser fixtures live under `tests/fixtures/`.
+
 ## Current permissions
 
 - `activeTab`: Grants temporary access to the current page only after the user clicks the extension.
