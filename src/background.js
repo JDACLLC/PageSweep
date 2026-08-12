@@ -27,7 +27,7 @@ chrome.action.onClicked.addListener(async (tab) => {
   if (!isSupportedPageUrl(tab.url)) {
     console.error("Full Page Capture cannot access this browser-controlled page.", {
       url: tab.url,
-      supportedSchemes: ["http:", "https:"],
+      supportedSchemes: ["http:", "https:", "file:"],
     });
     return;
   }
@@ -278,7 +278,7 @@ function isSupportedPageUrl(pageUrl) {
 
   try {
     const protocol = new URL(pageUrl).protocol;
-    return protocol === "http:" || protocol === "https:";
+    return protocol === "http:" || protocol === "https:" || protocol === "file:";
   } catch {
     return false;
   }

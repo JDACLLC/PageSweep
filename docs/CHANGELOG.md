@@ -27,6 +27,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Fixed
 
+- Allowed explicitly user-triggered capture of local `file:` test pages when Chrome's file-URL access toggle is enabled.
 - Guaranteed independent cleanup attempts for scroll position, smooth scrolling, scroll anchoring, fixed-element styles, frame memory, Blob URLs, and offscreen documents.
 - Protected browser-controlled pages now fail cleanly with an actionable console message.
 - Prevented lazy-load layout shifts and Chrome scroll anchoring from leaving the page at the bottom after capture.

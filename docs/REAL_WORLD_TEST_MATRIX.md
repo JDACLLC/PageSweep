@@ -40,7 +40,7 @@ This matrix records browser-tested evidence for substantially different page typ
 
 ### Floating chat control
 
-1. Open `tests/fixtures/fixed-elements.html` in Chrome. File-URL access must be enabled for the extension.
+1. Reload the extension, then open `tests/fixtures/fixed-elements.html` in Chrome. File-URL access must be enabled for the extension.
 2. Capture it once.
 3. Confirm the sticky header, delayed sticky sidebar, chat button, and fixed footer each appear once.
 4. Confirm page content does not shift and all four elements return to their original visible state afterward.
