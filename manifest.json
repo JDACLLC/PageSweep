@@ -5,8 +5,7 @@
   "version": "0.1.0",
   "permissions": [
     "activeTab",
-    "scripting",
-    "downloads"
+    "scripting"
   ],
   "action": {
     "default_title": "Capture full page"
