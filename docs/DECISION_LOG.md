@@ -1,0 +1,80 @@
+# Decision Log
+
+## Use controlled scroll-and-stitch capture — 2026-08-12
+
+### Context
+
+Chrome's visible-tab screenshot API captures only the current viewport, while the product must capture an entire scrollable page.
+
+### Decision
+
+Measure a finite page boundary, scroll through viewport positions, capture each visible frame at a controlled rate, and stitch the frames into one PNG.
+
+### Alternatives
+
+- Treat one visible-tab capture as a full-page image, which does not meet the requirement.
+- Use Chrome DevTools Protocol capture, which would require broader or more complex extension capabilities.
+- Add a third-party capture dependency.
+
+### Consequences
+
+The architecture uses native APIs and minimal permissions, but must explicitly handle overlap, fixed elements, lazy loading, rate limits, page restoration, and large-image constraints.
+
+## Use an offscreen document for stitching — 2026-08-12
+
+### Context
+
+Manifest V3 service workers do not provide the DOM image and canvas APIs used to compose PNG frames.
+
+### Decision
+
+Create an offscreen extension document only during stitching, draw the frames on its canvas, export the PNG, then close the document.
+
+### Alternatives
+
+- Add a third-party image library to the service worker.
+- Stitch inside the webpage, which would mix extension output processing with page manipulation.
+
+### Consequences
+
+The extension requires the narrow `offscreen` permission. Capture coordination, webpage manipulation, and image stitching remain separated.
+
+## Transfer captured frames individually — 2026-08-12
+
+### Context
+
+Sending 77 PNG data URLs in one extension message exceeded Chrome's 64 MiB message limit.
+
+### Decision
+
+Initialize a stitch session and transfer and draw one frame per message. Return a short temporary Blob URL for the completed download.
+
+### Alternatives
+
+- Reduce every frame's quality before transfer.
+- Limit the number of captured frames and omit part of the page.
+
+### Consequences
+
+Exceptionally long pages can be stitched without an oversized message, and peak message size is bounded by one viewport image.
+
+## Downscale only beyond native canvas limits in V1 — 2026-08-12
+
+### Context
+
+A test capture required an approximately 1,810 by 117,250-pixel canvas, which Chrome could not export as one PNG.
+
+### Decision
+
+Keep normal captures at their source device-pixel scale. When native canvas dimension or area limits would be exceeded, uniformly reduce the output to the highest safe scale and log a warning.
+
+### Alternatives
+
+- Build a custom tiled or streaming PNG encoder in V1.
+- Fail exceptionally tall captures.
+- Produce multiple PNG files instead of the required single image.
+
+### Consequences
+
+V1 reliably preserves the entire page as one PNG, but exceptionally tall pages can be less sharp when enlarged. Full-resolution tiled encoding remains a future option.
+
