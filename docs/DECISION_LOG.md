@@ -1,5 +1,24 @@
 # Decision Log
 
+## Adopt the PageSweep product identity — 2026-08-12
+
+### Context
+
+The working name described the feature but was generic and did not provide a distinct identity suitable for a future Chrome Web Store listing.
+
+### Decision
+
+Use **PageSweep** as the product name and **Capture the whole page.** as its tagline. Represent it with a blue rounded-square icon containing a white page and a downward sweep arrow.
+
+### Alternatives
+
+- Continue using the descriptive working name.
+- Use ScrollShot, which is already associated with other screenshot products.
+
+### Consequences
+
+The extension has a concise, memorable identity that communicates motion through a complete webpage. The repository folder may retain its working name without affecting the installed extension or future store listing.
+
 ## Bound lazy-load stabilization and page growth — 2026-08-12
 
 ### Context

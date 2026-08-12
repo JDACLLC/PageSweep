@@ -13,19 +13,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 chrome.action.onClicked.addListener(async (tab) => {
-  console.log("Full Page Capture triggered", {
+  console.log("PageSweep triggered", {
     tabId: tab.id,
     url: tab.url,
     title: tab.title,
   });
 
   if (typeof tab.id !== "number") {
-    console.error("Full Page Capture could not identify the active tab.");
+    console.error("PageSweep could not identify the active tab.");
     return;
   }
 
   if (!isSupportedPageUrl(tab.url)) {
-    console.error("Full Page Capture cannot access this browser-controlled page.", {
+    console.error("PageSweep cannot access this browser-controlled page.", {
       url: tab.url,
       supportedSchemes: ["http:", "https:", "file:"],
     });
@@ -33,7 +33,7 @@ chrome.action.onClicked.addListener(async (tab) => {
   }
 
   if (activeCapture) {
-    console.warn("Full Page Capture is already capturing a page.");
+    console.warn("PageSweep is already capturing a page.");
     return;
   }
 
@@ -60,13 +60,13 @@ chrome.action.onClicked.addListener(async (tab) => {
       throw new Error("Page capture returned no usable frames.");
     }
 
-    console.log("Full Page Capture multi-frame capture complete", captureDetails);
+    console.log("PageSweep multi-frame capture complete", captureDetails);
 
     activeCapture.stage = "image stitching";
     const stitchedImage = await stitchCapturedFrames(capturedFrames, captureDetails);
 
     if (stitchedImage.wasDownscaled) {
-      console.warn("Full Page Capture reduced this exceptionally large page to fit Chrome's PNG canvas limits.", {
+      console.warn("PageSweep reduced this exceptionally large page to fit Chrome's PNG canvas limits.", {
         sourceScale: stitchedImage.sourceScale,
         outputScale: stitchedImage.outputScale,
         outputWidth: stitchedImage.width,
@@ -83,7 +83,7 @@ chrome.action.onClicked.addListener(async (tab) => {
         saveAs: false,
       });
 
-      console.log("Full Page Capture stitched PNG downloaded", {
+      console.log("PageSweep stitched PNG downloaded", {
         downloadId,
         filename,
         width: stitchedImage.width,
@@ -95,7 +95,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     }
   } catch (error) {
     const stage = activeCapture?.stage || "startup";
-    console.error(`Full Page Capture failed during ${stage}.`, {
+    console.error(`PageSweep failed during ${stage}.`, {
       message: getErrorMessage(error),
       url: tab.url,
       tabId: tab.id,
@@ -130,7 +130,7 @@ async function captureVisibleFrame(message, sender) {
   };
 
   activeCapture.frames.push(frame);
-  console.log(`Full Page Capture frame ${activeCapture.frames.length}`, {
+  console.log(`PageSweep frame ${activeCapture.frames.length}`, {
     scrollY: frame.scrollY,
     expectedY: frame.expectedY,
     capturedWidth: frame.width,
@@ -267,7 +267,7 @@ async function safelyCloseOffscreenDocument() {
   try {
     await closeOffscreenDocument();
   } catch (error) {
-    console.warn("Full Page Capture could not close its temporary stitching document.", error);
+    console.warn("PageSweep could not close its temporary stitching document.", error);
   }
 }
 

@@ -10,11 +10,13 @@
 | 6 | P2 | Complete | Complete installation, usage, permissions, and limitations documentation. |
 | 7 | P2 | Parking Lot | Add visible capture progress or animation so users know capture is active. |
 | 8 | P2 | Known limitation | Preserve full Retina resolution for exceptionally tall pages without relying on one oversized canvas. |
+| 9 | P2 | Parking Lot | Prepare the Chrome Web Store package, listing assets, privacy policy, disclosures, and submission checklist. |
 
 ## Notes
 
 - Item 7 was identified after Stage 6. Its exact interaction and design will be decided after the capture fundamentals are stable.
 - Item 8 is outside V1. V1 uniformly downscales only when Chrome's native canvas dimension or memory limits require it, preserving the entire page in one PNG.
+- Item 9 is scheduled for release preparation. Screenshot capture counts as handling website content under Chrome Web Store policy even when processing remains local, so PageSweep will need an accurate privacy policy and dashboard disclosure before submission.
 
 ## Parking Lot
 

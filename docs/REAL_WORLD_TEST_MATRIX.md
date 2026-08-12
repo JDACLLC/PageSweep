@@ -48,6 +48,6 @@ This matrix records browser-tested evidence for substantially different page typ
 ### Unsupported page
 
 1. Open `chrome://extensions`.
-2. Click **Full Page Capture**.
+2. Click **PageSweep**.
 3. Confirm the service-worker console reports that the browser-controlled page cannot be accessed.
 4. Confirm the page does not scroll and no file downloads.

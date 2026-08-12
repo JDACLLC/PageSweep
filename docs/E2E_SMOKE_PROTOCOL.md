@@ -15,7 +15,7 @@ Use this checklist before declaring a capture stage complete and before a releas
 ## Core happy path
 
 1. Open a test page and note the starting scroll position.
-2. Click the **Full Page Capture** toolbar icon once.
+2. Click the **PageSweep** toolbar icon once.
 3. Confirm the page scrolls automatically without manual input.
 4. Confirm exactly one PNG downloads.
 5. Confirm the filename follows `hostname_YYYY-MM-DD_HH-MM-SS.png`.

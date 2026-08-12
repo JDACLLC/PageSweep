@@ -20,6 +20,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Rebranded the extension as **PageSweep — Capture the whole page**, with a new toolbar and store-ready icon set.
 - The finite capture boundary can grow by up to 20 percent or 5,000 CSS pixels, whichever is smaller, when lazy-loaded content modestly expands the page.
 - Fixed and sticky elements remain visible for their first captured occurrence, then use temporary layout-preserving suppression in later frames.
 - Each captured frame now contributes only the vertical region not covered by the next frame. The final frame is cropped exactly at the fixed document boundary.

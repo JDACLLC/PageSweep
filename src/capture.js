@@ -233,7 +233,7 @@
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       cleanupErrors.push({ name, message });
-      console.warn(`Full Page Capture could not restore ${name}.`, error);
+      console.warn(`PageSweep could not restore ${name}.`, error);
     }
   }
 

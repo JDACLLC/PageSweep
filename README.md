@@ -1,6 +1,8 @@
-# Full Page Capture
+# PageSweep
 
-Full Page Capture is a Chrome Manifest V3 extension that captures an entire scrollable webpage and automatically downloads it as one PNG.
+PageSweep is a Chrome Manifest V3 extension that captures an entire scrollable webpage and automatically downloads it as one PNG.
+
+**PageSweep — Capture the whole page.**
 
 One toolbar click measures a finite page boundary, scrolls through the page, captures each viewport, removes overlap, stitches the frames, downloads the PNG, and restores the original page state.
 
@@ -20,8 +22,8 @@ One toolbar click measures a finite page boundary, scrolls through the page, cap
 2. Turn on **Developer mode** in the upper-right corner.
 3. Click **Load unpacked**.
 4. Select this project directory.
-5. Confirm that **Full Page Capture** appears in the extensions list.
-6. Use Chrome's extensions menu to pin **Full Page Capture** to the toolbar.
+5. Confirm that **PageSweep** appears in the extensions list.
+6. Use Chrome's extensions menu to pin **PageSweep** to the toolbar.
 
 Project directory:
 
@@ -34,7 +36,7 @@ For local HTML files, open the extension's **Details** page and enable **Allow a
 ## Usage
 
 1. Open an `http`, `https`, or enabled local `file` page.
-2. Click the **Full Page Capture** toolbar icon once.
+2. Click the **PageSweep** toolbar icon once.
 3. Keep that tab visible and wait while the page scrolls.
 4. Open the PNG that Chrome downloads automatically.
 
@@ -103,23 +105,23 @@ After changing extension files, open `chrome://extensions`, click the reload but
 
 ### Debugging
 
-- **Service-worker console:** Open `chrome://extensions`, select **Full Page Capture**, then click **service worker**. Capture progress, dimensions, cleanup status, and errors are logged here.
+- **Service-worker console:** Open `chrome://extensions`, select **PageSweep**, then click **service worker**. Capture progress, dimensions, cleanup status, and errors are logged here.
 - **Webpage console:** Use the target tab's DevTools console for rare page-side cleanup warnings.
 - **Extension errors:** Inspect the **Errors** button on the extension card if Chrome reports a loading or runtime problem.
 
 ### Smoke test
 
 1. Open `chrome://extensions`.
-2. Find **Full Page Capture** and click its **service worker** link to open DevTools.
+2. Find **PageSweep** and click its **service worker** link to open DevTools.
 3. Open a normal webpage in another tab.
-4. Click the **Full Page Capture** toolbar icon.
+4. Click the **PageSweep** toolbar icon.
 5. Return to the service worker DevTools console.
-6. Confirm that a `Full Page Capture triggered` message includes the tab ID, URL, and title.
+6. Confirm that a `PageSweep triggered` message includes the tab ID, URL, and title.
 7. Watch the page scroll automatically from top to bottom and return to its starting position.
 8. Confirm that one PNG downloads automatically after the final frame.
-9. Open the PNG and verify that its pixel width and height match the values in `Full Page Capture stitched PNG downloaded`.
+9. Open the PNG and verify that its pixel width and height match the values in `PageSweep stitched PNG downloaded`.
 10. Check the image from top to bottom for missing regions, blank gaps, and obvious seams.
-11. Inspect `Full Page Capture multi-frame capture complete`; verify `captureCount` matches `framesStoredInMemory` and `cleanupErrors` is empty.
+11. Inspect `PageSweep multi-frame capture complete`; verify `captureCount` matches `framesStoredInMemory` and `cleanupErrors` is empty.
 
 Use [`docs/E2E_SMOKE_PROTOCOL.md`](docs/E2E_SMOKE_PROTOCOL.md) for the complete checks and [`docs/REAL_WORLD_TEST_MATRIX.md`](docs/REAL_WORLD_TEST_MATRIX.md) for recorded results.
 

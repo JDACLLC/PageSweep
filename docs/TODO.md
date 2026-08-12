@@ -14,6 +14,7 @@
 
 ## Recently Done
 
+- Adopt the PageSweep name, tagline, and icon system across the extension and maintained documentation.
 - Stage 12: finalize installation, usage, permissions, limitations, debugging, and testing documentation.
 - Stage 10: validate clean rejection of a browser-controlled page.
 - Stage 11: complete the ten-category real-world capture matrix.

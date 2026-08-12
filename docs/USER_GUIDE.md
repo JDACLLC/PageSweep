@@ -1,6 +1,8 @@
-# Full Page Capture User Guide
+# PageSweep User Guide
 
 Use this guide to install the unpacked extension, capture webpages, and resolve common issues.
+
+**PageSweep — Capture the whole page.**
 
 ## Install the extension
 
@@ -8,7 +10,7 @@ Use this guide to install the unpacked extension, capture webpages, and resolve 
 2. Turn on **Developer mode**.
 3. Select **Load unpacked**.
 4. Choose the project folder.
-5. Confirm **Full Page Capture** appears without an error.
+5. Confirm **PageSweep** appears without an error.
 
 > **Tip:** Pin the extension from Chrome's extensions menu so its toolbar icon is always visible.
 
@@ -23,7 +25,7 @@ Use this guide to install the unpacked extension, capture webpages, and resolve 
 ## Capture a webpage
 
 1. Open a normal webpage using an `http` or `https` address, or an enabled local `file` page.
-2. Select the **Full Page Capture** toolbar icon once.
+2. Select the **PageSweep** toolbar icon once.
 3. Wait while the page scrolls from top to bottom.
 4. Confirm the page returns to its starting position.
 5. Open the PNG downloaded by Chrome.
@@ -52,6 +54,6 @@ The filename uses the website hostname and capture time, such as `example.com_20
 ## Development diagnostics
 
 1. Open `chrome://extensions`.
-2. Select **Full Page Capture**.
+2. Select **PageSweep**.
 3. Click the **service worker** link.
 4. Run a capture and inspect its progress, dimensions, `cleanupErrors`, and stage-specific error messages.
