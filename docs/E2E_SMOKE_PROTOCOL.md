@@ -54,14 +54,14 @@ Use this checklist before declaring a capture stage complete and before a releas
 
 ## Stage 9 acceptance checks
 
-- Images that normally lazy-load when scrolled into view appear in the final PNG.
+- Images that normally lazy-load when scrolled into view appear in the final PNG. **Passed 2026-08-12 on a 100-image native lazy-loading demo.**
 - A modest increase in document height is included and reported as `boundaryGrowth`.
 - An infinite or continuously growing page stops at the bounded capture limit.
 - A slow or animated viewport does not wait longer than the per-frame hard timeout.
 - `stabilizationTimeouts` reports viewports that reached the hard timeout.
-- The extension still respects Chrome's screenshot rate limit.
+- The extension still respects Chrome's screenshot rate limit. **Passed without rate-limit errors.**
 - Short static pages do not incur an unbounded wait.
-- Lazy-load layout shifts do not override restoration of the original scroll position.
+- Lazy-load layout shifts do not override restoration of the original scroll position. **Passed after the scroll-anchoring correction.**
 
 ## Full V1 test matrix
 
