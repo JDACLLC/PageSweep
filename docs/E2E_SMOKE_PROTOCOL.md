@@ -43,13 +43,13 @@ Use this checklist before declaring a capture stage complete and before a releas
 
 ## Stage 8 acceptance checks
 
-- Fixed navigation appears once and its original visibility is restored afterward.
-- Sticky header appears once rather than in every viewport frame.
+- Fixed navigation appears once and its original visibility is restored afterward. **Passed 2026-08-12.**
+- Sticky header appears once rather than in every viewport frame. **Passed 2026-08-12.**
 - Floating chat control or action button appears once.
 - Fixed footer appears once.
-- Sticky sidebar that first becomes visible below the first viewport appears once at its first visible location.
+- Sticky sidebar that first becomes visible below the first viewport appears once at its first visible location. **Passed 2026-08-12.**
 - Suppressed elements do not cause content to shift or collapse.
-- Browser scrollbar thumbs do not repeat along the stitched image edge.
+- Browser scrollbar thumbs do not repeat along the stitched image edge. **Passed after corrective crop.**
 - A capture started partway down the page still restores the exact scroll position and all temporary visibility changes.
 
 ## Full V1 test matrix

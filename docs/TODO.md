@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Stage 8 browser validation: fixed and sticky element suppression and restoration.
+- Nothing. Ready to begin Stage 9.
 
 ## Up Next
 
@@ -15,6 +15,7 @@
 
 ## Recently Done
 
+- Stage 8: validate fixed and sticky element suppression, restoration, and scrollbar exclusion.
 - Implement first-visible-occurrence handling for fixed and sticky elements.
 - Stage 7: validate final-viewport overlap and boundary cropping on a very long page.
 - Implement unique-region cropping for every captured frame.
