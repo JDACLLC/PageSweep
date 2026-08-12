@@ -2,11 +2,12 @@
 
 ## In Progress
 
-- Stage 11: complete the remaining real-world page categories and record evidence.
+- Nothing. Stage 11 is complete; Stage 10 still needs unsupported-page console confirmation.
 
 ## Up Next
 
 - Finish Stage 10 unsupported-page confirmation as part of the Stage 11 failure matrix.
+- Stage 12: finalize README, installation, usage, permissions, and limitations documentation.
 
 ## Waiting On
 
@@ -14,6 +15,8 @@
 
 ## Recently Done
 
+- Stage 11: complete the ten-category real-world capture matrix.
+- Validate fixed header, sticky sidebar, floating chat control, and fixed footer behavior with a controlled fixture.
 - Validate successful cleanup and immediate session reuse on Google News and CNN.
 - Implement stage-specific errors and independent cleanup of page and extension resources.
 - Stage 9: validate lazy-loaded image capture, bounded settling, and scroll restoration.

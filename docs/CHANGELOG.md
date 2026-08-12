@@ -37,6 +37,10 @@ All notable changes to this project are documented here. The project uses semant
 - Prevented oversized multi-frame messages from aborting stitching.
 - Prevented PNG export failure when a page exceeds Chrome's native canvas limits.
 
+### Validated
+
+- Completed the ten-category real-world capture matrix, including static, article, marketing, documentation, sticky, lazy-loaded, floating-control, exceptionally tall, short, and responsive-app pages.
+
 ### Known limitations
 
 - Exceptionally tall captures may have reduced resolution.

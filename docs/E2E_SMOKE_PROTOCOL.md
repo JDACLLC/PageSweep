@@ -83,16 +83,16 @@ The controlled fixed-element regression fixture is `tests/fixtures/fixed-element
 
 | Category | Result | Observed issue | Expected behavior | Fix |
 |---|---|---|---|---|
-| Simple static page | Not run | — | Complete PNG | — |
-| Long article | Not run | — | Complete PNG | — |
-| Marketing website | Not run | — | Complete PNG | — |
-| Documentation site | Not run | — | Complete PNG | — |
-| Sticky navigation | Not run | — | No repeated navigation | — |
-| Lazy-loaded images | Not run | — | Loaded content captured within bounded wait | — |
-| Floating chat UI | Not run | — | Floating UI not repeated | — |
+| Simple static page | Pass | — | Complete PNG | Example Domain |
+| Long article | Pass | Initial overlay scrollbar | Complete PNG | CNN; scrollbar suppression added |
+| Marketing website | Pass | — | Complete PNG | Spawn.page |
+| Documentation site | Pass | Initial overlay scrollbar | Complete PNG | Position Sticky demo; scrollbar suppression added |
+| Sticky navigation | Pass | — | No repeated navigation | Position Sticky demo |
+| Lazy-loaded images | Pass with limitation | Tall output downscaled | Loaded content captured within bounded wait | Native 100-image demo |
+| Floating chat UI | Pass | Public candidate changed unexpectedly | Floating UI not repeated | Controlled fixed-element fixture |
 | Very long webpage | Pass with limitation | Output downscaled | Entire page in one PNG with warning | Safe uniform scaling |
-| Page shorter than viewport | Not run | — | One correctly sized image | — |
-| Complex responsive web app | Not run | — | Stable complete capture | — |
+| Page shorter than viewport | Pass | — | One correctly sized image | Example Domain |
+| Complex responsive web app | Pass | — | Stable complete capture | Google News |
 
 ## Failure reporting
 
