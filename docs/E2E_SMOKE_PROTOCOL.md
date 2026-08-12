@@ -41,6 +41,16 @@ Use this checklist before declaring a capture stage complete and before a releas
 - Page shorter than one viewport.
 - No duplicated bottom content, missing strip, blank gap, or visible overlap seam. **Passed in the recorded very-long-page test.**
 
+## Stage 8 acceptance checks
+
+- Fixed navigation appears once and its original visibility is restored afterward.
+- Sticky header appears once rather than in every viewport frame.
+- Floating chat control or action button appears once.
+- Fixed footer appears once.
+- Sticky sidebar that first becomes visible below the first viewport appears once at its first visible location.
+- Suppressed elements do not cause content to shift or collapse.
+- A capture started partway down the page still restores the exact scroll position and all temporary visibility changes.
+
 ## Full V1 test matrix
 
 | Category | Result | Observed issue | Expected behavior | Fix |

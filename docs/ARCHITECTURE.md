@@ -43,7 +43,7 @@ Owns Chrome API calls and capture-session coordination. It prevents concurrent c
 
 ### `src/capture.js`
 
-Runs in the active webpage. It measures document and viewport geometry, fixes the capture boundary, temporarily disables smooth scrolling, visits each target position, requests a frame, and restores the original scroll position and inline scroll behavior in `finally` cleanup.
+Runs in the active webpage. It measures document and viewport geometry, fixes the capture boundary, temporarily disables smooth scrolling, visits each target position, requests a frame, and restores the original scroll position and inline styles in `finally` cleanup. Fixed and sticky elements remain visible for their first on-screen capture and are then hidden with `visibility`, preserving page layout while preventing repeated appearances.
 
 ### `offscreen.html` and `src/stitch.js`
 

@@ -43,7 +43,5 @@ The filename uses the website hostname and capture time, such as `example.com_20
 ## Current limitations
 
 - A visible progress indicator has not been added yet; the page movement and development console currently show activity.
-- Fixed and sticky elements may repeat until Stage 8 is complete.
 - Dynamic infinite feeds are captured only to the finite boundary established near the start.
 - Chrome-protected pages such as `chrome://` pages cannot be captured.
-
