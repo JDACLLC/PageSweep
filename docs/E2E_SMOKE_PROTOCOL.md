@@ -49,7 +49,7 @@ Use this checklist before declaring a capture stage complete and before a releas
 - Fixed footer appears once.
 - Sticky sidebar that first becomes visible below the first viewport appears once at its first visible location. **Passed 2026-08-12.**
 - Suppressed elements do not cause content to shift or collapse.
-- Browser scrollbar thumbs do not repeat along the stitched image edge. **Passed after corrective crop.**
+- Browser scrollbar thumbs do not repeat along the stitched image edge, including macOS overlay scrollbars.
 - A capture started partway down the page still restores the exact scroll position and all temporary visibility changes.
 
 ## Stage 9 acceptance checks
@@ -70,6 +70,7 @@ Use this checklist before declaring a capture stage complete and before a releas
 - Starting from a non-zero position restores the exact X and Y coordinates.
 - Smooth-scrolling and scroll-anchoring inline styles match their original values after capture.
 - Fixed and sticky element visibility matches its original state after capture.
+- Temporary scrollbar suppression is removed after capture.
 - A failed capture does not prevent the next toolbar click from starting a new capture.
 - Frame memory and the temporary offscreen document are released after success and failure.
 - Errors identify whether failure occurred during page capture, image stitching, or PNG download.

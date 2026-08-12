@@ -29,7 +29,7 @@ All notable changes to this project are documented here. The project uses semant
 - Guaranteed independent cleanup attempts for scroll position, smooth scrolling, scroll anchoring, fixed-element styles, frame memory, Blob URLs, and offscreen documents.
 - Protected browser-controlled pages now fail cleanly with an actionable console message.
 - Prevented lazy-load layout shifts and Chrome scroll anchoring from leaving the page at the bottom after capture.
-- Excluded the browser's vertical scrollbar from stitched output so its thumb does not repeat along the right edge.
+- Prevented standard and macOS overlay scrollbar thumbs from repeating along the stitched image edge.
 - Prevented fixed navigation, sticky headers, floating controls, and similar elements from repeating throughout the stitched PNG.
 - Removed duplicated bottom content and overdraw caused by a partially overlapping final viewport.
 - Prevented oversized multi-frame messages from aborting stitching.

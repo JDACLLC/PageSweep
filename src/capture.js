@@ -14,6 +14,14 @@
     }));
   const repeatElements = findFixedAndStickyElements();
   const capturedRepeatElements = new Set();
+  const scrollbarSuppressionStyle = document.createElement("style");
+  scrollbarSuppressionStyle.textContent = `
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none !important;
+    }
+  `;
+  const usesOverlayScrollbar = Math.abs(window.innerWidth - documentElement.clientWidth) < 1;
   let repeatElementSuppressions = 0;
 
   const documentWidth = Math.max(
@@ -52,6 +60,9 @@
     documentElement.style.setProperty("scroll-behavior", "auto", "important");
     for (const scrollAnchoringStyle of scrollAnchoringStyles) {
       scrollAnchoringStyle.element.style.setProperty("overflow-anchor", "none", "important");
+    }
+    if (usesOverlayScrollbar) {
+      (document.head || documentElement).appendChild(scrollbarSuppressionStyle);
     }
 
     while (captureCount < maximumCaptureCount) {
@@ -97,6 +108,7 @@
       targetY = nextTargetY;
     }
   } finally {
+    await runCleanupStep("scrollbar suppression style", () => scrollbarSuppressionStyle.remove());
     await runCleanupStep("fixed and sticky element styles", () => restoreRepeatElements());
     await runCleanupStep("smooth scrolling style", () => {
       if (originalScrollBehavior) {
