@@ -16,6 +16,7 @@ All notable changes to this project are documented here. The project uses semant
 - Offscreen canvas stitching and automatic PNG download.
 - Project documentation protocol, work tracking, architecture, decisions, smoke testing, and optional user guide.
 - A real-world test matrix that separates verified results, qualified passes, and unrun cases.
+- Final installation, usage, permission, debugging, testing, and known-limitation documentation.
 
 ### Changed
 

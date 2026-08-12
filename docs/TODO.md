@@ -2,11 +2,11 @@
 
 ## In Progress
 
-- Nothing. Ready to begin Stage 12.
+- Nothing. Stages 0–12 are complete.
 
 ## Up Next
 
-- Stage 12: finalize README, installation, usage, permissions, and limitations documentation.
+- Decide the design and scope of a visible capture-progress indicator.
 
 ## Waiting On
 
@@ -14,6 +14,7 @@
 
 ## Recently Done
 
+- Stage 12: finalize installation, usage, permissions, limitations, debugging, and testing documentation.
 - Stage 10: validate clean rejection of a browser-controlled page.
 - Stage 11: complete the ten-category real-world capture matrix.
 - Validate fixed header, sticky sidebar, floating chat control, and fixed footer behavior with a controlled fixture.

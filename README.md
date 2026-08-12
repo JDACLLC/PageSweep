@@ -1,8 +1,18 @@
 # Full Page Capture
 
-Full Page Capture is a Chrome extension that will capture an entire scrollable webpage and download it as one PNG. The project uses Chrome Extension Manifest V3 and native browser APIs.
+Full Page Capture is a Chrome Manifest V3 extension that captures an entire scrollable webpage and automatically downloads it as one PNG.
 
-Clicking the extension icon captures each viewport, stitches the frames into one page-length PNG, downloads it automatically, and restores the starting position.
+One toolbar click measures a finite page boundary, scrolls through the page, captures each viewport, removes overlap, stitches the frames, downloads the PNG, and restores the original page state.
+
+## Features
+
+- One-click full-page capture with no manual scrolling.
+- One automatically downloaded PNG named `hostname_YYYY-MM-DD_HH-MM-SS.png`.
+- Accurate high-DPI, zoom, fractional-scroll, and final-viewport handling.
+- First-occurrence handling for fixed and sticky interface elements.
+- Bounded settling for lazy-loaded images and modest page growth.
+- Restoration of scroll position and temporary page styles after success or failure.
+- No persistent website access and no `<all_urls>` permission.
 
 ## Install in Chrome
 
@@ -11,12 +21,24 @@ Clicking the extension icon captures each viewport, stitches the frames into one
 3. Click **Load unpacked**.
 4. Select this project directory.
 5. Confirm that **Full Page Capture** appears in the extensions list.
+6. Use Chrome's extensions menu to pin **Full Page Capture** to the toolbar.
 
 Project directory:
 
 ```text
 /Users/jons/Documents/GoFullPage_ReplacementTool
 ```
+
+For local HTML files, open the extension's **Details** page and enable **Allow access to file URLs**.
+
+## Usage
+
+1. Open an `http`, `https`, or enabled local `file` page.
+2. Click the **Full Page Capture** toolbar icon once.
+3. Keep that tab visible and wait while the page scrolls.
+4. Open the PNG that Chrome downloads automatically.
+
+Do not interact with or switch away from the target tab until the page returns to its original position.
 
 ## Project structure
 
@@ -30,6 +52,7 @@ GoFullPage_ReplacementTool/
 │   ├── DECISION_LOG.md
 │   ├── DOC_PROTOCOL.md
 │   ├── E2E_SMOKE_PROTOCOL.md
+│   ├── REAL_WORLD_TEST_MATRIX.md
 │   ├── TODO.md
 │   ├── TRIAGE.md
 │   └── USER_GUIDE.md
@@ -37,6 +60,9 @@ GoFullPage_ReplacementTool/
 │   ├── background.js
 │   ├── capture.js
 │   └── stitch.js
+├── tests/
+│   └── fixtures/
+│       └── fixed-elements.html
 ├── README.md
 └── .gitignore
 ```
@@ -53,18 +79,35 @@ GoFullPage_ReplacementTool/
 
 Controlled browser fixtures live under `tests/fixtures/`.
 
-## Current permissions
+## Permissions
 
 - `activeTab`: Grants temporary access to the current page only after the user clicks the extension.
 - `scripting`: Injects the page-measurement logic into that temporarily authorized tab.
 - `offscreen`: Provides an invisible extension document with the image and canvas APIs needed to stitch captured frames. A Manifest V3 service worker does not provide those DOM APIs. The document exists only during stitching.
 - `downloads`: Saves the finished PNG automatically. Chrome provides no narrower permission for initiating a download.
 
+The extension does not request persistent host access. `activeTab` grants temporary access only after the user clicks the toolbar icon.
+
+## Supported pages
+
+- Normal `http://` and `https://` webpages.
+- Local `file://` pages when Chrome's file-URL access toggle is enabled.
+
+Chrome prevents extensions from accessing browser-controlled surfaces such as `chrome://` pages, Chrome Web Store pages, DevTools, settings, and some built-in viewers. The extension reports these pages cleanly in its service-worker console.
+
 ## Development
 
-After changing extension files, open `chrome://extensions` and click the reload button on the extension card.
+This project uses plain JavaScript and native Chrome APIs; there is no dependency installation or build step.
 
-### Test full-page stitching
+After changing extension files, open `chrome://extensions`, click the reload button on the extension card, and refresh the target webpage.
+
+### Debugging
+
+- **Service-worker console:** Open `chrome://extensions`, select **Full Page Capture**, then click **service worker**. Capture progress, dimensions, cleanup status, and errors are logged here.
+- **Webpage console:** Use the target tab's DevTools console for rare page-side cleanup warnings.
+- **Extension errors:** Inspect the **Errors** button on the extension card if Chrome reports a loading or runtime problem.
+
+### Smoke test
 
 1. Open `chrome://extensions`.
 2. Find **Full Page Capture** and click its **service worker** link to open DevTools.
@@ -76,13 +119,14 @@ After changing extension files, open `chrome://extensions` and click the reload 
 8. Confirm that one PNG downloads automatically after the final frame.
 9. Open the PNG and verify that its pixel width and height match the values in `Full Page Capture stitched PNG downloaded`.
 10. Check the image from top to bottom for missing regions, blank gaps, and obvious seams.
-11. Inspect `Full Page Capture multi-frame capture complete` and verify that `captureCount` matches `framesStoredInMemory`.
+11. Inspect `Full Page Capture multi-frame capture complete`; verify `captureCount` matches `framesStoredInMemory` and `cleanupErrors` is empty.
 
-Very tall pages that exceed Chrome's native canvas limits are downscaled to the highest safe resolution so the complete page can still be exported as one PNG.
+Use [`docs/E2E_SMOKE_PROTOCOL.md`](docs/E2E_SMOKE_PROTOCOL.md) for the complete checks and [`docs/REAL_WORLD_TEST_MATRIX.md`](docs/REAL_WORLD_TEST_MATRIX.md) for recorded results.
 
 ## Known limitations
 
 - Exceptionally tall pages may be downscaled because Chrome cannot export a single canvas beyond its native dimension and memory limits. The extension logs a warning with the source and output scale when this happens.
+- Infinite or continuously growing feeds are limited to a finite boundary. Normal lazy-load growth is allowed only within a bounded cap.
+- Content that takes longer than the bounded render timeout may not appear fully loaded.
+- Chrome-protected pages cannot be captured.
 - A visible capture-progress indicator is planned for a later stage. The current version reports progress in the extension service worker console.
-
-Test from both the top of a page and a position partway down a long page.

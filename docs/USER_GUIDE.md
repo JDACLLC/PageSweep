@@ -1,6 +1,6 @@
 # Full Page Capture User Guide
 
-This guide is optional during development and will be completed before the V1 release.
+Use this guide to install the unpacked extension, capture webpages, and resolve common issues.
 
 ## Install the extension
 
@@ -22,7 +22,7 @@ This guide is optional during development and will be completed before the V1 re
 
 ## Capture a webpage
 
-1. Open a normal webpage using an `http` or `https` address.
+1. Open a normal webpage using an `http` or `https` address, or an enabled local `file` page.
 2. Select the **Full Page Capture** toolbar icon once.
 3. Wait while the page scrolls from top to bottom.
 4. Confirm the page returns to its starting position.
@@ -48,3 +48,10 @@ The filename uses the website hostname and capture time, such as `example.com_20
 - A visible progress indicator has not been added yet; the page movement and development console currently show activity.
 - Lazy-loaded content receives a bounded opportunity to render. Dynamic infinite feeds are captured only to the finite boundary established near the start, with limited growth for normal page expansion.
 - Chrome-protected pages such as `chrome://` pages cannot be captured.
+
+## Development diagnostics
+
+1. Open `chrome://extensions`.
+2. Select **Full Page Capture**.
+3. Click the **service worker** link.
+4. Run a capture and inspect its progress, dimensions, `cleanupErrors`, and stage-specific error messages.
