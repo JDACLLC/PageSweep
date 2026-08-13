@@ -2,11 +2,11 @@
 
 ## In Progress
 
-- Nothing. Stages 0–12 are complete.
+- Design the visible capture-progress overlay and toolbar animation.
 
 ## Up Next
 
-- Decide the design and scope of a visible capture-progress indicator.
+- Run a small friend beta through the public GitHub repository before Chrome Web Store packaging.
 
 ## Waiting On
 

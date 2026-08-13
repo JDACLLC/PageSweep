@@ -6,18 +6,21 @@ Use this guide to install the unpacked extension, capture webpages, and resolve 
 
 ## Install the extension
 
-1. Open `chrome://extensions` in Google Chrome.
-2. Turn on **Developer mode**.
-3. Select **Load unpacked**.
-4. Choose the project folder.
-5. Confirm **PageSweep** appears without an error.
+1. On the GitHub project page, select **Code**, then select **Download ZIP**.
+2. Open the downloaded ZIP and extract its contents.
+3. Open `chrome://extensions` in Google Chrome.
+4. Turn on **Developer mode**.
+5. Select **Load unpacked**.
+6. Choose the extracted project folder that contains `manifest.json`.
+7. Confirm **PageSweep** appears without an error.
+8. Open Chrome's extensions menu and pin **PageSweep** to the toolbar.
 
 > **Tip:** Pin the extension from Chrome's extensions menu so its toolbar icon is always visible.
 
 > **Tip:** After a project update, use the extension card's **Reload** button before testing.
 
 > **Common issue:** Chrome says the manifest cannot be loaded.  
-> **Solution:** Confirm you selected the project root containing `manifest.json`.
+> **Solution:** Confirm you extracted the ZIP and selected the extracted project root containing `manifest.json`. Chrome cannot load the ZIP file directly.
 
 > **Common issue:** The latest changes do not appear.  
 > **Solution:** Reload the extension at `chrome://extensions`, then refresh the webpage.

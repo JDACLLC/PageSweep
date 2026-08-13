@@ -6,6 +6,18 @@ PageSweep is a Chrome Manifest V3 extension that captures an entire scrollable w
 
 One toolbar click measures a finite page boundary, scrolls through the page, captures each viewport, removes overlap, stitches the frames, downloads the PNG, and restores the original page state.
 
+## Install PageSweep from GitHub
+
+1. Select **Code**, then select **Download ZIP**.
+2. Open the downloaded ZIP and extract its contents.
+3. Open `chrome://extensions` in Google Chrome.
+4. Turn on **Developer mode** in the upper-right corner.
+5. Select **Load unpacked**.
+6. Choose the extracted project folder that contains `manifest.json`.
+7. Open Chrome's extensions menu and pin **PageSweep** to the toolbar.
+
+After an update, download and extract the latest ZIP again, then select **Reload** on the PageSweep card at `chrome://extensions`.
+
 ## Features
 
 - One-click full-page capture with no manual scrolling.
@@ -16,7 +28,7 @@ One toolbar click measures a finite page boundary, scrolls through the page, cap
 - Restoration of scroll position and temporary page styles after success or failure.
 - No persistent website access and no `<all_urls>` permission.
 
-## Install in Chrome
+## Install a local development copy
 
 1. Open `chrome://extensions` in Chrome.
 2. Turn on **Developer mode** in the upper-right corner.
@@ -24,12 +36,6 @@ One toolbar click measures a finite page boundary, scrolls through the page, cap
 4. Select this project directory.
 5. Confirm that **PageSweep** appears in the extensions list.
 6. Use Chrome's extensions menu to pin **PageSweep** to the toolbar.
-
-Project directory:
-
-```text
-/Users/jons/Documents/GoFullPage_ReplacementTool
-```
 
 For local HTML files, open the extension's **Details** page and enable **Allow access to file URLs**.
 
