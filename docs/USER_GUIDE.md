@@ -4,6 +4,8 @@ Use this guide to install the unpacked extension, capture webpages, and resolve 
 
 **PageSweep — Capture the whole page.**
 
+PageSweep is proprietary beta software provided for personal or internal evaluation, testing, and feedback under the PageSweep Beta Evaluation License included with the extension.
+
 ## Install the extension
 
 1. On the GitHub project page, select **Code**, then select **Download ZIP**.
@@ -58,6 +60,15 @@ PageSweep uses Chrome's configured download location—normally the **Downloads*
 ## Review the welcome and limitations guide
 
 PageSweep opens this guide once after its first installation. Select **Got it** to close it. To review it later, open PageSweep's extension options from Chrome's extension controls.
+
+## Send beta feedback
+
+Select **Send feedback** in the welcome guide to open the private PageSweep Google Form. PageSweep also offers the form after the third successful capture.
+
+- **Give feedback** opens the form and stops future invitations.
+- **Maybe later** schedules the next invitation after 6 additional successful captures, then after 9, 12, and 15 additional captures. After the final invitation, PageSweep stops asking.
+
+The successful-capture count and prompt preference stay locally in Chrome. PageSweep does not transmit them.
 
 ## Development diagnostics
 

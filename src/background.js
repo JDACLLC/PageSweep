@@ -2,6 +2,8 @@ let activeCapture = null;
 let toolbarAnimationTimer = null;
 let toolbarResetTimer = null;
 let toolbarAnimationFrame = 0;
+const BETA_FEEDBACK_FORM_URL = "https://forms.gle/f7kgk5EchbeFDP9K8";
+const BETA_FEEDBACK_REMINDER_INTERVALS = [6, 9, 12, 15];
 
 const DEFAULT_ACTION_ICONS = {
   16: "icons/icon-16.png",
@@ -25,6 +27,13 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type === "beta-feedback-choice") {
+    handleBetaFeedbackChoice(message.choice).catch((error) => {
+      console.warn("PageSweep could not save the feedback preference.", error);
+    });
+    return false;
+  }
+
   if (message?.type !== "capture-visible-frame") {
     return false;
   }
@@ -132,16 +141,169 @@ chrome.action.onClicked.addListener(async (tab) => {
       error,
     });
   } finally {
+    const captureSucceeded = activeCapture?.succeeded === true;
     if (activeCapture?.frames) {
       activeCapture.frames.length = 0;
     }
 
     await safelyCloseOffscreenDocument();
     await removePageProgress(tab.id);
-    await finishToolbarProgress(tab.id, activeCapture?.succeeded === true);
+    await finishToolbarProgress(tab.id, captureSucceeded);
+    if (captureSucceeded) {
+      await recordSuccessfulCaptureAndMaybePrompt(tab.id);
+    }
     activeCapture = null;
   }
 });
+
+async function recordSuccessfulCaptureAndMaybePrompt(tabId) {
+  try {
+    const stored = await chrome.storage.local.get({
+      betaSuccessfulCaptures: 0,
+      betaFeedbackNextPromptAt: 3,
+      betaFeedbackDismissed: false,
+      betaFeedbackReminderIndex: 0,
+    });
+    const successfulCaptures = stored.betaSuccessfulCaptures + 1;
+    await chrome.storage.local.set({ betaSuccessfulCaptures: successfulCaptures });
+
+    if (
+      stored.betaFeedbackDismissed
+      || successfulCaptures < stored.betaFeedbackNextPromptAt
+    ) {
+      return;
+    }
+
+    await showBetaFeedbackPrompt(tabId);
+    const reminderInterval = BETA_FEEDBACK_REMINDER_INTERVALS[stored.betaFeedbackReminderIndex];
+    if (typeof reminderInterval === "number") {
+      await chrome.storage.local.set({
+        betaFeedbackNextPromptAt: successfulCaptures + reminderInterval,
+        betaFeedbackReminderIndex: stored.betaFeedbackReminderIndex + 1,
+      });
+    } else {
+      await chrome.storage.local.set({ betaFeedbackDismissed: true });
+    }
+  } catch (error) {
+    console.warn("PageSweep could not show its beta feedback invitation.", error);
+  }
+}
+
+async function handleBetaFeedbackChoice(choice) {
+  if (choice === "feedback") {
+    await chrome.storage.local.set({ betaFeedbackDismissed: true });
+  }
+}
+
+async function showBetaFeedbackPrompt(tabId) {
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: (formUrl) => {
+      document.querySelector("[data-pagesweep-feedback]")?.remove();
+
+      const host = document.createElement("div");
+      host.setAttribute("data-pagesweep-feedback", "true");
+      Object.assign(host.style, {
+        all: "initial",
+        position: "fixed",
+        right: "18px",
+        bottom: "18px",
+        zIndex: "2147483647",
+      });
+
+      const shadow = host.attachShadow({ mode: "open" });
+      const card = document.createElement("section");
+      card.setAttribute("role", "dialog");
+      card.setAttribute("aria-labelledby", "pagesweep-feedback-title");
+      Object.assign(card.style, {
+        boxSizing: "border-box",
+        width: "min(360px, calc(100vw - 36px))",
+        padding: "20px",
+        border: "1px solid #D9E3F2",
+        borderRadius: "16px",
+        background: "#FFFFFF",
+        boxShadow: "0 16px 44px rgba(18, 43, 82, 0.24)",
+        color: "#142443",
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      });
+
+      const title = document.createElement("h2");
+      title.id = "pagesweep-feedback-title";
+      title.textContent = "Feedback Requested";
+      Object.assign(title.style, {
+        margin: "0 0 8px",
+        color: "#10264B",
+        fontSize: "18px",
+        lineHeight: "1.25",
+      });
+
+      const copy = document.createElement("p");
+      copy.textContent = "Beta feedback is very important. Please take 3 minutes to complete this survey.";
+      Object.assign(copy.style, {
+        margin: "0 0 16px",
+        color: "#52647E",
+        fontSize: "14px",
+        lineHeight: "1.5",
+      });
+
+      const actions = document.createElement("div");
+      Object.assign(actions.style, {
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        gap: "8px",
+      });
+
+      const feedbackLink = document.createElement("a");
+      feedbackLink.href = formUrl;
+      feedbackLink.target = "_blank";
+      feedbackLink.rel = "noreferrer";
+      feedbackLink.textContent = "Give feedback";
+      Object.assign(feedbackLink.style, {
+        padding: "9px 13px",
+        borderRadius: "9px",
+        background: "#185ADB",
+        color: "#FFFFFF",
+        fontSize: "13px",
+        fontWeight: "700",
+        textDecoration: "none",
+      });
+
+      const makeButton = (label, choice) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = label;
+        Object.assign(button.style, {
+          padding: "8px 5px",
+          border: "0",
+          background: "transparent",
+          color: "#52647E",
+          cursor: "pointer",
+          font: "600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        });
+        button.addEventListener("click", () => {
+          host.remove();
+          chrome.runtime.sendMessage({ type: "beta-feedback-choice", choice });
+        });
+        return button;
+      };
+
+      feedbackLink.addEventListener("click", () => {
+        host.remove();
+        chrome.runtime.sendMessage({ type: "beta-feedback-choice", choice: "feedback" });
+      });
+
+      actions.append(
+        feedbackLink,
+        makeButton("Maybe later", "later"),
+      );
+      card.append(title, copy, actions);
+      shadow.appendChild(card);
+      (document.body || document.documentElement).appendChild(host);
+    },
+    args: [BETA_FEEDBACK_FORM_URL],
+  });
+}
 
 async function captureVisibleFrame(message, sender) {
   if (!activeCapture || sender.tab?.id !== activeCapture.tabId) {

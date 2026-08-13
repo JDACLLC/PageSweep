@@ -2,11 +2,12 @@
 
 ## In Progress
 
-- Nothing. The first-run guide milestone is complete.
+- Nothing. The beta licensing and feedback milestone is complete.
 
 ## Up Next
 
 - Run a small friend beta through the public GitHub repository before Chrome Web Store packaging.
+- Review and triage responses submitted through the private PageSweep beta feedback form.
 - Create a dedicated PageSweep webpage under JDAC Labs, then replace the About-page `JDAC.ai` link with the new PageSweep URL.
 
 ## Waiting On
@@ -15,6 +16,7 @@
 
 ## Recently Done
 
+- Add and validate the PageSweep Beta Evaluation License and private Google Forms feedback flow.
 - Add and visually validate the one-time PageSweep welcome, limitations, privacy, and download-location guide.
 - Add and visually validate the capture overlay, eased frame transitions, toolbar animation, progress badge, and completion state.
 - Adopt the PageSweep name, tagline, and icon system across the extension and maintained documentation.

@@ -42,6 +42,20 @@ Use this checklist before declaring a capture stage complete and before a releas
 
 **First-run guide visual validation:** Passed 2026-08-12. Card order, version display, **Got it** action, JDAC.ai footer link, limitations, privacy language, and Chrome-controlled download guidance were approved.
 
+## Beta feedback invitation checks
+
+- The first two successful captures do not show a feedback invitation.
+- The third successful capture shows the invitation only after capture cleanup and download initiation.
+- **Give feedback** opens `https://forms.gle/f7kgk5EchbeFDP9K8` in a new tab and suppresses future invitations.
+- The invitation reads **Feedback Requested** and asks for three minutes to complete the survey.
+- **Maybe later** closes the invitation and schedules later prompts after 6, 9, 12, and 15 additional successful captures.
+- Invitations therefore occur at successful-capture totals 3, 9, 18, 30, and 45, then stop.
+- Failed capture attempts do not increase the successful-capture count.
+- An ignored invitation is removed before a later capture and never appears in the PNG.
+- The About page's **Send feedback** link opens the same Google Form.
+
+**Beta feedback validation:** Passed 2026-08-12. The Google Form opened correctly, the post-capture invitation appeared, the approved copy and actions were displayed, and the progressive reminder schedule was verified.
+
 ## Stage 6 regression checks
 
 - Shorter-than-viewport page: one frame, valid PNG, no extra blank height.

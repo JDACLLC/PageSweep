@@ -192,6 +192,7 @@
 
   function createProgressOverlay() {
     document.querySelector("[data-pagesweep-progress]")?.remove();
+    document.querySelector("[data-pagesweep-feedback]")?.remove();
 
     const host = document.createElement("div");
     host.setAttribute("data-pagesweep-progress", "true");

@@ -1,5 +1,25 @@
 # Decision Log
 
+## Request private beta feedback after demonstrated use — 2026-08-12
+
+### Context
+
+Community testers should be able to download PageSweep and provide feedback without creating or learning to use a GitHub account. Asking before they have used the extension would produce lower-quality feedback and add friction to installation.
+
+### Decision
+
+Link to a private Google Form from the About page and offer a lightweight invitation after the third successful capture. Keep the successful-capture count and invitation preference locally in Chrome. Let testers provide feedback or postpone invitations through progressively wider intervals of 6, 9, 12, and 15 additional successful captures, after which prompting stops.
+
+### Alternatives
+
+- Use a public GitHub Issue Form, which requires a GitHub account and exposes responses publicly.
+- Open the Google Form automatically, which would interrupt the tester.
+- Ask after installation before the tester has completed a capture.
+
+### Consequences
+
+Downloading and feedback require no GitHub knowledge, responses remain outside the public repository, and the prompt appears only after demonstrated use. PageSweep adds the narrow `storage` permission solely for local counters and preferences.
+
 ## Adopt the PageSweep product identity — 2026-08-12
 
 ### Context

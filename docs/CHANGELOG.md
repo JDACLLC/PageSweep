@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Added
 
+- A limited beta evaluation license and private Google Forms feedback link available from the About page and an invitation after the third successful capture.
 - A one-time first-install welcome page with download-location guidance, current limitations, privacy information, and a permanently available extension-options entry.
 - An animated PageSweep capture overlay, toolbar-arrow animation, percentage badge, and success or failure status.
 - Stage-specific error reporting for page capture, image stitching, and download failures.
@@ -22,6 +23,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Revised the beta invitation copy and reminder cadence to prompt at successful-capture totals 3, 9, 18, 30, and 45 before stopping automatically.
 - Reworded capture completion as **Download started** so the status remains accurate for default folders, custom download locations, and save-location prompts.
 - Smoothed the progress overlay's frame-capture transition with a short fade out and fade in instead of an abrupt flash.
 - Added first-page GitHub ZIP installation instructions for unpacked friend testing.

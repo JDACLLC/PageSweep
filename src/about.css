@@ -133,6 +133,27 @@ button:focus-visible {
   outline-offset: 3px;
 }
 
+.feedback-link {
+  padding: 11px 16px;
+  border: 1px solid #cbd8eb;
+  border-radius: 10px;
+  color: #185adb;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.feedback-link:hover {
+  border-color: #185adb;
+  background: #f3f7ff;
+}
+
+.feedback-link:focus-visible {
+  outline: 3px solid #89cbff;
+  outline-offset: 3px;
+}
+
 .actions p {
   margin: 0;
   color: #687994;

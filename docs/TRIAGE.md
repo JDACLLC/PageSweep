@@ -14,6 +14,7 @@
 | 10 | P3 | Parking Lot | Evaluate Stripe-based monetization with a 30- or 45-day free trial and an approximately $1–$2 paid plan. |
 | 11 | P2 | Complete | Add and visually validate a one-time first-install guide that remains available through extension options. |
 | 12 | P3 | Parking Lot | Create a dedicated PageSweep webpage under JDAC Labs and repoint the About-page footer link to it. |
+| 13 | P2 | Complete | Add and validate a limited beta evaluation license and private Google Forms feedback flow. |
 
 ## Notes
 
@@ -24,6 +25,7 @@
 - Item 10 is intentionally deferred until the free product is stable and store-ready. Before implementation, decide between a 30- and 45-day trial, one-time purchase versus subscription, and a $1 versus $2 price point. Use Stripe-hosted checkout rather than collecting card details in the extension. The paid flow will also require trial-start tracking, license validation, restore-purchase support, clear pricing and renewal disclosures, terms, refund handling, and a useful payment prompt that does not interrupt an active capture.
 - Item 11 passed visual review on 2026-08-12. It explains Chrome-controlled download destinations, major capture limitations, local screenshot processing, and how to use PageSweep. It opens automatically only for a new installation and remains manually available afterward.
 - Item 12 keeps the general `JDAC.ai` footer destination for now. Replace it only after the dedicated JDAC Labs PageSweep page is published and its final URL is confirmed.
+- Item 13 permits installation and testing without granting broad reuse rights. The Google Form is linked permanently from About and offered after the third successful capture. **Maybe later** schedules reminders after 6, 9, 12, and 15 additional successful captures; prompts then stop automatically.
 
 ## Parking Lot
 

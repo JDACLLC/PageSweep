@@ -4,6 +4,8 @@ PageSweep is a Chrome Manifest V3 extension that captures an entire scrollable w
 
 **PageSweep — Capture the whole page.**
 
+> **Beta software:** PageSweep is currently available for testing under the [PageSweep Beta Evaluation License](LICENSE). It may not be redistributed, sold, monetized, modified, or used to create a competing product.
+
 One toolbar click measures a finite page boundary, scrolls through the page, captures each viewport, removes overlap, stitches the frames, downloads the PNG, and restores the original page state.
 
 ## Install PageSweep from GitHub
@@ -90,12 +92,23 @@ GoFullPage_ReplacementTool/
 
 Controlled browser fixtures live under `tests/fixtures/`.
 
+## Send beta feedback
+
+Use the About page's **Send feedback** link or open the [private PageSweep beta feedback form](https://forms.gle/f7kgk5EchbeFDP9K8). PageSweep first offers this form after the third successful capture. Selecting **Maybe later** schedules reminders after 6, 9, 12, and 15 additional successful captures, then PageSweep stops asking.
+
+No GitHub account is required to download PageSweep or use the feedback form.
+
+## License
+
+PageSweep is proprietary beta software, not open source. It may be downloaded, installed, and run only for personal or internal evaluation, testing, and feedback under the [PageSweep Beta Evaluation License](LICENSE).
+
 ## Permissions
 
 - `activeTab`: Grants temporary access to the current page only after the user clicks the extension.
 - `scripting`: Injects the page-measurement logic into that temporarily authorized tab.
 - `offscreen`: Provides an invisible extension document with the image and canvas APIs needed to stitch captured frames. A Manifest V3 service worker does not provide those DOM APIs. The document exists only during stitching.
 - `downloads`: Saves the finished PNG automatically. Chrome provides no narrower permission for initiating a download.
+- `storage`: Keeps the successful-capture count and feedback-prompt preference locally in Chrome. This information is not transmitted by PageSweep.
 
 The extension does not request persistent host access. `activeTab` grants temporary access only after the user clicks the toolbar icon.
 

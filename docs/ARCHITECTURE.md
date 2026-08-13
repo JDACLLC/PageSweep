@@ -28,12 +28,13 @@ Background service worker
 
 ### `manifest.json`
 
-Declares Manifest V3, the toolbar action, service worker, and four narrowly scoped permissions:
+Declares Manifest V3, the toolbar action, service worker, and five narrowly scoped permissions:
 
 - `activeTab` for user-triggered access to the current tab.
 - `scripting` to inject page capture logic.
 - `offscreen` to provide temporary canvas and image APIs.
 - `downloads` to save the final PNG automatically.
+- `storage` to retain the successful-capture count and feedback-prompt preference locally.
 
 No persistent host permission or `<all_urls>` access is requested.
 
@@ -43,7 +44,7 @@ The manifest also registers `about.html` as the extension's options page. The ba
 
 ### `src/background.js`
 
-Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, reads PNG dimensions, animates the toolbar action and progress badge, controls the offscreen stitch session, downloads the result, and logs failures by stage. Its final cleanup clears frame memory, restores the toolbar action, removes the page overlay, and closes temporary documents even after an earlier operation fails.
+Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, reads PNG dimensions, animates the toolbar action and progress badge, controls the offscreen stitch session, downloads the result, and logs failures by stage. After successful captures it updates a local counter and may display the beta feedback invitation. Its final cleanup clears frame memory, restores the toolbar action, removes the page overlay, and closes temporary documents even after an earlier operation fails.
 
 ### `src/capture.js`
 
