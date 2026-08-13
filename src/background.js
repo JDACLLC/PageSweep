@@ -402,14 +402,25 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
         }
 
         const statusElement = shadow.querySelector("[data-pagesweep-status]");
+        const gradientTextElements = shadow.querySelectorAll("[data-pagesweep-gradient-text]");
         const barElement = shadow.querySelector("[data-pagesweep-bar]");
         const cardElement = shadow.querySelector("[data-pagesweep-card]");
         const iconElement = shadow.querySelector("[data-pagesweep-icon]");
         if (statusElement) statusElement.textContent = nextStatus;
-        if (barElement) barElement.style.width = `${nextProgress}%`;
+        if (barElement) {
+          barElement.style.width = `${nextProgress}%`;
+          if (nextState === "complete") barElement.style.background = "#34D399";
+        }
         if (cardElement) {
           cardElement.dataset.state = nextState;
-          if (nextState === "complete") cardElement.style.background = "#126B4B";
+        }
+        if (nextState === "complete") {
+          gradientTextElements.forEach((textElement) => {
+            textElement.getAnimations().forEach((animation) => animation.cancel());
+            textElement.style.backgroundImage = "none";
+            textElement.style.webkitTextFillColor = "#86EFAC";
+            textElement.style.color = "#86EFAC";
+          });
         }
         if (iconElement && nextState === "complete") {
           iconElement.getAnimations().forEach((animation) => animation.cancel());

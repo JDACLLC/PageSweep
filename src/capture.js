@@ -259,10 +259,11 @@
     const copy = document.createElement("div");
     copy.style.minWidth = "0";
     const title = document.createElement("div");
+    title.setAttribute("data-pagesweep-gradient-text", "true");
     title.textContent = "PageSweep";
     Object.assign(title.style, {
       margin: "0 0 2px",
-      color: "#FFFFFF",
+      color: "#7DD3FC",
       fontSize: "13px",
       fontWeight: "700",
       letterSpacing: "0.01em",
@@ -270,16 +271,38 @@
     });
     const status = document.createElement("div");
     status.setAttribute("data-pagesweep-status", "true");
+    status.setAttribute("data-pagesweep-gradient-text", "true");
     status.textContent = "Starting capture…";
     Object.assign(status.style, {
       overflow: "hidden",
-      color: "#DCE9FF",
+      color: "#7DD3FC",
       fontSize: "12px",
       fontWeight: "500",
       lineHeight: "1.3",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
     });
+    for (const textElement of [title, status]) {
+      Object.assign(textElement.style, {
+        backgroundImage: "linear-gradient(90deg, #7DD3FC 0%, #818CF8 50%, #C4B5FD 100%)",
+        backgroundPosition: "0% 50%",
+        backgroundSize: "220% 100%",
+        backgroundClip: "text",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+      });
+
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        textElement.animate(
+          [
+            { backgroundPosition: "0% 50%" },
+            { backgroundPosition: "100% 50%" },
+            { backgroundPosition: "0% 50%" },
+          ],
+          { duration: 4800, iterations: Infinity, easing: "ease-in-out" },
+        );
+      }
+    }
     copy.append(title, status);
     row.append(icon, copy);
 
@@ -298,7 +321,7 @@
       height: "100%",
       borderRadius: "inherit",
       background: "#25C7F7",
-      transition: "width 180ms ease-out",
+      transition: "width 180ms ease-out, background-color 180ms ease-out",
     });
     track.appendChild(bar);
     card.append(row, track);
