@@ -41,11 +41,11 @@ Normal `http`, `https`, and explicitly enabled local `file` pages are supported.
 
 ### `src/background.js`
 
-Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, reads PNG dimensions, controls the offscreen stitch session, downloads the result, and logs failures by stage. Its final cleanup clears frame memory and closes temporary documents even after an earlier operation fails.
+Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, reads PNG dimensions, animates the toolbar action and progress badge, controls the offscreen stitch session, downloads the result, and logs failures by stage. Its final cleanup clears frame memory, restores the toolbar action, removes the page overlay, and closes temporary documents even after an earlier operation fails.
 
 ### `src/capture.js`
 
-Runs in the active webpage. It measures document and viewport geometry, establishes a bounded capture boundary, temporarily disables smooth scrolling and scrollbar painting, visits each target position, waits for layout and visible images to settle, requests a frame, and restores the original scroll position and page styles in `finally` cleanup. Fixed and sticky elements remain visible for their first on-screen capture and are then hidden with `visibility`, preserving page layout while preventing repeated appearances.
+Runs in the active webpage. It measures document and viewport geometry, establishes a bounded capture boundary, temporarily disables smooth scrolling and scrollbar painting, displays an isolated progress overlay, visits each target position, waits for layout and visible images to settle, requests a frame, and restores the original scroll position and page styles in `finally` cleanup. The overlay is hidden before each screenshot and remains hidden until the frame is returned, ensuring it cannot enter the PNG. Fixed and sticky elements remain visible for their first on-screen capture and are then hidden with `visibility`, preserving page layout while preventing repeated appearances.
 
 ### `offscreen.html` and `src/stitch.js`
 
@@ -57,6 +57,7 @@ Provide a temporary DOM environment for image decoding and canvas composition. F
 2. The service worker opens a capture session and injects `capture.js`.
 3. The page script establishes dimensions and scroll targets.
 4. At each target, the page settles and requests a visible-tab capture.
+   The progress overlay is hidden across a two-frame repaint before the request and restored only after the screenshot returns.
 5. The service worker stores the PNG data URL and frame metadata.
 6. After page cleanup, the service worker opens the offscreen document.
 7. The stitcher receives frames individually and draws only each frame's unique region, ending the final frame at the fixed document boundary.

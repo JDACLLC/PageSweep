@@ -26,6 +26,7 @@ After an update, download and extract the latest ZIP again, then select **Reload
 - First-occurrence handling for fixed and sticky interface elements.
 - Bounded settling for lazy-loaded images and modest page growth.
 - Restoration of scroll position and temporary page styles after success or failure.
+- Animated in-page and toolbar progress that stays out of the downloaded PNG.
 - No persistent website access and no `<all_urls>` permission.
 
 ## Install a local development copy
@@ -43,8 +44,8 @@ For local HTML files, open the extension's **Details** page and enable **Allow a
 
 1. Open an `http`, `https`, or enabled local `file` page.
 2. Click the **PageSweep** toolbar icon once.
-3. Keep that tab visible and wait while the page scrolls.
-4. Open the PNG that Chrome downloads automatically.
+3. Keep that tab visible and follow the PageSweep progress card while the page scrolls.
+4. Wait for **Saved to Downloads**, then open the PNG that Chrome downloads automatically.
 
 Do not interact with or switch away from the target tab until the page returns to its original position.
 
@@ -137,4 +138,3 @@ Use [`docs/E2E_SMOKE_PROTOCOL.md`](docs/E2E_SMOKE_PROTOCOL.md) for the complete 
 - Infinite or continuously growing feeds are limited to a finite boundary. Normal lazy-load growth is allowed only within a bounded cap.
 - Content that takes longer than the bounded render timeout may not appear fully loaded.
 - Chrome-protected pages cannot be captured.
-- A visible capture-progress indicator is planned for a later stage. The current version reports progress in the extension service worker console.

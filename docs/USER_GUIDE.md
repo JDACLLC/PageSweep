@@ -29,9 +29,9 @@ Use this guide to install the unpacked extension, capture webpages, and resolve 
 
 1. Open a normal webpage using an `http` or `https` address, or an enabled local `file` page.
 2. Select the **PageSweep** toolbar icon once.
-3. Wait while the page scrolls from top to bottom.
+3. Watch the PageSweep progress card while the page scrolls from top to bottom. If PageSweep is pinned, its toolbar arrow and percentage badge also show progress.
 4. Confirm the page returns to its starting position.
-5. Open the PNG downloaded by Chrome.
+5. Wait for **Saved to Downloads**, then open the PNG downloaded by Chrome.
 
 The filename uses the website hostname and capture time, such as `example.com_2026-08-12_14-01-32.png`.
 
@@ -50,7 +50,6 @@ The filename uses the website hostname and capture time, such as `example.com_20
 
 ## Current limitations
 
-- A visible progress indicator has not been added yet; the page movement and development console currently show activity.
 - Lazy-loaded content receives a bounded opportunity to render. Dynamic infinite feeds are captured only to the finite boundary established near the start, with limited growth for normal page expansion.
 - Chrome-protected pages such as `chrome://` pages cannot be captured.
 

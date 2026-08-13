@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Added
 
+- An animated PageSweep capture overlay, toolbar-arrow animation, percentage badge, and success or failure status.
 - Stage-specific error reporting for page capture, image stitching, and download failures.
 - Bounded layout stabilization and visible-image decoding before each viewport capture.
 - Manifest V3 extension shell and toolbar action.
@@ -20,6 +21,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Smoothed the progress overlay's frame-capture transition with a short fade out and fade in instead of an abrupt flash.
 - Added first-page GitHub ZIP installation instructions for unpacked friend testing.
 - Rebranded the extension as **PageSweep — Capture the whole page**, with a new toolbar and store-ready icon set.
 - The finite capture boundary can grow by up to 20 percent or 5,000 CSS pixels, whichever is smaller, when lazy-loaded content modestly expands the page.
@@ -30,6 +32,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Fixed
 
+- Capture frames now wait for the progress overlay to be hidden and repainted so PageSweep's own interface is excluded from downloaded PNGs.
 - Allowed explicitly user-triggered capture of local `file:` test pages when Chrome's file-URL access toggle is enabled.
 - Guaranteed independent cleanup attempts for scroll position, smooth scrolling, scroll anchoring, fixed-element styles, frame memory, Blob URLs, and offscreen documents.
 - Protected browser-controlled pages now fail cleanly with an actionable console message.

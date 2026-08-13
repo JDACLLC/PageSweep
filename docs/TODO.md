@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Design the visible capture-progress overlay and toolbar animation.
+- Nothing. The progress-animation milestone is complete.
 
 ## Up Next
 
@@ -14,6 +14,7 @@
 
 ## Recently Done
 
+- Add and visually validate the capture overlay, eased frame transitions, toolbar animation, progress badge, and completion state.
 - Adopt the PageSweep name, tagline, and icon system across the extension and maintained documentation.
 - Stage 12: finalize installation, usage, permissions, limitations, debugging, and testing documentation.
 - Stage 10: validate clean rejection of a browser-controlled page.

@@ -1,4 +1,20 @@
 let activeCapture = null;
+let toolbarAnimationTimer = null;
+let toolbarResetTimer = null;
+let toolbarAnimationFrame = 0;
+
+const DEFAULT_ACTION_ICONS = {
+  16: "icons/icon-16.png",
+  32: "icons/icon-32.png",
+  48: "icons/icon-48.png",
+  128: "icons/icon-128.png",
+};
+const CAPTURING_ACTION_ICONS = [1, 2, 3].map((frame) => ({
+  16: `icons/animation/capturing-${frame}-16.png`,
+  32: `icons/animation/capturing-${frame}-32.png`,
+  48: `icons/animation/capturing-${frame}-48.png`,
+  128: `icons/animation/capturing-${frame}-128.png`,
+}));
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type !== "capture-visible-frame") {
@@ -44,6 +60,7 @@ chrome.action.onClicked.addListener(async (tab) => {
       frames: [],
       stage: "page capture",
     };
+    await startToolbarProgress(tab.id);
 
     const [injectionResult] = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
@@ -63,6 +80,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     console.log("PageSweep multi-frame capture complete", captureDetails);
 
     activeCapture.stage = "image stitching";
+    await setPageProgressStatus(tab.id, "Preparing your PNG…", 100);
     const stitchedImage = await stitchCapturedFrames(capturedFrames, captureDetails);
 
     if (stitchedImage.wasDownscaled) {
@@ -90,6 +108,9 @@ chrome.action.onClicked.addListener(async (tab) => {
         height: stitchedImage.height,
         outputScale: stitchedImage.outputScale,
       });
+      activeCapture.succeeded = true;
+      await setPageProgressStatus(tab.id, "Saved to Downloads", 100, "complete");
+      await delay(900);
     } finally {
       await releaseStitchedImage();
     }
@@ -108,6 +129,8 @@ chrome.action.onClicked.addListener(async (tab) => {
     }
 
     await safelyCloseOffscreenDocument();
+    await removePageProgress(tab.id);
+    await finishToolbarProgress(tab.id, activeCapture?.succeeded === true);
     activeCapture = null;
   }
 });
@@ -130,6 +153,7 @@ async function captureVisibleFrame(message, sender) {
   };
 
   activeCapture.frames.push(frame);
+  await updateToolbarProgress(activeCapture.tabId, message.progressPercent);
   console.log(`PageSweep frame ${activeCapture.frames.length}`, {
     scrollY: frame.scrollY,
     expectedY: frame.expectedY,
@@ -143,6 +167,102 @@ async function captureVisibleFrame(message, sender) {
     width: frame.width,
     height: frame.height,
   };
+}
+
+async function startToolbarProgress(tabId) {
+  clearInterval(toolbarAnimationTimer);
+  clearTimeout(toolbarResetTimer);
+  toolbarAnimationFrame = 0;
+
+  await Promise.allSettled([
+    chrome.action.setBadgeBackgroundColor({ tabId, color: "#185ADB" }),
+    chrome.action.setBadgeText({ tabId, text: "0" }),
+    chrome.action.setTitle({ tabId, title: "PageSweep is capturing this page" }),
+    chrome.action.setIcon({ tabId, path: CAPTURING_ACTION_ICONS[0] }),
+  ]);
+
+  toolbarAnimationTimer = setInterval(() => {
+    toolbarAnimationFrame = (toolbarAnimationFrame + 1) % CAPTURING_ACTION_ICONS.length;
+    chrome.action.setIcon({
+      tabId,
+      path: CAPTURING_ACTION_ICONS[toolbarAnimationFrame],
+    }).catch(() => undefined);
+  }, 180);
+}
+
+async function updateToolbarProgress(tabId, progressPercent) {
+  const boundedProgress = Math.max(0, Math.min(99, Math.round(progressPercent ?? 0)));
+  await chrome.action.setBadgeText({ tabId, text: String(boundedProgress) });
+}
+
+async function finishToolbarProgress(tabId, succeeded) {
+  clearInterval(toolbarAnimationTimer);
+  toolbarAnimationTimer = null;
+
+  await Promise.allSettled([
+    chrome.action.setIcon({ tabId, path: DEFAULT_ACTION_ICONS }),
+    chrome.action.setBadgeBackgroundColor({
+      tabId,
+      color: succeeded ? "#168A5B" : "#C83C3C",
+    }),
+    chrome.action.setBadgeText({ tabId, text: succeeded ? "✓" : "!" }),
+    chrome.action.setTitle({
+      tabId,
+      title: succeeded ? "PageSweep capture saved" : "PageSweep capture failed",
+    }),
+  ]);
+
+  toolbarResetTimer = setTimeout(() => {
+    Promise.allSettled([
+      chrome.action.setBadgeText({ tabId, text: "" }),
+      chrome.action.setTitle({ tabId, title: "PageSweep — Capture the whole page" }),
+    ]);
+  }, 2200);
+}
+
+async function setPageProgressStatus(tabId, status, progressPercent, state = "working") {
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: (nextStatus, nextProgress, nextState) => {
+        const host = document.querySelector("[data-pagesweep-progress]");
+        const shadow = host?.shadowRoot;
+        if (!host || !shadow) {
+          return;
+        }
+
+        const statusElement = shadow.querySelector("[data-pagesweep-status]");
+        const barElement = shadow.querySelector("[data-pagesweep-bar]");
+        const cardElement = shadow.querySelector("[data-pagesweep-card]");
+        const iconElement = shadow.querySelector("[data-pagesweep-icon]");
+        if (statusElement) statusElement.textContent = nextStatus;
+        if (barElement) barElement.style.width = `${nextProgress}%`;
+        if (cardElement) {
+          cardElement.dataset.state = nextState;
+          if (nextState === "complete") cardElement.style.background = "#126B4B";
+        }
+        if (iconElement && nextState === "complete") {
+          iconElement.getAnimations().forEach((animation) => animation.cancel());
+          iconElement.textContent = "✓";
+          iconElement.style.background = "#18A66F";
+        }
+      },
+      args: [status, progressPercent, state],
+    });
+  } catch {
+    // The tab may have navigated or closed after capture; toolbar state still reports the result.
+  }
+}
+
+async function removePageProgress(tabId) {
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => document.querySelector("[data-pagesweep-progress]")?.remove(),
+    });
+  } catch {
+    // The page may no longer be available for cleanup.
+  }
 }
 
 function readPngDimensions(dataUrl) {
@@ -308,4 +428,8 @@ function createScreenshotFilename(pageUrl) {
 
 function padNumber(value) {
   return String(value).padStart(2, "0");
+}
+
+function delay(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
