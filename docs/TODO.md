@@ -16,6 +16,7 @@
 
 ## Recently Done
 
+- Add the visual GitHub installation guide to the repository package and first-page instructions.
 - Add and validate the PageSweep Beta Evaluation License and private Google Forms feedback flow.
 - Add and visually validate the one-time PageSweep welcome, limitations, privacy, and download-location guide.
 - Add and visually validate the capture overlay, eased frame transitions, toolbar animation, progress badge, and completion state.

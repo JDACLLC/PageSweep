@@ -8,6 +8,8 @@ PageSweep is proprietary beta software provided for personal or internal evaluat
 
 ## Install the extension
 
+![Four-step visual guide for installing PageSweep from GitHub](images/pagesweep-github-install.png)
+
 1. On the GitHub project page, select **Code**, then select **Download ZIP**.
 2. Open the downloaded ZIP and extract its contents.
 3. Open `chrome://extensions` in Google Chrome.

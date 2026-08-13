@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Added
 
+- A four-step visual GitHub installation guide displayed prominently in the README and user guide.
 - A limited beta evaluation license and private Google Forms feedback link available from the About page and an invitation after the third successful capture.
 - A one-time first-install welcome page with download-location guidance, current limitations, privacy information, and a permanently available extension-options entry.
 - An animated PageSweep capture overlay, toolbar-arrow animation, percentage badge, and success or failure status.

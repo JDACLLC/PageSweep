@@ -10,6 +10,8 @@ One toolbar click measures a finite page boundary, scrolls through the page, cap
 
 ## Install PageSweep from GitHub
 
+![Four-step visual guide for installing PageSweep from GitHub](docs/images/pagesweep-github-install.png)
+
 1. Select **Code**, then select **Download ZIP**.
 2. Open the downloaded ZIP and extract its contents.
 3. Open `chrome://extensions` in Google Chrome.
