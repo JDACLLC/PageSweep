@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to PageSweep</title>
+    <link rel="stylesheet" href="src/about.css">
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="welcome-card" aria-labelledby="welcome-title">
+        <img class="brand-icon" src="icons/icon-128.png" alt="">
+        <p class="eyebrow">Welcome to PageSweep</p>
+        <h1 id="welcome-title">Capture the whole page.</h1>
+        <p class="intro">Select the PageSweep toolbar icon once. Keep the tab visible while PageSweep scrolls, captures, and prepares one PNG.</p>
+
+        <div class="information-grid">
+          <article>
+            <h2>Before capturing</h2>
+            <p>Pin PageSweep from Chrome's extensions menu, then avoid switching tabs or interacting with the page until the capture finishes.</p>
+          </article>
+
+          <article>
+            <h2>Where files go</h2>
+            <p>PageSweep uses Chrome's normal download system. Files go to Chrome's configured download location—usually your <strong>Downloads</strong> folder.</p>
+            <p>If Chrome is set to ask where to save each file, Chrome will show that prompt.</p>
+          </article>
+
+          <article>
+            <h2>Current limitations</h2>
+            <ul>
+              <li>Chrome-controlled pages such as <code>chrome://</code> pages cannot be captured.</li>
+              <li>Exceptionally tall pages may be reduced in resolution to fit Chrome's image limits.</li>
+              <li>Infinite feeds stop at a safe, finite boundary.</li>
+              <li>Slow-loading content receives a limited opportunity to finish loading.</li>
+            </ul>
+          </article>
+
+          <article>
+            <h2>Your privacy</h2>
+            <p>PageSweep processes screenshots locally in Chrome and does not send captured webpage content to an external server.</p>
+          </article>
+        </div>
+
+        <div class="actions">
+          <button id="dismiss-button" type="button">Got it</button>
+          <p>You can reopen this guide later from PageSweep's extension options.</p>
+        </div>
+
+        <footer>
+          <span>PageSweep <span id="version"></span></span>
+          <a href="https://jdac.ai/" target="_blank" rel="noreferrer">JDAC.ai</a>
+        </footer>
+      </section>
+    </main>
+    <script src="src/about.js"></script>
+  </body>
+</html>

@@ -16,6 +16,14 @@ const CAPTURING_ACTION_ICONS = [1, 2, 3].map((frame) => ({
   128: `icons/animation/capturing-${frame}-128.png`,
 }));
 
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason === "install") {
+    chrome.runtime.openOptionsPage().catch((error) => {
+      console.warn("PageSweep could not open its first-run guide.", error);
+    });
+  }
+});
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type !== "capture-visible-frame") {
     return false;
@@ -109,7 +117,7 @@ chrome.action.onClicked.addListener(async (tab) => {
         outputScale: stitchedImage.outputScale,
       });
       activeCapture.succeeded = true;
-      await setPageProgressStatus(tab.id, "Saved to Downloads", 100, "complete");
+      await setPageProgressStatus(tab.id, "Download started", 100, "complete");
       await delay(900);
     } finally {
       await releaseStitchedImage();
@@ -208,7 +216,7 @@ async function finishToolbarProgress(tabId, succeeded) {
     chrome.action.setBadgeText({ tabId, text: succeeded ? "✓" : "!" }),
     chrome.action.setTitle({
       tabId,
-      title: succeeded ? "PageSweep capture saved" : "PageSweep capture failed",
+      title: succeeded ? "PageSweep download started" : "PageSweep capture failed",
     }),
   ]);
 

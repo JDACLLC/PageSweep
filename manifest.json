@@ -26,5 +26,9 @@
   },
   "background": {
     "service_worker": "src/background.js"
+  },
+  "options_ui": {
+    "page": "about.html",
+    "open_in_tab": true
   }
 }

@@ -45,7 +45,9 @@ For local HTML files, open the extension's **Details** page and enable **Allow a
 1. Open an `http`, `https`, or enabled local `file` page.
 2. Click the **PageSweep** toolbar icon once.
 3. Keep that tab visible and follow the PageSweep progress card while the page scrolls.
-4. Wait for **Saved to Downloads**, then open the PNG that Chrome downloads automatically.
+4. Wait for **Download started**, then open the PNG that Chrome downloads automatically.
+
+PageSweep uses Chrome's configured download location—normally the **Downloads** folder. If Chrome's **Ask where to save each file before downloading** setting is enabled, Chrome may ask where to save the PNG. PageSweep does not choose or create a separate folder.
 
 Do not interact with or switch away from the target tab until the page returns to its original position.
 
@@ -138,3 +140,7 @@ Use [`docs/E2E_SMOKE_PROTOCOL.md`](docs/E2E_SMOKE_PROTOCOL.md) for the complete 
 - Infinite or continuously growing feeds are limited to a finite boundary. Normal lazy-load growth is allowed only within a bounded cap.
 - Content that takes longer than the bounded render timeout may not appear fully loaded.
 - Chrome-protected pages cannot be captured.
+
+## About and first-run guide
+
+PageSweep opens its welcome and limitations guide once after first installation. Select **Got it** to dismiss it. To review it later, open PageSweep's extension options from Chrome's extension controls.

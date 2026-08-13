@@ -39,6 +39,8 @@ No persistent host permission or `<all_urls>` access is requested.
 
 Normal `http`, `https`, and explicitly enabled local `file` pages are supported. Browser-controlled schemes remain blocked.
 
+The manifest also registers `about.html` as the extension's options page. The background worker opens it only when Chrome reports a first installation; Chrome keeps it available later through the extension's options entry.
+
 ### `src/background.js`
 
 Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, reads PNG dimensions, animates the toolbar action and progress badge, controls the offscreen stitch session, downloads the result, and logs failures by stage. Its final cleanup clears frame memory, restores the toolbar action, removes the page overlay, and closes temporary documents even after an earlier operation fails.

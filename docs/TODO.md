@@ -2,11 +2,12 @@
 
 ## In Progress
 
-- Nothing. The progress-animation milestone is complete.
+- Nothing. The first-run guide milestone is complete.
 
 ## Up Next
 
 - Run a small friend beta through the public GitHub repository before Chrome Web Store packaging.
+- Create a dedicated PageSweep webpage under JDAC Labs, then replace the About-page `JDAC.ai` link with the new PageSweep URL.
 
 ## Waiting On
 
@@ -14,6 +15,7 @@
 
 ## Recently Done
 
+- Add and visually validate the one-time PageSweep welcome, limitations, privacy, and download-location guide.
 - Add and visually validate the capture overlay, eased frame transitions, toolbar animation, progress badge, and completion state.
 - Adopt the PageSweep name, tagline, and icon system across the extension and maintained documentation.
 - Stage 12: finalize installation, usage, permissions, limitations, debugging, and testing documentation.

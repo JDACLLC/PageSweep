@@ -22,13 +22,25 @@ Use this checklist before declaring a capture stage complete and before a releas
 6. Confirm exactly one PNG downloads.
 7. Confirm the filename follows `hostname_YYYY-MM-DD_HH-MM-SS.png`.
 8. Confirm the page returns to its exact starting position.
-9. Confirm the overlay reports that the PNG was saved and then disappears.
+9. Confirm the overlay reports **Download started** and then disappears.
 10. Open the PNG and inspect it from top to bottom.
 11. Confirm the PageSweep overlay does not appear anywhere in the PNG.
 12. Confirm major content is present without blank gaps or missing regions.
 13. Confirm the console contains a completion message and no uncaught error.
 
 **Progress UI validation:** Passed 2026-08-12. The in-page card, animated arrow, progress bar, toolbar animation, and completion state appeared correctly. The eased frame transition was visually acceptable, and the PageSweep interface did not appear in the downloaded PNG.
+
+## First-run guide checks
+
+- A new installation opens the PageSweep welcome guide once.
+- The guide states that Chrome controls the download location and may show a save prompt depending on Chrome settings.
+- The guide lists protected pages, exceptionally tall pages, infinite feeds, and slow-loading content as current limitations.
+- The guide states that captured webpage content is processed locally and is not sent to an external server.
+- **Got it** closes the guide.
+- Reloading or updating PageSweep does not automatically reopen the guide.
+- PageSweep's extension-options entry reopens the guide on demand.
+
+**First-run guide visual validation:** Passed 2026-08-12. Card order, version display, **Got it** action, JDAC.ai footer link, limitations, privacy language, and Chrome-controlled download guidance were approved.
 
 ## Stage 6 regression checks
 

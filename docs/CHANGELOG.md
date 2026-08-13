@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Added
 
+- A one-time first-install welcome page with download-location guidance, current limitations, privacy information, and a permanently available extension-options entry.
 - An animated PageSweep capture overlay, toolbar-arrow animation, percentage badge, and success or failure status.
 - Stage-specific error reporting for page capture, image stitching, and download failures.
 - Bounded layout stabilization and visible-image decoding before each viewport capture.
@@ -21,6 +22,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Reworded capture completion as **Download started** so the status remains accurate for default folders, custom download locations, and save-location prompts.
 - Smoothed the progress overlay's frame-capture transition with a short fade out and fade in instead of an abrupt flash.
 - Added first-page GitHub ZIP installation instructions for unpacked friend testing.
 - Rebranded the extension as **PageSweep — Capture the whole page**, with a new toolbar and store-ready icon set.
