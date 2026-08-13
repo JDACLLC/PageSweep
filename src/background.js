@@ -99,14 +99,25 @@ chrome.action.onClicked.addListener(async (tab) => {
     activeCapture.stage = "image stitching";
     await setPageProgressStatus(tab.id, "Preparing your PNG…", 100);
     const stitchedImage = await stitchCapturedFrames(capturedFrames, captureDetails);
+    const resolutionStatus = stitchedImage.wasDownscaled
+      ? "Reduced to fit Chrome limits"
+      : "Full resolution";
+    const resolutionDetails = {
+      status: resolutionStatus,
+      wasDownscaled: stitchedImage.wasDownscaled,
+      sourceScale: stitchedImage.sourceScale,
+      outputScale: stitchedImage.outputScale,
+      outputWidth: stitchedImage.width,
+      outputHeight: stitchedImage.height,
+    };
 
     if (stitchedImage.wasDownscaled) {
-      console.warn("PageSweep reduced this exceptionally large page to fit Chrome's PNG canvas limits.", {
-        sourceScale: stitchedImage.sourceScale,
-        outputScale: stitchedImage.outputScale,
-        outputWidth: stitchedImage.width,
-        outputHeight: stitchedImage.height,
-      });
+      console.warn(
+        "PageSweep reduced this exceptionally large page to fit Chrome's PNG canvas limits.",
+        resolutionDetails,
+      );
+    } else {
+      console.log("PageSweep retained the page at full capture resolution.", resolutionDetails);
     }
 
     try {
@@ -123,10 +134,18 @@ chrome.action.onClicked.addListener(async (tab) => {
         filename,
         width: stitchedImage.width,
         height: stitchedImage.height,
+        resolutionStatus,
+        sourceScale: stitchedImage.sourceScale,
         outputScale: stitchedImage.outputScale,
+        wasDownscaled: stitchedImage.wasDownscaled,
       });
       activeCapture.succeeded = true;
-      await setPageProgressStatus(tab.id, "Download started", 100, "complete");
+      await setPageProgressStatus(
+        tab.id,
+        `Download started · ${resolutionStatus}`,
+        100,
+        "complete",
+      );
       await delay(900);
     } finally {
       await releaseStitchedImage();

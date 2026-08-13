@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Added
 
+- Capture completion now identifies **Full resolution** or **Reduced to fit Chrome limits**, while console diagnostics report source scale, output scale, final dimensions, and whether downscaling occurred.
 - A four-step visual GitHub installation guide displayed prominently in the README and user guide.
 - A limited beta evaluation license and private Google Forms feedback link available from the About page and an invitation after the third successful capture.
 - A one-time first-install welcome page with download-location guidance, current limitations, privacy information, and a permanently available extension-options entry.
