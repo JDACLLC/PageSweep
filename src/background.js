@@ -4,6 +4,8 @@ let toolbarResetTimer = null;
 let toolbarAnimationFrame = 0;
 const BETA_FEEDBACK_FORM_URL = "https://forms.gle/f7kgk5EchbeFDP9K8";
 const BETA_FEEDBACK_REMINDER_INTERVALS = [6, 9, 12, 15];
+const MAX_STITCH_CANVAS_DIMENSION = 65000;
+const MAX_STITCH_CANVAS_PIXELS = 64 * 1024 * 1024;
 
 const DEFAULT_ACTION_ICONS = {
   16: "icons/icon-16.png",
@@ -89,6 +91,7 @@ chrome.action.onClicked.addListener(async (tab) => {
       ...injectionResult.result,
       framesStoredInMemory: capturedFrames.length,
     };
+    activeCapture.captureDetails = captureDetails;
 
     if (!injectionResult?.result || capturedFrames.length === 0) {
       throw new Error("Page capture returned no usable frames.");
@@ -152,12 +155,23 @@ chrome.action.onClicked.addListener(async (tab) => {
     }
   } catch (error) {
     const stage = activeCapture?.stage || "startup";
-    console.error(`PageSweep failed during ${stage}.`, {
-      message: getErrorMessage(error),
+    const diagnostics = stage === "image stitching"
+      ? createStitchDiagnostics(activeCapture?.frames || [], activeCapture?.captureDetails, tab, error)
+      : {
+          url: tab.url,
+          tabId: tab.id,
+          capturedFrames: activeCapture?.frames.length ?? 0,
+        };
+    const serializedError = serializeError(error);
+    const errorReport = formatErrorReport(stage, serializedError, diagnostics);
+    activeCapture.failureMessage = formatUiErrorMessage(stage, serializedError, diagnostics);
+
+    console.error(errorReport, error, {
+      serializedError,
+      diagnostics,
       url: tab.url,
       tabId: tab.id,
       capturedFrames: activeCapture?.frames.length ?? 0,
-      error,
     });
   } finally {
     const captureSucceeded = activeCapture?.succeeded === true;
@@ -167,7 +181,7 @@ chrome.action.onClicked.addListener(async (tab) => {
 
     await safelyCloseOffscreenDocument();
     await removePageProgress(tab.id);
-    await finishToolbarProgress(tab.id, captureSucceeded);
+    await finishToolbarProgress(tab.id, captureSucceeded, activeCapture?.failureMessage);
     if (captureSucceeded) {
       await recordSuccessfulCaptureAndMaybePrompt(tab.id);
     }
@@ -384,7 +398,7 @@ async function updateToolbarProgress(tabId, progressPercent) {
   await chrome.action.setBadgeText({ tabId, text: String(boundedProgress) });
 }
 
-async function finishToolbarProgress(tabId, succeeded) {
+async function finishToolbarProgress(tabId, succeeded, failureMessage) {
   clearInterval(toolbarAnimationTimer);
   toolbarAnimationTimer = null;
 
@@ -397,7 +411,9 @@ async function finishToolbarProgress(tabId, succeeded) {
     chrome.action.setBadgeText({ tabId, text: succeeded ? "✓" : "!" }),
     chrome.action.setTitle({
       tabId,
-      title: succeeded ? "PageSweep download started" : "PageSweep capture failed",
+      title: succeeded
+        ? "PageSweep download started"
+        : failureMessage || "PageSweep capture failed",
     }),
   ]);
 
@@ -487,6 +503,8 @@ function readUint32(bytes, offset) {
 
 async function stitchCapturedFrames(frames, captureDetails) {
   await ensureOffscreenDocument();
+  let currentOperation = "canvas creation";
+  let currentFrameIndex = null;
 
   try {
     const startResponse = await sendOffscreenMessage({
@@ -497,6 +515,8 @@ async function stitchCapturedFrames(frames, captureDetails) {
     });
 
     for (let frameIndex = 0; frameIndex < frames.length; frameIndex += 1) {
+      currentOperation = "frame/image decoding";
+      currentFrameIndex = frameIndex;
       const frame = frames[frameIndex];
       const nextFrame = frames[frameIndex + 1];
       const uniqueHeight = nextFrame
@@ -512,11 +532,14 @@ async function stitchCapturedFrames(frames, captureDetails) {
         type: "stitch-add-frame",
         frame: {
           ...frame,
+          frameIndex,
           uniqueHeight,
         },
       });
     }
 
+    currentOperation = "canvas/blob/image encoding";
+    currentFrameIndex = null;
     const finishResponse = await sendOffscreenMessage({
       target: "offscreen",
       type: "stitch-finish",
@@ -531,6 +554,12 @@ async function stitchCapturedFrames(frames, captureDetails) {
       wasDownscaled: startResponse.wasDownscaled,
     };
   } catch (error) {
+    if (error && typeof error === "object") {
+      if (!("operation" in error)) error.operation = currentOperation;
+      if (!("frameIndex" in error) && currentFrameIndex !== null) {
+        error.frameIndex = currentFrameIndex;
+      }
+    }
     await safelyCloseOffscreenDocument();
     throw error;
   }
@@ -540,7 +569,7 @@ async function sendOffscreenMessage(message) {
   const response = await chrome.runtime.sendMessage(message);
 
   if (!response?.ok) {
-    throw new Error(response?.error || "The image stitching operation failed.");
+    throw deserializeError(response?.error, "The image stitching operation failed.");
   }
 
   return response;
@@ -604,8 +633,174 @@ function isSupportedPageUrl(pageUrl) {
   }
 }
 
-function getErrorMessage(error) {
-  return error instanceof Error ? error.message : String(error);
+function createStitchDiagnostics(frames, captureDetails = {}, tab = {}, error) {
+  const firstFrame = frames[0];
+  const viewportWidth = captureDetails.viewportWidth;
+  const viewportHeight = captureDetails.viewportHeight;
+  const documentHeight = captureDetails.documentHeight;
+  const capturedDocumentWidth = Math.min(
+    captureDetails.documentWidth ?? viewportWidth ?? firstFrame?.width ?? 0,
+    captureDetails.viewportContentWidth ?? viewportWidth ?? firstFrame?.width ?? 0,
+  );
+  const scaleX = firstFrame && viewportWidth ? firstFrame.width / viewportWidth : null;
+  const scaleY = firstFrame && viewportHeight ? firstFrame.height / viewportHeight : null;
+  const dimensionScaleLimit = capturedDocumentWidth && documentHeight
+    ? Math.min(
+        MAX_STITCH_CANVAS_DIMENSION / capturedDocumentWidth,
+        MAX_STITCH_CANVAS_DIMENSION / documentHeight,
+      )
+    : null;
+  const areaScaleLimit = capturedDocumentWidth && documentHeight
+    ? Math.sqrt(MAX_STITCH_CANVAS_PIXELS / (capturedDocumentWidth * documentHeight))
+    : null;
+  const availableScales = [scaleX, scaleY, dimensionScaleLimit, areaScaleLimit]
+    .filter((value) => Number.isFinite(value));
+  const outputScale = availableScales.length > 0 ? Math.min(...availableScales) : null;
+  const calculatedOutputWidth = outputScale !== null
+    ? Math.max(1, Math.floor(capturedDocumentWidth * outputScale))
+    : null;
+  const calculatedOutputHeight = outputScale !== null
+    ? Math.max(1, Math.floor(documentHeight * outputScale))
+    : null;
+
+  return {
+    operation: error?.operation ?? null,
+    frameBeingProcessed: Number.isInteger(error?.frameIndex) ? error.frameIndex + 1 : null,
+    frameIndex: Number.isInteger(error?.frameIndex) ? error.frameIndex : null,
+    capturedFrameCount: frames.length,
+    frameDimensions: frames.map((frame, index) => ({
+      frameNumber: index + 1,
+      width: frame.width,
+      height: frame.height,
+    })),
+    viewportWidth: viewportWidth ?? null,
+    viewportHeight: viewportHeight ?? null,
+    devicePixelRatio: captureDetails.devicePixelRatio ?? null,
+    calculatedOutputWidth,
+    calculatedOutputHeight,
+    totalOutputPixels: calculatedOutputWidth !== null && calculatedOutputHeight !== null
+      ? calculatedOutputWidth * calculatedOutputHeight
+      : null,
+    pageUrl: tab.url ?? null,
+    tabId: tab.id ?? null,
+    frameScrollPositions: frames.map((frame, index) => ({
+      frameNumber: index + 1,
+      scrollY: frame.scrollY ?? null,
+      expectedY: frame.expectedY ?? null,
+    })),
+  };
+}
+
+function formatErrorReport(stage, serializedError, diagnostics) {
+  const errorName = serializedError?.name || serializedError?.type || "Error";
+  const errorMessage = serializedError?.message || safeStringify(serializedError);
+  const lines = [`PageSweep failed during ${stage}. ${errorName}: ${errorMessage}`];
+
+  if (serializedError?.stack) lines.push(`Stack: ${serializedError.stack}`);
+  if (serializedError?.cause !== undefined) {
+    lines.push(`Cause: ${safeStringify(serializedError.cause)}`);
+  }
+  if (diagnostics) lines.push(`Diagnostics: ${safeStringify(diagnostics)}`);
+  if (serializedError?.properties && Object.keys(serializedError.properties).length > 0) {
+    lines.push(`Error properties: ${safeStringify(serializedError.properties)}`);
+  }
+
+  return lines.join("\n");
+}
+
+function formatUiErrorMessage(stage, serializedError, diagnostics) {
+  const errorName = serializedError?.name || serializedError?.type || "Error";
+  const errorMessage = (serializedError?.message || safeStringify(serializedError))
+    .replace(/[.\s]+$/, "");
+  const operation = diagnostics?.operation ? ` Operation: ${diagnostics.operation}.` : "";
+  const frame = diagnostics?.frameBeingProcessed
+    ? ` Frame: ${diagnostics.frameBeingProcessed} of ${diagnostics.capturedFrameCount}.`
+    : "";
+  return `PageSweep failed during ${stage}. ${errorName}: ${errorMessage}.${operation}${frame} See the extension console for full diagnostics.`;
+}
+
+function deserializeError(serialized, fallbackMessage) {
+  if (!serialized || typeof serialized !== "object") {
+    return new Error(serialized == null ? fallbackMessage : formatUnknownValue(serialized));
+  }
+
+  const error = new Error(serialized.message || fallbackMessage, {
+    cause: serialized.cause,
+  });
+  error.name = serialized.name || "Error";
+  if (serialized.stack) error.stack = serialized.stack;
+
+  for (const [key, value] of Object.entries(serialized.properties || {})) {
+    try {
+      error[key] = value;
+    } catch {
+      // Preserve the serialized property in the report even if it is read-only on Error.
+    }
+  }
+
+  return error;
+}
+
+function serializeError(value, seen = new WeakSet(), depth = 0) {
+  if (depth > 12) return "[Maximum serialization depth reached]";
+  if (value === null || value === undefined) return value;
+  if (typeof value === "bigint") return `${value}n`;
+  if (typeof value === "symbol" || typeof value === "function") return String(value);
+  if (typeof value !== "object") return value;
+  if (seen.has(value)) return "[Circular]";
+
+  seen.add(value);
+  if (value instanceof Error) {
+    const properties = {};
+    for (const key of Object.keys(value)) {
+      if (key !== "cause") properties[key] = serializeError(value[key], seen, depth + 1);
+    }
+    const serialized = {
+      type: "Error",
+      name: value.name || "Error",
+      message: value.message || "",
+      stack: value.stack || null,
+      properties,
+    };
+    if ("cause" in value) serialized.cause = serializeError(value.cause, seen, depth + 1);
+    return serialized;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => serializeError(item, seen, depth + 1));
+  }
+
+  const serialized = {};
+  for (const key of Object.keys(value)) {
+    try {
+      serialized[key] = serializeError(value[key], seen, depth + 1);
+    } catch (serializationError) {
+      serialized[key] = `[Property serialization failed: ${formatUnknownValue(serializationError)}]`;
+    }
+  }
+  return serialized;
+}
+
+function safeStringify(value) {
+  try {
+    const serialized = typeof value === "object" && value !== null
+      ? serializeError(value)
+      : value;
+    const json = JSON.stringify(serialized, null, 2);
+    if (json !== undefined) return json;
+    if (typeof serialized === "string") return serialized;
+    return `[Unserializable ${serialized?.constructor?.name || typeof serialized}]`;
+  } catch (error) {
+    return `[Serialization failed: ${error instanceof Error ? error.message : "unknown error"}]`;
+  }
+}
+
+function formatUnknownValue(value) {
+  if (typeof value === "string") return value;
+  const serialized = safeStringify(value);
+  return serialized === "{}" && value != null
+    ? `[Unserializable ${value?.constructor?.name || typeof value}]`
+    : serialized;
 }
 
 function createScreenshotFilename(pageUrl) {
