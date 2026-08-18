@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Added
 
+- Failure diagnostics now report the PageSweep version, browser version and user-agent details, operating system and architecture, and relevant Chrome API availability.
 - Capture completion now identifies **Full resolution** or **Reduced to fit Chrome limits**, while console diagnostics report source scale, output scale, final dimensions, and whether downscaling occurred.
 - A four-step visual GitHub installation guide displayed prominently in the README and user guide.
 - A limited beta evaluation license and private Google Forms feedback link available from the About page and an invitation after the third successful capture.
@@ -38,6 +39,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Fixed
 
+- Offscreen stitching now supports browsers without `runtime.getContexts()` through the documented service-worker client fallback, and locks document creation to prevent concurrent setup attempts.
 - Capture frames now wait for the progress overlay to be hidden and repainted so PageSweep's own interface is excluded from downloaded PNGs.
 - Allowed explicitly user-triggered capture of local `file:` test pages when Chrome's file-URL access toggle is enabled.
 - Guaranteed independent cleanup attempts for scroll position, smooth scrolling, scroll anchoring, fixed-element styles, frame memory, Blob URLs, and offscreen documents.

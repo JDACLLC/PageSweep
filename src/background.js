@@ -2,6 +2,7 @@ let activeCapture = null;
 let toolbarAnimationTimer = null;
 let toolbarResetTimer = null;
 let toolbarAnimationFrame = 0;
+let offscreenDocumentCreationPromise = null;
 const BETA_FEEDBACK_FORM_URL = "https://forms.gle/f7kgk5EchbeFDP9K8";
 const BETA_FEEDBACK_REMINDER_INTERVALS = [6, 9, 12, 15];
 const MAX_STITCH_CANVAS_DIMENSION = 65000;
@@ -155,12 +156,22 @@ chrome.action.onClicked.addListener(async (tab) => {
     }
   } catch (error) {
     const stage = activeCapture?.stage || "startup";
+    const runtimeDiagnostics = await createRuntimeDiagnostics();
     const diagnostics = stage === "image stitching"
-      ? createStitchDiagnostics(activeCapture?.frames || [], activeCapture?.captureDetails, tab, error)
+      ? {
+          ...createStitchDiagnostics(
+            activeCapture?.frames || [],
+            activeCapture?.captureDetails,
+            tab,
+            error,
+          ),
+          ...runtimeDiagnostics,
+        }
       : {
           url: tab.url,
           tabId: tab.id,
           capturedFrames: activeCapture?.frames.length ?? 0,
+          ...runtimeDiagnostics,
         };
     const serializedError = serializeError(error);
     const errorReport = formatErrorReport(stage, serializedError, diagnostics);
@@ -502,11 +513,12 @@ function readUint32(bytes, offset) {
 }
 
 async function stitchCapturedFrames(frames, captureDetails) {
-  await ensureOffscreenDocument();
-  let currentOperation = "canvas creation";
+  let currentOperation = "offscreen document setup";
   let currentFrameIndex = null;
 
   try {
+    await ensureOffscreenDocument();
+    currentOperation = "canvas creation";
     const startResponse = await sendOffscreenMessage({
       target: "offscreen",
       type: "stitch-start",
@@ -587,29 +599,44 @@ async function releaseStitchedImage() {
 }
 
 async function ensureOffscreenDocument() {
-  const documentUrl = chrome.runtime.getURL("offscreen.html");
-  const contexts = await chrome.runtime.getContexts({
-    contextTypes: ["OFFSCREEN_DOCUMENT"],
-    documentUrls: [documentUrl],
-  });
+  if (await hasOffscreenDocument()) {
+    return;
+  }
 
-  if (contexts.length === 0) {
-    await chrome.offscreen.createDocument({
+  if (!offscreenDocumentCreationPromise) {
+    offscreenDocumentCreationPromise = chrome.offscreen.createDocument({
       url: "offscreen.html",
       reasons: ["BLOBS"],
       justification: "Stitch captured viewport images into one PNG using a canvas.",
     });
   }
+
+  try {
+    await offscreenDocumentCreationPromise;
+  } finally {
+    offscreenDocumentCreationPromise = null;
+  }
 }
 
 async function closeOffscreenDocument() {
-  const contexts = await chrome.runtime.getContexts({
-    contextTypes: ["OFFSCREEN_DOCUMENT"],
-  });
-
-  if (contexts.length > 0) {
+  if (await hasOffscreenDocument()) {
     await chrome.offscreen.closeDocument();
   }
+}
+
+async function hasOffscreenDocument() {
+  const documentUrl = chrome.runtime.getURL("offscreen.html");
+
+  if (typeof chrome.runtime.getContexts === "function") {
+    const contexts = await chrome.runtime.getContexts({
+      contextTypes: ["OFFSCREEN_DOCUMENT"],
+      documentUrls: [documentUrl],
+    });
+    return contexts.length > 0;
+  }
+
+  const matchedClients = await clients.matchAll();
+  return matchedClients.some((client) => client.url === documentUrl);
 }
 
 async function safelyCloseOffscreenDocument() {
@@ -689,6 +716,78 @@ function createStitchDiagnostics(frames, captureDetails = {}, tab = {}, error) {
       expectedY: frame.expectedY ?? null,
     })),
   };
+}
+
+async function createRuntimeDiagnostics() {
+  const manifest = chrome.runtime.getManifest();
+  const userAgent = globalThis.navigator?.userAgent ?? null;
+  const userAgentData = globalThis.navigator?.userAgentData;
+  let platformInfo = null;
+  let highEntropyUserAgentData = null;
+
+  try {
+    platformInfo = await chrome.runtime.getPlatformInfo();
+  } catch (error) {
+    platformInfo = { unavailable: formatUnknownValue(error) };
+  }
+
+  if (typeof userAgentData?.getHighEntropyValues === "function") {
+    try {
+      highEntropyUserAgentData = await userAgentData.getHighEntropyValues([
+        "architecture",
+        "bitness",
+        "fullVersionList",
+        "model",
+        "platformVersion",
+      ]);
+    } catch (error) {
+      highEntropyUserAgentData = { unavailable: formatUnknownValue(error) };
+    }
+  }
+
+  return {
+    pageSweep: {
+      name: manifest.name,
+      version: manifest.version,
+      manifestVersion: manifest.manifest_version,
+      extensionId: chrome.runtime.id,
+    },
+    browser: {
+      detectedVersion: detectBrowserVersion(userAgent, highEntropyUserAgentData),
+      userAgent,
+      userAgentData: userAgentData
+        ? {
+            brands: userAgentData.brands ?? null,
+            mobile: userAgentData.mobile ?? null,
+            platform: userAgentData.platform ?? null,
+            highEntropyValues: highEntropyUserAgentData,
+          }
+        : null,
+    },
+    platform: platformInfo,
+    apiCapabilities: {
+      runtimeGetContexts: typeof chrome.runtime.getContexts === "function",
+      offscreenCreateDocument: typeof chrome.offscreen?.createDocument === "function",
+      offscreenCloseDocument: typeof chrome.offscreen?.closeDocument === "function",
+      serviceWorkerClientsMatchAll: typeof globalThis.clients?.matchAll === "function",
+    },
+  };
+}
+
+function detectBrowserVersion(userAgent, highEntropyUserAgentData) {
+  const fullVersionList = highEntropyUserAgentData?.fullVersionList;
+  if (Array.isArray(fullVersionList)) {
+    const preferredBrands = [/Google Chrome/i, /Microsoft Edge/i, /Brave/i, /Chromium/i];
+    const browserBrand = preferredBrands
+      .map((pattern) => fullVersionList.find(({ brand }) => pattern.test(brand)))
+      .find(Boolean);
+    if (browserBrand) {
+      return { brand: browserBrand.brand, version: browserBrand.version };
+    }
+  }
+
+  const match = userAgent?.match(/(Edg|Chrome|Chromium|CriOS)\/([\d.]+)/);
+  return match ? { brand: match[1], version: match[2] } : null;
 }
 
 function formatErrorReport(stage, serializedError, diagnostics) {
