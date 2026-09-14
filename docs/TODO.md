@@ -2,7 +2,6 @@
 
 ## In Progress
 
-- Give the robot more vertical flight room and a gentle varied path while preserving forward-only progress.
 - Move the completion check away from the robot and hold the completed state for 1.5–2 seconds.
 
 ## Up Next
@@ -15,10 +14,11 @@
 
 ## Waiting On
 
-- Visual confirmation from the 2026-09-13 long-page test that no PageSweep interface appears in the downloaded PNG.
+- Nothing currently.
 
 ## Recently Done
 
+- Give the robot a continuous lower-left to upper-right ascent while preserving its gentle hover; short- and long-page visual review passed on 2026-09-13.
 - Replace the dotted progress treatment with one clean illuminated scan track; visual review passed on 2026-09-13.
 - Confirm that PageSweep's progress card, robot, scan beam, and capture transitions are absent from the exported 20-frame Fox News PNG.
 - Validate PageSweep 0.1.3 runtime delivery of completion details; a Fox News retest captured 20 frames with zero cleanup errors, stitched and downloaded the PNG, and displayed the green completion state.

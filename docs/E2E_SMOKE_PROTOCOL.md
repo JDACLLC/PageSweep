@@ -17,18 +17,20 @@ Use this checklist before declaring a capture stage complete and before a releas
 1. Open a test page and note the starting scroll position.
 2. Click the **PageSweep** toolbar icon once.
 3. Confirm the page scrolls automatically without manual input.
-4. Confirm the PageSweep overlay appears, its arrow moves, and its progress advances.
+4. Confirm the PageSweep overlay appears, its mascot moves forward and upward with a gentle hover, and its progress advances.
 5. If PageSweep is pinned, confirm its toolbar arrow and percentage badge also advance.
 6. Confirm exactly one PNG downloads.
 7. Confirm the filename follows `hostname_YYYY-MM-DD_HH-MM-SS.png`.
 8. Confirm the page returns to its exact starting position.
-9. Confirm the overlay reports **Download started** and then disappears.
+9. Confirm the overlay reports **Download started**, shows its completion check beside the status text for about 1.7 seconds, and then disappears.
 10. Open the PNG and inspect it from top to bottom.
 11. Confirm the PageSweep overlay does not appear anywhere in the PNG.
 12. Confirm major content is present without blank gaps or missing regions.
 13. Confirm the console contains a completion message and no uncaught error.
 
 **Progress UI validation:** Passed 2026-08-12. The in-page card, animated arrow, progress bar, toolbar animation, and completion state appeared correctly. The eased frame transition was visually acceptable, and the PageSweep interface did not appear in the downloaded PNG.
+
+**Mascot motion validation:** Passed 2026-09-13 on short and long webpages with PageSweep 0.1.6. The mascot rose throughout capture without moving backward, and its separate subtle bob and rotation retained the approved hovering feel.
 
 ## First-run guide checks
 

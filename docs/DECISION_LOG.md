@@ -1,5 +1,25 @@
 # Decision Log
 
+## Separate mascot travel from hovering motion — 2026-09-13
+
+### Context
+
+The capture mascot needed to show clear progress from the lower-left toward the upper-right without following a stiff diagonal or appearing to make most of its climb only near the end.
+
+### Decision
+
+Tie the mascot's forward and upward travel to capture progress, using a continuous ascent with varied easing. Apply a separate small vertical bob and rotation to the mascot artwork so it continues to feel like it is hovering while it travels.
+
+### Alternatives
+
+- Use one straight diagonal transition.
+- Include a mid-flight downward movement as part of the progress path.
+- Use only local hovering motion without a visible overall ascent.
+
+### Consequences
+
+The mascot communicates progress across the full capture and never flies backward. The independent hover remains subtle, and its strength can be tuned later without changing progress accuracy or the flight destination.
+
 ## Request private beta feedback after demonstrated use — 2026-08-12
 
 ### Context

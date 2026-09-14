@@ -50,7 +50,7 @@ Owns Chrome API calls and capture-session coordination. It prevents concurrent c
 
 ### `src/capture.js`
 
-Runs in the active webpage. It measures document and viewport geometry, establishes a bounded capture boundary, temporarily disables smooth scrolling and scrollbar painting, displays an isolated progress overlay, visits each target position, waits for layout and visible images to settle, requests a frame, and restores the original scroll position and page styles in `finally` cleanup. The overlay is hidden before each screenshot and remains hidden until the frame is returned, ensuring it cannot enter the PNG. Fixed and sticky elements remain visible for their first on-screen capture and are then hidden with `visibility`, preserving page layout while preventing repeated appearances.
+Runs in the active webpage. It measures document and viewport geometry, establishes a bounded capture boundary, temporarily disables smooth scrolling and scrollbar painting, displays an isolated progress overlay, visits each target position, waits for layout and visible images to settle, requests a frame, and restores the original scroll position and page styles in `finally` cleanup. The overlay's mascot moves forward and continuously upward according to capture progress, while a separate subtle bob and rotation preserve a hovering feel. The overlay is hidden before each screenshot and remains hidden until the frame is returned, ensuring it cannot enter the PNG. Fixed and sticky elements remain visible for their first on-screen capture and are then hidden with `visibility`, preserving page layout while preventing repeated appearances.
 
 ### `offscreen.html` and `src/stitch.js`
 
@@ -67,7 +67,7 @@ Provide a temporary DOM environment for image decoding and canvas composition. F
 6. After page cleanup, the service worker opens the offscreen document.
 7. The stitcher receives frames individually and draws only each frame's unique region, ending the final frame at the fixed document boundary.
 8. The stitcher exports a PNG Blob URL.
-9. The service worker starts the download using a sanitized timestamped filename.
+9. The service worker starts the download using a sanitized timestamped filename, displays the check beside the status text, and holds the completed state for 1.7 seconds.
 10. The temporary Blob URL and offscreen document are released.
 
 ## Current boundaries
