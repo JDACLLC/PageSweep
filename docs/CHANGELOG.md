@@ -28,6 +28,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Bumped the extension version to 0.2.1, restored the animated blue-to-purple text gradient from the approved in-page card, and enlarged the popup plume by approximately 55 percent with a stronger glow and subtle pulse.
 - Promoted the persistent browser-owned mascot progress experience to version 0.2.0 after successful short- and long-page validation, and removed temporary visibility-timing instrumentation.
 - Bumped the extension version to 0.1.12 for the isolated popup-progress experiment; the in-page card is disabled on this branch while the approved 0.1.10 milestone remains preserved.
 - Bumped the extension version to 0.1.11 for the measurement-only flashing baseline; capture transitions remain unchanged.

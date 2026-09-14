@@ -56,6 +56,7 @@
 - PageSweep 0.1.10 raises the completion check by 8 pixels. Its outer ring now has approximately 6 pixels of clearance from the mascot's lower glow and 10 pixels from the progress track; visual review remains pending.
 - PageSweep 0.1.10 visual review approved the protected completion copy, mascot-facing direction, raised check spacing, and overall completed card. Item 25 is complete. Version 0.1.11 adds measurement-only diagnostics for item 17 without changing any hide or show transition values.
 - Timing reduction remained visually ineffective because Chrome's capture interval dominated each disappearance. The browser-owned popup remained continuously visible and completed short- and long-page captures successfully on 2026-09-14. Item 17 is complete; version 0.2.0 removes temporary instrumentation and retains the earlier in-page implementation as a source fallback.
+- PageSweep 0.2.1 restores the original animated gradient treatment to the popup title and status copy. The plume grows from 14 by 9 pixels to 22 by 14 pixels, remains centered under the mascot, gains a stronger glow and pulse, and keeps approximately 6 pixels of nominal clearance above the track at the starting position.
 
 ## Parking Lot
 

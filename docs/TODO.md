@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Run the final PageSweep 0.2.0 short- and long-page regression after instrumentation cleanup.
+- Visually validate the restored animated text gradient and enlarged popup plume in PageSweep 0.2.1.
 
 ## Up Next
 
