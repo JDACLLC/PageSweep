@@ -28,6 +28,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Bumped the extension version to 0.2.3, enlarged the tightly framed plume by 25 percent, and raised the early flight path by 6 pixels to preserve clearance above the progress track.
 - Bumped the extension version to 0.2.2 and replaced the padded plume sprite with a verified transparent, tightly framed flame positioned lower beneath the robot body for better visibility.
 - Bumped the extension version to 0.2.1, restored the animated blue-to-purple text gradient from the approved in-page card, and enlarged the popup plume by approximately 55 percent with a stronger glow and subtle pulse.
 - Promoted the persistent browser-owned mascot progress experience to version 0.2.0 after successful short- and long-page validation, and removed temporary visibility-timing instrumentation.

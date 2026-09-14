@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Visually validate the tightly framed and lower-mounted plume in PageSweep 0.2.2.
+- Visually validate the 25-percent larger plume and adjusted starting clearance in PageSweep 0.2.3.
 
 ## Up Next
 
