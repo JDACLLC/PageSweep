@@ -380,7 +380,7 @@
     robotPosition.setAttribute("data-pagesweep-robot-position", "true");
     Object.assign(robotPosition.style, {
       position: "absolute",
-      top: "16px",
+      top: "24px",
       left: "3%",
       width: "56px",
       height: "50px",
@@ -494,11 +494,12 @@
     function getFlightTop(progressPercent) {
       const progress = progressPercent / 100;
       const waypoints = [
-        [0, 16],
-        [0.24, 11],
-        [0.5, 13],
-        [0.76, 7],
-        [1, 3],
+        [0, 24],
+        [0.22, 19],
+        [0.48, 15],
+        [0.7, 9],
+        [0.86, 6],
+        [1, 2],
       ];
 
       for (let index = 1; index < waypoints.length; index += 1) {

@@ -47,6 +47,7 @@
 - Item 23 passed a PageSweep 0.1.3 Fox News retest on 2026-09-13. Runtime messaging delivered completion details after 20 captured frames, cleanup reported no errors, stitching intentionally reduced the Retina source to Chrome's safe canvas limits, the 2,347 by 28,592 PNG downloaded, and the card displayed its green completion state.
 - Item 18 passed visual review in PageSweep 0.1.4 on 2026-09-13. The dots are gone, the clean scan track reads more clearly, and the subtle completion hover was positively received.
 - Item 24 records optional polish only. Revisit the opacity of the track ahead of the robot after the flight path, plume visibility, completion-check placement, and long-capture visibility behavior are settled.
+- PageSweep 0.1.5 visual testing found that the mascot used too little of the available vertical space: its small early rise and middle dip made most of the ascent appear during the final 15–20 percent. Version 0.1.6 keeps the 76-pixel scene and changes the path to a continuous 22-pixel ascent with varied easing across the full capture.
 
 ## Parking Lot
 
