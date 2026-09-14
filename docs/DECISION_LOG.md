@@ -8,7 +8,7 @@ The capture mascot needed to show clear progress from the lower-left toward the 
 
 ### Decision
 
-Tie the mascot's forward and upward travel to capture progress, using a continuous ascent with varied easing. Apply a separate small vertical bob and rotation to the mascot artwork so it continues to feel like it is hovering while it travels.
+Tie the mascot's forward and upward travel to capture progress, using a continuous ascent with varied easing. Apply a separate small vertical bob and rotation to the mascot artwork so it continues to feel like it is hovering while it travels. Place the completion check above the track's lower-right endpoint so the mascot can finish in the upper-right without competing with the success indicator.
 
 ### Alternatives
 
@@ -18,7 +18,7 @@ Tie the mascot's forward and upward travel to capture progress, using a continuo
 
 ### Consequences
 
-The mascot communicates progress across the full capture and never flies backward. The independent hover remains subtle, and its strength can be tuned later without changing progress accuracy or the flight destination.
+The mascot communicates progress across the full capture and never flies backward. The independent hover remains subtle, and its strength can be tuned later without changing progress accuracy or the flight destination. The success indicator remains visually tied to the completed track while the upper-right becomes the mascot's clear destination.
 
 ## Request private beta feedback after demonstrated use — 2026-08-12
 

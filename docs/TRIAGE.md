@@ -20,7 +20,7 @@
 | 16 | P0 | Complete | Verify that the robot, progress card, scan beam, and capture transition remain absent from exported PNGs. |
 | 17 | P1 | Up Next | Reduce the obvious repeated disappearance and return of the in-page progress card during long captures. |
 | 18 | P1 | Complete | Replace the dotted progress treatment with one clean illuminated scan path. |
-| 19 | P1 | Complete | Move the robot above the scan path and add a gentle varied vertical flight path without backward movement. |
+| 19 | P1 | In Progress | Move the robot above the scan path and add a gentle varied vertical flight path without backward movement. |
 | 20 | P1 | In Progress | Move the completion check outside the robot's path and hold the green completed state for 1.5–2 seconds. |
 | 21 | P2 | Up Next | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |
 | 22 | P1 | Parking Lot | Before Chrome Web Store release, remove beta wording and the automatic beta-feedback invitation and reminder schedule. |
@@ -49,6 +49,7 @@
 - Item 24 records optional polish only. Revisit the opacity of the track ahead of the robot after the flight path, plume visibility, completion-check placement, and long-capture visibility behavior are settled.
 - PageSweep 0.1.5 visual testing found that the mascot used too little of the available vertical space: its small early rise and middle dip made most of the ascent appear during the final 15–20 percent. Version 0.1.6 keeps the 76-pixel scene and changes the path to a continuous 22-pixel ascent with varied easing across the full capture.
 - Item 19 passed short- and long-page visual review in PageSweep 0.1.6 on 2026-09-13. The mascot rises throughout the capture while its separate bob-and-rotation animation preserves the approved hovering character.
+- PageSweep 0.1.7 moves the completion check to the lower-right above the track and lets the mascot finish in the open upper-right area. This uses substantially more vertical travel while retaining the existing card height and independent hover motion; visual review remains pending.
 
 ## Parking Lot
 

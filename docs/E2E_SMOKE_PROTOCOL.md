@@ -22,7 +22,7 @@ Use this checklist before declaring a capture stage complete and before a releas
 6. Confirm exactly one PNG downloads.
 7. Confirm the filename follows `hostname_YYYY-MM-DD_HH-MM-SS.png`.
 8. Confirm the page returns to its exact starting position.
-9. Confirm the overlay reports **Download started**, shows its completion check beside the status text for about 1.7 seconds, and then disappears.
+9. Confirm the overlay reports **Download started**, shows its completion check at the lower-right above the progress track for about 1.7 seconds while the mascot hovers in the upper-right, and then disappears.
 10. Open the PNG and inspect it from top to bottom.
 11. Confirm the PageSweep overlay does not appear anywhere in the PNG.
 12. Confirm major content is present without blank gaps or missing regions.

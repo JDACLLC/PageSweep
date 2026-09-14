@@ -290,7 +290,6 @@
     Object.assign(row.style, {
       display: "flex",
       alignItems: "center",
-      justifyContent: "space-between",
       gap: "10px",
     });
 
@@ -438,11 +437,13 @@
     completeBadge.setAttribute("data-pagesweep-complete-badge", "true");
     completeBadge.textContent = "✓";
     Object.assign(completeBadge.style, {
+      position: "absolute",
+      right: "2px",
+      bottom: "13px",
       display: "grid",
       placeItems: "center",
       width: "22px",
       height: "22px",
-      flex: "0 0 22px",
       borderRadius: "50%",
       background: "#18A66F",
       boxShadow: "0 0 0 3px rgba(52, 211, 153, 0.16), 0 4px 12px rgba(3, 80, 55, 0.32)",
@@ -455,8 +456,7 @@
     });
 
     robotPosition.append(plume, scanBeam, robotVisual);
-    row.append(completeBadge);
-    scene.append(track, robotPosition);
+    scene.append(track, robotPosition, completeBadge);
     card.append(row, scene);
     shadow.appendChild(card);
     (document.body || documentElement).appendChild(host);
@@ -495,11 +495,11 @@
       const progress = progressPercent / 100;
       const waypoints = [
         [0, 24],
-        [0.22, 19],
-        [0.48, 15],
-        [0.7, 9],
-        [0.86, 6],
-        [1, 2],
+        [0.22, 14],
+        [0.48, 5],
+        [0.7, -7],
+        [0.86, -15],
+        [1, -27],
       ];
 
       for (let index = 1; index < waypoints.length; index += 1) {

@@ -37,7 +37,7 @@ PageSweep is proprietary beta software provided for personal or internal evaluat
 2. Select the **PageSweep** toolbar icon once.
 3. Watch the flying robot move forward and upward in the PageSweep progress card while the page scrolls from top to bottom. If PageSweep is pinned, its toolbar arrow and percentage badge also show progress.
 4. Confirm the page returns to its starting position.
-5. Wait for the green check and **Download started**, then open the PNG downloaded by Chrome.
+5. Wait for the green check above the end of the progress track and **Download started**, then open the PNG downloaded by Chrome.
 
 The filename uses the website hostname and capture time, such as `example.com_2026-08-12_14-01-32.png`.
 
