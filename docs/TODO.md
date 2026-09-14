@@ -2,8 +2,7 @@
 
 ## In Progress
 
-- Visually validate the raised mascot starting position and plume clearance above the progress track.
-- Move the completion check away from the robot and hold the completed state for 1.5–2 seconds.
+- Visually validate the protected two-line completion copy and the mascot's completion-facing direction.
 
 ## Up Next
 
@@ -19,6 +18,7 @@
 
 ## Recently Done
 
+- Raise the mascot's starting position so the robot and existing booster plume visibly hover above the track; long-page visual review passed on 2026-09-13.
 - Give the robot a continuous lower-left to upper-right ascent while preserving its gentle hover; short- and long-page visual review passed on 2026-09-13.
 - Replace the dotted progress treatment with one clean illuminated scan track; visual review passed on 2026-09-13.
 - Confirm that PageSweep's progress card, robot, scan beam, and capture transitions are absent from the exported 20-frame Fox News PNG.

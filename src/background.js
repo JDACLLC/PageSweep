@@ -469,6 +469,7 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
         }
 
         const statusElement = shadow.querySelector("[data-pagesweep-status]");
+        const copyElement = shadow.querySelector("[data-pagesweep-copy]");
         const gradientTextElements = shadow.querySelectorAll("[data-pagesweep-gradient-text]");
         const barElement = shadow.querySelector("[data-pagesweep-bar]");
         const cardElement = shadow.querySelector("[data-pagesweep-card]");
@@ -485,6 +486,19 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
           cardElement.dataset.state = nextState;
         }
         if (nextState === "complete") {
+          if (copyElement) {
+            copyElement.style.width = "170px";
+            copyElement.style.maxWidth = "170px";
+          }
+          if (statusElement) {
+            statusElement.style.display = "-webkit-box";
+            statusElement.style.overflow = "hidden";
+            statusElement.style.overflowWrap = "anywhere";
+            statusElement.style.textOverflow = "clip";
+            statusElement.style.whiteSpace = "normal";
+            statusElement.style.webkitBoxOrient = "vertical";
+            statusElement.style.webkitLineClamp = "2";
+          }
           gradientTextElements.forEach((textElement) => {
             textElement.getAnimations().forEach((animation) => animation.cancel());
             textElement.style.backgroundImage = "none";
@@ -497,9 +511,9 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
             robotElement.getAnimations().forEach((animation) => animation.cancel());
             robotElement.animate(
               [
-                { transform: "translateY(-1px)" },
-                { transform: "translateY(-3px)" },
-                { transform: "translateY(-1px)" },
+                { transform: "translateY(-1px) scaleX(-1)" },
+                { transform: "translateY(-3px) scaleX(-1)" },
+                { transform: "translateY(-1px) scaleX(-1)" },
               ],
               { duration: 1100, iterations: Infinity, easing: "ease-in-out" },
             );

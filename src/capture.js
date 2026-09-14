@@ -290,10 +290,12 @@
     Object.assign(row.style, {
       display: "flex",
       alignItems: "center",
+      height: "34px",
       gap: "10px",
     });
 
     const copy = document.createElement("div");
+    copy.setAttribute("data-pagesweep-copy", "true");
     copy.style.minWidth = "0";
     const title = document.createElement("div");
     title.setAttribute("data-pagesweep-gradient-text", "true");
