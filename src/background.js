@@ -37,6 +37,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return false;
   }
 
+  if (message?.type === "capture-complete") {
+    if (!activeCapture || sender.tab?.id !== activeCapture.tabId || !message.captureDetails) {
+      sendResponse({ ok: false, error: "Capture completion did not match the active session." });
+      return false;
+    }
+    activeCapture.captureDetails = message.captureDetails;
+    sendResponse({ ok: true });
+    return false;
+  }
+
   if (message?.type !== "capture-visible-frame") {
     return false;
   }
@@ -93,9 +103,10 @@ chrome.action.onClicked.addListener(async (tab) => {
         `The page capture script failed: ${formatUnknownValue(injectionResult.error)}`,
       );
     }
-    if (!injectionResult?.result) {
+    const returnedCaptureDetails = injectionResult?.result || activeCapture.captureDetails;
+    if (!returnedCaptureDetails) {
       throw new Error(
-        `The page capture script did not return completion details after capturing ${capturedFrames.length} frame${capturedFrames.length === 1 ? "" : "s"}.`,
+        `The page capture script did not deliver completion details after capturing ${capturedFrames.length} frame${capturedFrames.length === 1 ? "" : "s"}.`,
       );
     }
     if (capturedFrames.length === 0) {
@@ -103,7 +114,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     }
 
     const captureDetails = {
-      ...injectionResult.result,
+      ...returnedCaptureDetails,
       framesStoredInMemory: capturedFrames.length,
     };
     activeCapture.captureDetails = captureDetails;

@@ -9,6 +9,7 @@ Toolbar click
 Background service worker
     |-- injects page capture logic
     |-- receives one frame request at a time
+    |-- receives explicit capture-completion details
     |-- calls captureVisibleTab
     |-- coordinates stitching and download
     |
@@ -16,7 +17,8 @@ Background service worker
     |      |-- measures a finite document boundary
     |      |-- records original scroll state
     |      |-- scrolls and requests frames
-    |      `-- restores the original position and styles
+    |      |-- restores the original position and styles
+    |      `-- sends completion details through runtime messaging
     |
     `--> Offscreen stitch document
            |-- receives and draws frames individually
@@ -44,7 +46,7 @@ The manifest also registers `about.html` as the extension's options page. The ba
 
 ### `src/background.js`
 
-Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, reads PNG dimensions, animates the toolbar action and progress badge, controls the offscreen stitch session, downloads the result, and logs failures by stage. After successful captures it updates a local counter and may display the beta feedback invitation. Its final cleanup clears frame memory, restores the toolbar action, removes the page overlay, and closes temporary documents even after an earlier operation fails.
+Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, receives explicit page-capture completion details with the injected-script result retained as a fallback, reads PNG dimensions, animates the toolbar action and progress badge, controls the offscreen stitch session, downloads the result, and logs failures by stage. After successful captures it updates a local counter and may display the beta feedback invitation. Its final cleanup clears frame memory, restores the toolbar action, removes the page overlay, and closes temporary documents even after an earlier operation fails.
 
 ### `src/capture.js`
 

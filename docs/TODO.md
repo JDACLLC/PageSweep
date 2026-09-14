@@ -2,6 +2,7 @@
 
 ## In Progress
 
+- Validate runtime delivery of long-page completion details when Chrome omits the injected-script result.
 - Confirm that the progress card, robot, scan beam, and transitions are absent from the exported PNG.
 
 ## Up Next

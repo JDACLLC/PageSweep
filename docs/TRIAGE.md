@@ -24,6 +24,7 @@
 | 20 | P1 | Up Next | Move the completion check outside the robot's path and hold the green completed state for 1.5–2 seconds. |
 | 21 | P2 | Up Next | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |
 | 22 | P1 | Parking Lot | Before Chrome Web Store release, remove beta wording and the automatic beta-feedback invitation and reminder schedule. |
+| 23 | P0 | In Progress | Deliver long-page completion details independently of Chrome's intermittent injected-script result so captured frames always reach stitching. |
 
 ## Notes
 
@@ -40,6 +41,7 @@
 - Item 16 remains open until the PNG from the same long-page test is visually inspected. The webpage screenshot attached to the test report documents the visible card design but does not prove whether the overlay entered the exported PNG.
 - Items 17–21 capture the first visual review of the robot progress branch. The test found that repeated hide/show cycles were conspicuous over approximately 20 frames, the dots read too literally, the robot traveled too close to the line for its booster plume to read clearly, the completion check overlapped the robot, and the compact cape silhouette resembled a tail.
 - Item 22 is a mandatory release-preparation gate. Remove beta labels from maintained product surfaces and remove the automatic post-capture beta feedback prompt, local capture counter, and reminder cadence before packaging the Chrome Web Store release. A normal user-initiated feedback link may remain if intentionally approved for the release.
+- Item 23 was identified by a PageSweep 0.1.2 Fox News retest on 2026-09-13. Chrome delivered all 20 frame messages but intermittently omitted the injected file's final result, leaving the background worker without capture geometry and preventing stitching. Version 0.1.3 sends the same completion details explicitly through runtime messaging and retains the injection result as a fallback; validation is pending on the same page.
 
 ## Parking Lot
 

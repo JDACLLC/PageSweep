@@ -26,6 +26,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Bumped the extension version to 0.1.3 for reliable long-page completion delivery.
 - Bumped the extension version to 0.1.2 for the robot-progress and long-page termination test build.
 - Revised the beta invitation copy and reminder cadence to prompt at successful-capture totals 3, 9, 18, 30, and 45 before stopping automatically.
 - Reworded capture completion as **Download started** so the status remains accurate for default folders, custom download locations, and save-location prompts.
@@ -40,6 +41,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Fixed
 
+- Delivered page-capture completion details through runtime messaging, with the injected-script return retained as a fallback, so long captures can proceed to stitching when Chrome omits the file-injection result.
 - Kept reachable-end trimming separate from lazy-load boundary growth in capture diagnostics and stopped displaying an unattempted final frame while confirming the page endpoint.
 - Treat a page that has already scrolled through multiple frames and can no longer advance as having reached its browser-accessible end, preventing duplicate final frames and allowing the captured frames to proceed to stitching.
 - Preserve injected page-script failures instead of replacing them with a misleading claim that captured frames were unusable.

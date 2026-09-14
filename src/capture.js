@@ -200,7 +200,7 @@
 
   const observedBoundaryHeight = Math.min(maximumObservedHeight, maximumCaptureBoundary);
 
-  return {
+  const captureDetails = {
     ...measurements,
     documentHeight: captureBoundaryHeight,
     initialDocumentHeight,
@@ -220,6 +220,26 @@
     restoredScrollX: window.scrollX,
     restoredScrollY: window.scrollY,
   };
+
+  try {
+    const completionResponse = await chrome.runtime.sendMessage({
+      type: "capture-complete",
+      captureDetails,
+    });
+    if (!completionResponse?.ok) {
+      console.warn(
+        "PageSweep could not confirm capture completion through runtime messaging.",
+        completionResponse?.error,
+      );
+    }
+  } catch (error) {
+    console.warn(
+      "PageSweep could not deliver capture completion through runtime messaging; using the injected-script result fallback.",
+      error,
+    );
+  }
+
+  return captureDetails;
 
   function getDocumentHeight() {
     return Math.max(
