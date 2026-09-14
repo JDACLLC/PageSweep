@@ -55,8 +55,10 @@
 
   let captureCount = 0;
   let targetY = 0;
+  let lastCapturedScrollY = null;
   const maximumCaptureCount = Math.ceil(maximumCaptureBoundary / window.innerHeight) + 2;
   let pageCaptureCompleted = false;
+  let reachedCaptureBoundary = false;
 
   try {
     documentElement.style.setProperty("scroll-behavior", "auto", "important");
@@ -71,6 +73,7 @@
       const estimatedCaptureCount = Math.max(
         1,
         Math.ceil(captureBoundaryHeight / window.innerHeight),
+        captureCount + 1,
       );
       progressOverlay.update(
         `Capturing ${captureCount + 1} of ${estimatedCaptureCount}`,
@@ -89,6 +92,21 @@
         captureBoundaryHeight,
         Math.min(observedHeight, maximumCaptureBoundary),
       );
+
+      const actualScrollY = window.scrollY;
+      if (
+        lastCapturedScrollY !== null
+        && actualScrollY <= lastCapturedScrollY + 1
+      ) {
+        const capturedThroughY = lastCapturedScrollY + window.innerHeight;
+        if (capturedThroughY >= captureBoundaryHeight - 1) {
+          reachedCaptureBoundary = true;
+          break;
+        }
+        throw new Error(
+          `The page stopped scrolling at ${actualScrollY}px before the ${captureBoundaryHeight}px capture boundary.`,
+        );
+      }
 
       suppressPreviouslyCapturedRepeatElements();
       await waitForStylePaint();
@@ -113,18 +131,27 @@
 
       recordVisibleRepeatElements();
       captureCount += 1;
+      lastCapturedScrollY = actualScrollY;
 
       const maximumScrollY = Math.max(0, captureBoundaryHeight - window.innerHeight);
-      if (window.scrollY >= maximumScrollY - 0.5) {
+      if (maximumScrollY - actualScrollY <= 1) {
+        reachedCaptureBoundary = true;
         break;
       }
 
-      const nextTargetY = Math.min(window.scrollY + window.innerHeight, maximumScrollY);
-      if (nextTargetY <= window.scrollY + 0.5) {
-        break;
+      const nextTargetY = Math.min(actualScrollY + window.innerHeight, maximumScrollY);
+      if (nextTargetY <= actualScrollY + 1) {
+        throw new Error(
+          `PageSweep could not advance beyond ${actualScrollY}px toward the ${captureBoundaryHeight}px capture boundary.`,
+        );
       }
 
       targetY = nextTargetY;
+    }
+    if (!reachedCaptureBoundary) {
+      throw new Error(
+        `PageSweep reached its ${maximumCaptureCount}-frame safety limit before the page boundary.`,
+      );
     }
     pageCaptureCompleted = true;
     progressOverlay.update("Preparing your PNG…", 100);

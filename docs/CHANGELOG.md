@@ -39,6 +39,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Fixed
 
+- Prevented final-position scroll rounding from capturing the same viewport repeatedly, overrunning the displayed capture total, and sending duplicate frames into stitching.
 - Offscreen stitching now supports browsers without `runtime.getContexts()` through the documented service-worker client fallback, and locks document creation to prevent concurrent setup attempts.
 - Capture frames now wait for the progress overlay to be hidden and repainted so PageSweep's own interface is excluded from downloaded PNGs.
 - Allowed explicitly user-triggered capture of local `file:` test pages when Chrome's file-URL access toggle is enabled.
