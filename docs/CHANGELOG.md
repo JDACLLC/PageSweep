@@ -26,6 +26,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Bumped the extension version to 0.1.5, added a gentle progress-driven flight path from lower-left to upper-right, moved the completion check beside the status text, and extended the completed-state hold to 1.7 seconds.
 - Bumped the extension version to 0.1.4 and replaced the dotted progress treatment with a clean illuminated scan track.
 - Bumped the extension version to 0.1.3 for reliable long-page completion delivery.
 - Bumped the extension version to 0.1.2 for the robot-progress and long-page termination test build.

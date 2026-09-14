@@ -21,7 +21,7 @@
 | 17 | P1 | Up Next | Reduce the obvious repeated disappearance and return of the in-page progress card during long captures. |
 | 18 | P1 | Complete | Replace the dotted progress treatment with one clean illuminated scan path. |
 | 19 | P1 | In Progress | Move the robot above the scan path and add a gentle varied vertical flight path without backward movement. |
-| 20 | P1 | Up Next | Move the completion check outside the robot's path and hold the green completed state for 1.5–2 seconds. |
+| 20 | P1 | In Progress | Move the completion check outside the robot's path and hold the green completed state for 1.5–2 seconds. |
 | 21 | P2 | Up Next | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |
 | 22 | P1 | Parking Lot | Before Chrome Web Store release, remove beta wording and the automatic beta-feedback invitation and reminder schedule. |
 | 23 | P0 | Complete | Deliver long-page completion details independently of Chrome's intermittent injected-script result so captured frames always reach stitching. |

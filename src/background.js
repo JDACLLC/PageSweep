@@ -171,7 +171,7 @@ chrome.action.onClicked.addListener(async (tab) => {
         100,
         "complete",
       );
-      await delay(900);
+      await delay(1700);
     } finally {
       await releaseStitchedImage();
     }

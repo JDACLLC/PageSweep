@@ -3,10 +3,10 @@
 ## In Progress
 
 - Give the robot more vertical flight room and a gentle varied path while preserving forward-only progress.
+- Move the completion check away from the robot and hold the completed state for 1.5–2 seconds.
 
 ## Up Next
 
-- Move the completion check away from the robot and hold the completed state for 1.5–2 seconds.
 - Reduce the repeated hide/show effect during long captures without allowing PageSweep UI into captured frames.
 - Refine the mascot cape at small sizes after capture behavior and layout are stable.
 - Run a small friend beta through the public GitHub repository before Chrome Web Store packaging.

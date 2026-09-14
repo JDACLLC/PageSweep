@@ -290,6 +290,7 @@
     Object.assign(row.style, {
       display: "flex",
       alignItems: "center",
+      justifyContent: "space-between",
       gap: "10px",
     });
 
@@ -347,7 +348,7 @@
     scene.setAttribute("data-pagesweep-scene", "true");
     Object.assign(scene.style, {
       position: "relative",
-      height: "58px",
+      height: "76px",
       marginTop: "7px",
     });
 
@@ -379,13 +380,13 @@
     robotPosition.setAttribute("data-pagesweep-robot-position", "true");
     Object.assign(robotPosition.style, {
       position: "absolute",
-      top: "0",
+      top: "16px",
       left: "3%",
       width: "56px",
       height: "50px",
       transform: "translateX(-3%)",
-      transition: "left 260ms cubic-bezier(0.22, 1, 0.36, 1), transform 260ms cubic-bezier(0.22, 1, 0.36, 1)",
-      willChange: "left, transform",
+      transition: "left 320ms cubic-bezier(0.22, 1, 0.36, 1), top 420ms cubic-bezier(0.22, 1, 0.36, 1), transform 320ms cubic-bezier(0.22, 1, 0.36, 1)",
+      willChange: "left, top, transform",
     });
 
     const plume = document.createElement("img");
@@ -437,13 +438,11 @@
     completeBadge.setAttribute("data-pagesweep-complete-badge", "true");
     completeBadge.textContent = "✓";
     Object.assign(completeBadge.style, {
-      position: "absolute",
-      right: "1px",
-      top: "5px",
       display: "grid",
       placeItems: "center",
       width: "22px",
       height: "22px",
+      flex: "0 0 22px",
       borderRadius: "50%",
       background: "#18A66F",
       boxShadow: "0 0 0 3px rgba(52, 211, 153, 0.16), 0 4px 12px rgba(3, 80, 55, 0.32)",
@@ -456,7 +455,8 @@
     });
 
     robotPosition.append(plume, scanBeam, robotVisual);
-    scene.append(track, robotPosition, completeBadge);
+    row.append(completeBadge);
+    scene.append(track, robotPosition);
     card.append(row, scene);
     shadow.appendChild(card);
     (document.body || documentElement).appendChild(host);
@@ -491,6 +491,29 @@
     let displayedProgress = 3;
     let capturePulseAnimation = null;
 
+    function getFlightTop(progressPercent) {
+      const progress = progressPercent / 100;
+      const waypoints = [
+        [0, 16],
+        [0.24, 11],
+        [0.5, 13],
+        [0.76, 7],
+        [1, 3],
+      ];
+
+      for (let index = 1; index < waypoints.length; index += 1) {
+        const [nextProgress, nextTop] = waypoints[index];
+        if (progress <= nextProgress) {
+          const [previousProgress, previousTop] = waypoints[index - 1];
+          const segmentProgress = (progress - previousProgress) / (nextProgress - previousProgress);
+          const easedProgress = segmentProgress * segmentProgress * (3 - 2 * segmentProgress);
+          return previousTop + ((nextTop - previousTop) * easedProgress);
+        }
+      }
+
+      return waypoints.at(-1)[1];
+    }
+
     return {
       async hide() {
         if (!reducedMotion) {
@@ -524,6 +547,7 @@
         );
         bar.style.width = `${displayedProgress}%`;
         robotPosition.style.left = `${displayedProgress}%`;
+        robotPosition.style.top = `${getFlightTop(displayedProgress)}px`;
         robotPosition.style.transform = `translateX(-${displayedProgress}%)`;
       },
       remove() {
