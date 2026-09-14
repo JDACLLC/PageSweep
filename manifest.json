@@ -31,5 +31,14 @@
   "options_ui": {
     "page": "about.html",
     "open_in_tab": true
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/progress/pagesweep-robot-body.png",
+        "icons/progress/pagesweep-plume.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

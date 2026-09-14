@@ -451,7 +451,10 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
         const gradientTextElements = shadow.querySelectorAll("[data-pagesweep-gradient-text]");
         const barElement = shadow.querySelector("[data-pagesweep-bar]");
         const cardElement = shadow.querySelector("[data-pagesweep-card]");
-        const iconElement = shadow.querySelector("[data-pagesweep-icon]");
+        const robotElement = shadow.querySelector("[data-pagesweep-robot]");
+        const plumeElement = shadow.querySelector("[data-pagesweep-plume]");
+        const scanBeamElement = shadow.querySelector("[data-pagesweep-scan-beam]");
+        const completeBadgeElement = shadow.querySelector("[data-pagesweep-complete-badge]");
         if (statusElement) statusElement.textContent = nextStatus;
         if (barElement) {
           barElement.style.width = `${nextProgress}%`;
@@ -468,10 +471,31 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
             textElement.style.color = "#86EFAC";
           });
         }
-        if (iconElement && nextState === "complete") {
-          iconElement.getAnimations().forEach((animation) => animation.cancel());
-          iconElement.textContent = "✓";
-          iconElement.style.background = "#18A66F";
+        if (nextState === "complete") {
+          if (robotElement) {
+            robotElement.getAnimations().forEach((animation) => animation.cancel());
+            robotElement.animate(
+              [
+                { transform: "translateY(-1px)" },
+                { transform: "translateY(-3px)" },
+                { transform: "translateY(-1px)" },
+              ],
+              { duration: 1100, iterations: Infinity, easing: "ease-in-out" },
+            );
+          }
+          if (plumeElement) {
+            plumeElement.getAnimations().forEach((animation) => animation.cancel());
+            plumeElement.style.opacity = "0.42";
+            plumeElement.style.transform = "scaleY(0.78)";
+          }
+          if (scanBeamElement) {
+            scanBeamElement.getAnimations().forEach((animation) => animation.cancel());
+            scanBeamElement.style.opacity = "0";
+          }
+          if (completeBadgeElement) {
+            completeBadgeElement.style.opacity = "1";
+            completeBadgeElement.style.transform = "scale(1)";
+          }
         }
       },
       args: [status, progressPercent, state],

@@ -214,7 +214,7 @@
     card.setAttribute("data-pagesweep-card", "true");
     Object.assign(card.style, {
       boxSizing: "border-box",
-      width: "236px",
+      width: "276px",
       padding: "12px 14px 11px",
       border: "1px solid rgba(255, 255, 255, 0.22)",
       borderRadius: "14px",
@@ -230,31 +230,6 @@
       alignItems: "center",
       gap: "10px",
     });
-
-    const icon = document.createElement("div");
-    icon.setAttribute("data-pagesweep-icon", "true");
-    Object.assign(icon.style, {
-      display: "grid",
-      placeItems: "center",
-      width: "30px",
-      height: "30px",
-      flex: "0 0 30px",
-      borderRadius: "8px",
-      background: "#185ADB",
-      color: "#FFFFFF",
-      fontSize: "22px",
-      fontWeight: "800",
-      lineHeight: "1",
-    });
-    icon.textContent = "↓";
-    icon.animate(
-      [
-        { transform: "translateY(-2px)" },
-        { transform: "translateY(3px)" },
-        { transform: "translateY(-2px)" },
-      ],
-      { duration: 850, iterations: Infinity, easing: "ease-in-out" },
-    );
 
     const copy = document.createElement("div");
     copy.style.minWidth = "0";
@@ -304,15 +279,29 @@
       }
     }
     copy.append(title, status);
-    row.append(icon, copy);
+    row.append(copy);
+
+    const scene = document.createElement("div");
+    scene.setAttribute("data-pagesweep-scene", "true");
+    Object.assign(scene.style, {
+      position: "relative",
+      height: "58px",
+      marginTop: "7px",
+    });
 
     const track = document.createElement("div");
     Object.assign(track.style, {
-      height: "4px",
-      marginTop: "10px",
+      position: "absolute",
+      right: "2px",
+      bottom: "3px",
+      left: "2px",
+      height: "5px",
       overflow: "hidden",
       borderRadius: "999px",
-      background: "rgba(255, 255, 255, 0.18)",
+      backgroundColor: "rgba(255, 255, 255, 0.10)",
+      backgroundImage: "radial-gradient(circle, rgba(255, 255, 255, 0.42) 1.3px, transparent 1.5px)",
+      backgroundPosition: "0 50%",
+      backgroundSize: "13px 5px",
     });
     const bar = document.createElement("div");
     bar.setAttribute("data-pagesweep-bar", "true");
@@ -320,32 +309,162 @@
       width: "3%",
       height: "100%",
       borderRadius: "inherit",
-      background: "#25C7F7",
+      background: "linear-gradient(90deg, #25C7F7 0%, #818CF8 58%, #A78BFA 100%)",
+      boxShadow: "0 0 10px rgba(129, 140, 248, 0.72)",
       transition: "width 180ms ease-out, background-color 180ms ease-out",
     });
     track.appendChild(bar);
-    card.append(row, track);
+
+    const robotPosition = document.createElement("div");
+    robotPosition.setAttribute("data-pagesweep-robot-position", "true");
+    Object.assign(robotPosition.style, {
+      position: "absolute",
+      top: "0",
+      left: "3%",
+      width: "56px",
+      height: "50px",
+      transform: "translateX(-3%)",
+      transition: "left 260ms cubic-bezier(0.22, 1, 0.36, 1), transform 260ms cubic-bezier(0.22, 1, 0.36, 1)",
+      willChange: "left, transform",
+    });
+
+    const plume = document.createElement("img");
+    plume.setAttribute("data-pagesweep-plume", "true");
+    plume.alt = "";
+    plume.src = chrome.runtime.getURL("icons/progress/pagesweep-plume.png");
+    Object.assign(plume.style, {
+      position: "absolute",
+      top: "35px",
+      left: "22px",
+      width: "14px",
+      height: "9px",
+      objectFit: "fill",
+      opacity: "0.88",
+      filter: "drop-shadow(0 0 4px rgba(139, 92, 246, 0.78))",
+      transformOrigin: "50% 0%",
+    });
+
+    const scanBeam = document.createElement("div");
+    scanBeam.setAttribute("data-pagesweep-scan-beam", "true");
+    Object.assign(scanBeam.style, {
+      position: "absolute",
+      top: "34px",
+      left: "19px",
+      width: "20px",
+      height: "17px",
+      background: "linear-gradient(180deg, rgba(196, 181, 253, 0.52), rgba(37, 199, 247, 0))",
+      clipPath: "polygon(40% 0, 60% 0, 100% 100%, 0 100%)",
+      opacity: "0.68",
+      filter: "blur(0.4px)",
+    });
+
+    const robotVisual = document.createElement("img");
+    robotVisual.setAttribute("data-pagesweep-robot", "true");
+    robotVisual.alt = "";
+    robotVisual.src = chrome.runtime.getURL("icons/progress/pagesweep-robot-body.png");
+    Object.assign(robotVisual.style, {
+      position: "absolute",
+      top: "0",
+      left: "0",
+      width: "56px",
+      height: "auto",
+      filter: "drop-shadow(0 4px 7px rgba(7, 18, 43, 0.38))",
+      transform: "translateY(-1px)",
+      transformOrigin: "50% 58%",
+    });
+
+    const completeBadge = document.createElement("div");
+    completeBadge.setAttribute("data-pagesweep-complete-badge", "true");
+    completeBadge.textContent = "✓";
+    Object.assign(completeBadge.style, {
+      position: "absolute",
+      right: "1px",
+      top: "5px",
+      display: "grid",
+      placeItems: "center",
+      width: "22px",
+      height: "22px",
+      borderRadius: "50%",
+      background: "#18A66F",
+      boxShadow: "0 0 0 3px rgba(52, 211, 153, 0.16), 0 4px 12px rgba(3, 80, 55, 0.32)",
+      color: "#FFFFFF",
+      fontSize: "14px",
+      fontWeight: "800",
+      opacity: "0",
+      transform: "scale(0.72)",
+      transition: "opacity 180ms ease-out, transform 260ms cubic-bezier(0.22, 1, 0.36, 1)",
+    });
+
+    robotPosition.append(plume, scanBeam, robotVisual);
+    scene.append(track, robotPosition, completeBadge);
+    card.append(row, scene);
     shadow.appendChild(card);
     (document.body || documentElement).appendChild(host);
 
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reducedMotion) {
+      robotVisual.animate(
+        [
+          { transform: "translateY(-1px) rotate(-0.35deg)" },
+          { transform: "translateY(1.5px) rotate(0.25deg)" },
+          { transform: "translateY(-1px) rotate(-0.35deg)" },
+        ],
+        { duration: 2400, iterations: Infinity, easing: "ease-in-out" },
+      );
+      plume.animate(
+        [
+          { transform: "scaleY(0.86) scaleX(0.96)", opacity: 0.72 },
+          { transform: "scaleY(1.04) scaleX(1.02)", opacity: 0.92 },
+          { transform: "scaleY(0.86) scaleX(0.96)", opacity: 0.72 },
+        ],
+        { duration: 1500, iterations: Infinity, easing: "ease-in-out" },
+      );
+      scanBeam.animate(
+        [{ opacity: 0.5 }, { opacity: 0.76 }, { opacity: 0.5 }],
+        { duration: 1900, iterations: Infinity, easing: "ease-in-out" },
+      );
+    } else {
+      robotPosition.style.transition = "none";
+      completeBadge.style.transition = "none";
+    }
+
+    let displayedProgress = 3;
+    let capturePulseAnimation = null;
+
     return {
       async hide() {
-        host.style.setProperty("transition", "opacity 120ms ease-out", "important");
+        if (!reducedMotion) {
+          capturePulseAnimation?.cancel();
+          capturePulseAnimation = scanBeam.animate(
+            [{ opacity: 0.58 }, { opacity: 0.96 }],
+            { duration: 55, fill: "forwards", easing: "ease-out" },
+          );
+          await delay(55);
+        }
+        host.style.setProperty("transition", "opacity 85ms ease-out", "important");
         host.style.setProperty("opacity", "0", "important");
-        await delay(130);
+        await delay(95);
         host.style.setProperty("visibility", "hidden", "important");
       },
       show() {
+        capturePulseAnimation?.cancel();
+        capturePulseAnimation = null;
         host.style.setProperty("visibility", "visible", "important");
         host.style.setProperty("opacity", "0", "important");
         requestAnimationFrame(() => {
-          host.style.setProperty("transition", "opacity 180ms ease-in", "important");
+          host.style.setProperty("transition", "opacity 125ms ease-in", "important");
           host.style.setProperty("opacity", "1", "important");
         });
       },
       update(nextStatus, progressPercent) {
         status.textContent = nextStatus;
-        bar.style.width = `${Math.max(3, Math.min(100, progressPercent))}%`;
+        displayedProgress = Math.max(
+          displayedProgress,
+          Math.max(3, Math.min(100, progressPercent)),
+        );
+        bar.style.width = `${displayedProgress}%`;
+        robotPosition.style.left = `${displayedProgress}%`;
+        robotPosition.style.transform = `translateX(-${displayedProgress}%)`;
       },
       remove() {
         host.remove();
