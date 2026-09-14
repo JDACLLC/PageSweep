@@ -18,8 +18,8 @@
 | 14 | P0 | Complete | Stop long-page capture when scrolling no longer advances and prevent duplicate final frames from reaching stitching. |
 | 15 | P0 | Complete | Prevent capture status from displaying a current frame number greater than its estimated total. |
 | 16 | P0 | Complete | Verify that the robot, progress card, scan beam, and capture transition remain absent from exported PNGs. |
-| 17 | P1 | In Progress | Reduce the obvious repeated disappearance and return of the in-page progress card during long captures. |
-| 18 | P1 | Up Next | Replace the dotted progress treatment with one clean illuminated scan path. |
+| 17 | P1 | Up Next | Reduce the obvious repeated disappearance and return of the in-page progress card during long captures. |
+| 18 | P1 | In Progress | Replace the dotted progress treatment with one clean illuminated scan path. |
 | 19 | P1 | Up Next | Move the robot above the scan path and add a gentle varied vertical flight path without backward movement. |
 | 20 | P1 | Up Next | Move the completion check outside the robot's path and hold the green completed state for 1.5–2 seconds. |
 | 21 | P2 | Up Next | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |

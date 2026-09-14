@@ -26,6 +26,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Bumped the extension version to 0.1.4 and replaced the dotted progress treatment with a clean illuminated scan track.
 - Bumped the extension version to 0.1.3 for reliable long-page completion delivery.
 - Bumped the extension version to 0.1.2 for the robot-progress and long-page termination test build.
 - Revised the beta invitation copy and reminder cadence to prompt at successful-capture totals 3, 9, 18, 30, and 45 before stopping automatically.

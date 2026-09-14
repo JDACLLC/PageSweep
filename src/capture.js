@@ -360,10 +360,8 @@
       height: "5px",
       overflow: "hidden",
       borderRadius: "999px",
-      backgroundColor: "rgba(255, 255, 255, 0.10)",
-      backgroundImage: "radial-gradient(circle, rgba(255, 255, 255, 0.42) 1.3px, transparent 1.5px)",
-      backgroundPosition: "0 50%",
-      backgroundSize: "13px 5px",
+      background: "rgba(255, 255, 255, 0.14)",
+      boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.05)",
     });
     const bar = document.createElement("div");
     bar.setAttribute("data-pagesweep-bar", "true");
