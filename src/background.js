@@ -88,15 +88,25 @@ chrome.action.onClicked.addListener(async (tab) => {
     });
 
     const capturedFrames = activeCapture.frames;
+    if (injectionResult?.error) {
+      throw new Error(
+        `The page capture script failed: ${formatUnknownValue(injectionResult.error)}`,
+      );
+    }
+    if (!injectionResult?.result) {
+      throw new Error(
+        `The page capture script did not return completion details after capturing ${capturedFrames.length} frame${capturedFrames.length === 1 ? "" : "s"}.`,
+      );
+    }
+    if (capturedFrames.length === 0) {
+      throw new Error("Page capture returned no frames.");
+    }
+
     const captureDetails = {
       ...injectionResult.result,
       framesStoredInMemory: capturedFrames.length,
     };
     activeCapture.captureDetails = captureDetails;
-
-    if (!injectionResult?.result || capturedFrames.length === 0) {
-      throw new Error("Page capture returned no usable frames.");
-    }
 
     console.log("PageSweep multi-frame capture complete", captureDetails);
 

@@ -59,6 +59,7 @@
   const maximumCaptureCount = Math.ceil(maximumCaptureBoundary / window.innerHeight) + 2;
   let pageCaptureCompleted = false;
   let reachedCaptureBoundary = false;
+  let boundaryAdjustedToReachableEnd = false;
 
   try {
     documentElement.style.setProperty("scroll-behavior", "auto", "important");
@@ -99,7 +100,9 @@
         && actualScrollY <= lastCapturedScrollY + 1
       ) {
         const capturedThroughY = lastCapturedScrollY + window.innerHeight;
-        if (capturedThroughY >= captureBoundaryHeight - 1) {
+        if (lastCapturedScrollY > 0) {
+          captureBoundaryHeight = Math.min(captureBoundaryHeight, capturedThroughY);
+          boundaryAdjustedToReachableEnd = true;
           reachedCaptureBoundary = true;
           break;
         }
@@ -196,6 +199,7 @@
     maximumObservedHeight,
     boundaryGrowth: captureBoundaryHeight - initialDocumentHeight,
     boundaryGrowthWasCapped: maximumObservedHeight > maximumCaptureBoundary,
+    boundaryAdjustedToReachableEnd,
     stabilizationTimeouts,
     captureCount,
     fixedAndStickyElementsFound: repeatElements.length,
