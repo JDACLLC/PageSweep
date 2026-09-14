@@ -133,6 +133,7 @@
       try {
         response = await chrome.runtime.sendMessage({
           type: "capture-visible-frame",
+          status: `Capturing ${captureCount + 1} of ${estimatedCaptureCount}`,
           expectedY: targetY,
           scrollY: window.scrollY,
           progressPercent: Math.min(99, ((captureCount + 1) / estimatedCaptureCount) * 100),
@@ -267,6 +268,15 @@
   }
 
   function createProgressOverlay() {
+    return {
+      async hide() {},
+      show() {},
+      update() {},
+      remove() {},
+    };
+  }
+
+  function createInPageProgressOverlay() {
     document.querySelector("[data-pagesweep-progress]")?.remove();
     document.querySelector("[data-pagesweep-feedback]")?.remove();
 

@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Measure the existing progress-card hidden interval on one short page and the approximately 20-frame Fox News page before changing transition timing.
+- Validate that the browser-owned popup remains open and updates throughout short- and long-page captures without appearing in exported PNGs.
 
 ## Up Next
 

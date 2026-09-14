@@ -30,6 +30,17 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type === "start-popup-capture") {
+    chrome.tabs.query({ active: true, currentWindow: true })
+      .then(([tab]) => {
+        if (!tab) throw new Error("PageSweep could not identify the active tab.");
+        runCapture(tab);
+        sendResponse({ ok: true });
+      })
+      .catch((error) => sendResponse({ ok: false, error: error.message }));
+    return true;
+  }
+
   if (message?.type === "beta-feedback-choice") {
     handleBetaFeedbackChoice(message.choice).catch((error) => {
       console.warn("PageSweep could not save the feedback preference.", error);
@@ -58,7 +69,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true;
 });
 
-chrome.action.onClicked.addListener(async (tab) => {
+async function runCapture(tab) {
   console.log("PageSweep triggered", {
     tabId: tab.id,
     url: tab.url,
@@ -225,7 +236,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     }
     activeCapture = null;
   }
-});
+}
 
 async function recordSuccessfulCaptureAndMaybePrompt(tabId) {
   try {
@@ -381,6 +392,10 @@ async function captureVisibleFrame(message, sender) {
     throw new Error("Received a frame request without a matching capture session.");
   }
 
+  broadcastPopupProgress(
+    message.status || `Capturing ${activeCapture.frames.length + 1}`,
+    message.progressPercent,
+  );
   const captureApiStartedAt = performance.now();
   const dataUrl = await chrome.tabs.captureVisibleTab(activeCapture.windowId, {
     format: "png",
@@ -468,6 +483,7 @@ async function finishToolbarProgress(tabId, succeeded, failureMessage) {
 }
 
 async function setPageProgressStatus(tabId, status, progressPercent, state = "working") {
+  broadcastPopupProgress(status, progressPercent, state);
   try {
     await chrome.scripting.executeScript({
       target: { tabId },
@@ -548,6 +564,15 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
   } catch {
     // The tab may have navigated or closed after capture; toolbar state still reports the result.
   }
+}
+
+function broadcastPopupProgress(status, progressPercent, state = "working") {
+  chrome.runtime.sendMessage({
+    type: "popup-progress",
+    status,
+    progressPercent,
+    state,
+  }).catch(() => undefined);
 }
 
 async function removePageProgress(tabId) {

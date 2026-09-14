@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Added
 
+- Added a browser-owned toolbar-popup prototype that carries the mascot progress card outside captured webpage pixels.
 - Added baseline progress-card visibility diagnostics with per-frame and aggregate measurements for hide preparation, hidden repaint, Chrome capture, and return-fade timing.
 - Failure diagnostics now report the PageSweep version, browser version and user-agent details, operating system and architecture, and relevant Chrome API availability.
 - Capture completion now identifies **Full resolution** or **Reduced to fit Chrome limits**, while console diagnostics report source scale, output scale, final dimensions, and whether downscaling occurred.
@@ -27,6 +28,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Bumped the extension version to 0.1.12 for the isolated popup-progress experiment; the in-page card is disabled on this branch while the approved 0.1.10 milestone remains preserved.
 - Bumped the extension version to 0.1.11 for the measurement-only flashing baseline; capture transitions remain unchanged.
 - Bumped the extension version to 0.1.10 and raised the completion check by 8 pixels to balance its clearance between the mascot and progress track.
 - Bumped the extension version to 0.1.9, protected the mascot's upper-right destination with an end-state-only two-line text boundary, and flipped the mascot at completion so it faces the success message while hovering.
