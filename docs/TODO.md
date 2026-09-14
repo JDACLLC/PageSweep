@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Visually validate the expanded mascot climb into the upper-right with the completion check moved above the end of the progress track.
+- Visually validate the raised mascot starting position and plume clearance above the progress track.
 - Move the completion check away from the robot and hold the completed state for 1.5–2 seconds.
 
 ## Up Next

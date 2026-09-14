@@ -26,6 +26,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Bumped the extension version to 0.1.8 and raised the mascot's starting flight path by 12 pixels so the robot and booster plume begin visibly above the progress track.
 - Bumped the extension version to 0.1.7, moved the completion check to the lower-right above the progress track, and extended the mascot's climb into the freed upper-right area without increasing the card height.
 - Synchronized the user guide, architecture, smoke-test protocol, decision log, TODO, and triage records with the approved PageSweep 0.1.6 mascot motion.
 - Bumped the extension version to 0.1.6 and revised the mascot path to use the existing card height for a continuous, more visible ascent throughout capture.

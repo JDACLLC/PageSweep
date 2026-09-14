@@ -50,6 +50,7 @@
 - PageSweep 0.1.5 visual testing found that the mascot used too little of the available vertical space: its small early rise and middle dip made most of the ascent appear during the final 15–20 percent. Version 0.1.6 keeps the 76-pixel scene and changes the path to a continuous 22-pixel ascent with varied easing across the full capture.
 - Item 19 passed short- and long-page visual review in PageSweep 0.1.6 on 2026-09-13. The mascot rises throughout the capture while its separate bob-and-rotation animation preserves the approved hovering character.
 - PageSweep 0.1.7 moves the completion check to the lower-right above the track and lets the mascot finish in the open upper-right area. This uses substantially more vertical travel while retaining the existing card height and independent hover motion; visual review remains pending.
+- PageSweep 0.1.7 long-page review approved the expanded ascent, upper-right destination, hover motion, and clean exported PNG, but found the mascot began directly against the track. Version 0.1.8 raises the entire early path by 12 pixels while preserving the approved endpoint; plume artwork remains unchanged so clearance can be evaluated independently.
 
 ## Parking Lot
 
