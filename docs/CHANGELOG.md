@@ -27,7 +27,6 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
-- Bumped the extension version to 0.1.12, reduced measured hide preparation from roughly 152–155 milliseconds toward a 45-millisecond target by overlapping the scan pulse and fade-out, and shortened the return fade from 125 to 80 milliseconds while retaining the hidden repaint.
 - Bumped the extension version to 0.1.11 for the measurement-only flashing baseline; capture transitions remain unchanged.
 - Bumped the extension version to 0.1.10 and raised the completion check by 8 pixels to balance its clearance between the mascot and progress track.
 - Bumped the extension version to 0.1.9, protected the mascot's upper-right destination with an end-state-only two-line text boundary, and flipped the mascot at completion so it faces the success message while hovering.

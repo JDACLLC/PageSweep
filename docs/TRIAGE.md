@@ -55,7 +55,6 @@
 - PageSweep 0.1.8 long-page review approved the raised starting position, visible plume, expanded ascent, hover motion, and clean exported PNG. Items 19 and 20 are complete. Version 0.1.9 reserves a 170-pixel, two-line completion-copy region on the left without changing header height, and flips only the mascot artwork when the green state begins so it faces the message without flying backward.
 - PageSweep 0.1.10 raises the completion check by 8 pixels. Its outer ring now has approximately 6 pixels of clearance from the mascot's lower glow and 10 pixels from the progress track; visual review remains pending.
 - PageSweep 0.1.10 visual review approved the protected completion copy, mascot-facing direction, raised check spacing, and overall completed card. Item 25 is complete. Version 0.1.11 adds measurement-only diagnostics for item 17 without changing any hide or show transition values.
-- PageSweep 0.1.11 baselines recorded hide preparation at 152.0 milliseconds average on the short test and 155.3 milliseconds on the 20-frame Fox News test. Total time until the return fade averaged 695.9 and 608.3 milliseconds respectively; Chrome's capture API accounted for 516.3 and 411.4 milliseconds. Version 0.1.12 overlaps the pulse and fade-out with a 45-millisecond hide target, retains the hidden repaint, and shortens the return fade to 80 milliseconds for controlled comparison.
 
 ## Parking Lot
 

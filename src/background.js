@@ -122,7 +122,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     console.log("PageSweep multi-frame capture complete", captureDetails);
     if (captureDetails.progressVisibilityTiming) {
       console.log(
-        "PageSweep progress-card visibility timing",
+        "PageSweep progress-card visibility baseline",
         captureDetails.progressVisibilityTiming,
       );
     }
