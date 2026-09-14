@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Visually validate the restored animated text gradient and enlarged popup plume in PageSweep 0.2.1.
+- Visually validate the tightly framed and lower-mounted plume in PageSweep 0.2.2.
 
 ## Up Next
 
