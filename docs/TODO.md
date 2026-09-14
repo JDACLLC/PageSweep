@@ -2,7 +2,6 @@
 
 ## In Progress
 
-- Validate runtime delivery of long-page completion details when Chrome omits the injected-script result.
 - Confirm that the progress card, robot, scan beam, and transitions are absent from the exported PNG.
 
 ## Up Next
@@ -22,6 +21,7 @@
 
 ## Recently Done
 
+- Validate PageSweep 0.1.3 runtime delivery of completion details; a Fox News retest captured 20 frames with zero cleanup errors, stitched and downloaded the PNG, and displayed the green completion state.
 - Correct long-page termination and capture-count reporting; a 2026-09-13 Fox News retest stitched 20 unique frames, downloaded a 2,343 by 28,640 PNG, and displayed the green completion state.
 - Add the visual GitHub installation guide to the repository package and first-page instructions.
 - Add and validate the PageSweep Beta Evaluation License and private Google Forms feedback flow.
