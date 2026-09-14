@@ -1,5 +1,25 @@
 # Decision Log
 
+## Move capture progress into the toolbar popup — 2026-09-14
+
+### Context
+
+The in-page card had to disappear for every screenshot. Measurements showed Chrome's capture call dominated the hidden interval, so shorter fades did not visibly reduce flashing.
+
+### Decision
+
+Display the mascot progress card in Chrome's action popup and send it progress from the service worker. Keep the earlier in-page implementation in source as a fallback.
+
+### Alternatives
+
+- Continue shortening the in-page hide and show transitions.
+- Use Chrome's larger side panel.
+- Reconstruct webpage pixels hidden behind a continuously visible in-page card.
+
+### Consequences
+
+The card remains continuously visible without entering captured webpage pixels or changing the page viewport. Capture now starts through the popup, and closing the popup hides progress without interrupting the background capture.
+
 ## Separate mascot travel from hovering motion — 2026-09-13
 
 ### Context

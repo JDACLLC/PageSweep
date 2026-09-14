@@ -17,7 +17,7 @@ Use this checklist before declaring a capture stage complete and before a releas
 1. Open a test page and note the starting scroll position.
 2. Click the **PageSweep** toolbar icon once.
 3. Confirm the page scrolls automatically without manual input.
-4. Confirm the PageSweep overlay appears, its mascot moves forward and upward with a gentle hover, and its progress advances.
+4. Confirm the PageSweep toolbar popup remains open, its mascot moves forward and upward with a gentle hover, and its progress advances.
 5. If PageSweep is pinned, confirm its toolbar arrow and percentage badge also advance.
 6. Confirm exactly one PNG downloads.
 7. Confirm the filename follows `hostname_YYYY-MM-DD_HH-MM-SS.png`.
@@ -41,6 +41,8 @@ Use this checklist before declaring a capture stage complete and before a releas
 5. Confirm the downloaded PNG contains no PageSweep interface before accepting the baseline.
 
 Use the same pages and browser window for the optimized retest. Compare `hidePreparationMs`, `hiddenUntilFadeMs`, and `totalUntilFadeMs`; treat `captureApiMs` as Chrome-controlled time rather than transition time.
+
+**Persistent popup validation — 2026-09-14:** Passed on short and long pages. The Chrome-owned mascot card remained visible and updated throughout capture without repeated disappearance, and both captures completed successfully. Version 0.2.0 removes temporary measurement instrumentation; final clean-build regression remains pending.
 
 ## First-run guide checks
 

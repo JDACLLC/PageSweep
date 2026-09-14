@@ -18,7 +18,7 @@
 | 14 | P0 | Complete | Stop long-page capture when scrolling no longer advances and prevent duplicate final frames from reaching stitching. |
 | 15 | P0 | Complete | Prevent capture status from displaying a current frame number greater than its estimated total. |
 | 16 | P0 | Complete | Verify that the robot, progress card, scan beam, and capture transition remain absent from exported PNGs. |
-| 17 | P1 | In Progress | Reduce the obvious repeated disappearance and return of the in-page progress card during long captures. |
+| 17 | P1 | Complete | Reduce the obvious repeated disappearance and return of the in-page progress card during long captures. |
 | 18 | P1 | Complete | Replace the dotted progress treatment with one clean illuminated scan path. |
 | 19 | P1 | Complete | Move the robot above the scan path and add a gentle varied vertical flight path without backward movement. |
 | 20 | P1 | Complete | Move the completion check outside the robot's path and hold the green completed state for 1.5–2 seconds. |
@@ -55,6 +55,7 @@
 - PageSweep 0.1.8 long-page review approved the raised starting position, visible plume, expanded ascent, hover motion, and clean exported PNG. Items 19 and 20 are complete. Version 0.1.9 reserves a 170-pixel, two-line completion-copy region on the left without changing header height, and flips only the mascot artwork when the green state begins so it faces the message without flying backward.
 - PageSweep 0.1.10 raises the completion check by 8 pixels. Its outer ring now has approximately 6 pixels of clearance from the mascot's lower glow and 10 pixels from the progress track; visual review remains pending.
 - PageSweep 0.1.10 visual review approved the protected completion copy, mascot-facing direction, raised check spacing, and overall completed card. Item 25 is complete. Version 0.1.11 adds measurement-only diagnostics for item 17 without changing any hide or show transition values.
+- Timing reduction remained visually ineffective because Chrome's capture interval dominated each disappearance. The browser-owned popup remained continuously visible and completed short- and long-page captures successfully on 2026-09-14. Item 17 is complete; version 0.2.0 removes temporary instrumentation and retains the earlier in-page implementation as a source fallback.
 
 ## Parking Lot
 

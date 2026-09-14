@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Validate that the browser-owned popup remains open and updates throughout short- and long-page captures without appearing in exported PNGs.
+- Run the final PageSweep 0.2.0 short- and long-page regression after instrumentation cleanup.
 
 ## Up Next
 
@@ -18,6 +18,7 @@
 
 ## Recently Done
 
+- Replace the flashing in-page card with a persistent browser-owned popup; short- and long-page visual review passed on 2026-09-14.
 - Protect the completion copy, turn the mascot toward it, and balance the completion-check spacing; visual review passed on 2026-09-13.
 - Raise the mascot's starting position so the robot and existing booster plume visibly hover above the track; long-page visual review passed on 2026-09-13.
 - Give the robot a continuous lower-left to upper-right ascent while preserving its gentle hover; short- and long-page visual review passed on 2026-09-13.
