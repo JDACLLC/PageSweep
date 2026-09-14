@@ -71,14 +71,10 @@
     }
 
     while (captureCount < maximumCaptureCount) {
-      const estimatedCaptureCount = Math.max(
+      let estimatedCaptureCount = Math.max(
         1,
         Math.ceil(captureBoundaryHeight / window.innerHeight),
         captureCount + 1,
-      );
-      progressOverlay.update(
-        `Capturing ${captureCount + 1} of ${estimatedCaptureCount}`,
-        Math.min(95, (captureCount / estimatedCaptureCount) * 100),
       );
       window.scrollTo(originalScrollX, targetY);
       const stabilization = await waitForPageToSettle();
@@ -92,6 +88,11 @@
       captureBoundaryHeight = Math.max(
         captureBoundaryHeight,
         Math.min(observedHeight, maximumCaptureBoundary),
+      );
+      estimatedCaptureCount = Math.max(
+        1,
+        Math.ceil(captureBoundaryHeight / window.innerHeight),
+        captureCount + 1,
       );
 
       const actualScrollY = window.scrollY;
@@ -110,6 +111,11 @@
           `The page stopped scrolling at ${actualScrollY}px before the ${captureBoundaryHeight}px capture boundary.`,
         );
       }
+
+      progressOverlay.update(
+        `Capturing ${captureCount + 1} of ${estimatedCaptureCount}`,
+        Math.min(95, (captureCount / estimatedCaptureCount) * 100),
+      );
 
       suppressPreviouslyCapturedRepeatElements();
       await waitForStylePaint();
@@ -192,14 +198,19 @@
     }
   }
 
+  const observedBoundaryHeight = Math.min(maximumObservedHeight, maximumCaptureBoundary);
+
   return {
     ...measurements,
     documentHeight: captureBoundaryHeight,
     initialDocumentHeight,
     maximumObservedHeight,
-    boundaryGrowth: captureBoundaryHeight - initialDocumentHeight,
+    boundaryGrowth: Math.max(0, observedBoundaryHeight - initialDocumentHeight),
     boundaryGrowthWasCapped: maximumObservedHeight > maximumCaptureBoundary,
     boundaryAdjustedToReachableEnd,
+    reachableBoundaryAdjustment: boundaryAdjustedToReachableEnd
+      ? Math.max(0, observedBoundaryHeight - captureBoundaryHeight)
+      : 0,
     stabilizationTimeouts,
     captureCount,
     fixedAndStickyElementsFound: repeatElements.length,

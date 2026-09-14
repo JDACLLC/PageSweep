@@ -2,13 +2,10 @@
 
 ## In Progress
 
-- Correct long-page capture termination so PageSweep never stores duplicate final frames or continues beyond the usable page boundary.
-- Keep the displayed capture total internally consistent on pages whose measured height changes during capture.
+- Confirm that the progress card, robot, scan beam, and transitions are absent from the exported PNG.
 
 ## Up Next
 
-- Retest the reported 20-frame page and confirm that capture reaches stitching, downloads successfully, and holds a visible green completion state.
-- Confirm that the progress card, robot, scan beam, and transitions are absent from the exported PNG.
 - Reduce the repeated hide/show effect during long captures without allowing PageSweep UI into captured frames.
 - Remove the dotted progress treatment and retain one clean illuminated scan path.
 - Give the robot more vertical flight room and a gentle varied path while preserving forward-only progress.
@@ -24,6 +21,7 @@
 
 ## Recently Done
 
+- Correct long-page termination and capture-count reporting; a 2026-09-13 Fox News retest stitched 20 unique frames, downloaded a 2,343 by 28,640 PNG, and displayed the green completion state.
 - Add the visual GitHub installation guide to the repository package and first-page instructions.
 - Add and validate the PageSweep Beta Evaluation License and private Google Forms feedback flow.
 - Add and visually validate the one-time PageSweep welcome, limitations, privacy, and download-location guide.
