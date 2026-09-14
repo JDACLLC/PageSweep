@@ -18,7 +18,7 @@
 | 14 | P0 | Complete | Stop long-page capture when scrolling no longer advances and prevent duplicate final frames from reaching stitching. |
 | 15 | P0 | Complete | Prevent capture status from displaying a current frame number greater than its estimated total. |
 | 16 | P0 | Complete | Verify that the robot, progress card, scan beam, and capture transition remain absent from exported PNGs. |
-| 17 | P1 | Up Next | Reduce the obvious repeated disappearance and return of the in-page progress card during long captures. |
+| 17 | P1 | In Progress | Reduce the obvious repeated disappearance and return of the in-page progress card during long captures. |
 | 18 | P1 | Complete | Replace the dotted progress treatment with one clean illuminated scan path. |
 | 19 | P1 | Complete | Move the robot above the scan path and add a gentle varied vertical flight path without backward movement. |
 | 20 | P1 | Complete | Move the completion check outside the robot's path and hold the green completed state for 1.5–2 seconds. |
@@ -26,7 +26,7 @@
 | 22 | P1 | Parking Lot | Before Chrome Web Store release, remove beta wording and the automatic beta-feedback invitation and reminder schedule. |
 | 23 | P0 | Complete | Deliver long-page completion details independently of Chrome's intermittent injected-script result so captured frames always reach stitching. |
 | 24 | P3 | Parking Lot | Consider making the uncompleted portion of the clean scan track even fainter. |
-| 25 | P1 | In Progress | Protect the upper-right mascot destination from completion copy and turn the mascot to face the message in the green state. |
+| 25 | P1 | Complete | Protect the upper-right mascot destination from completion copy and turn the mascot to face the message in the green state. |
 
 ## Notes
 
@@ -54,6 +54,7 @@
 - PageSweep 0.1.7 long-page review approved the expanded ascent, upper-right destination, hover motion, and clean exported PNG, but found the mascot began directly against the track. Version 0.1.8 raises the entire early path by 12 pixels while preserving the approved endpoint; plume artwork remains unchanged so clearance can be evaluated independently.
 - PageSweep 0.1.8 long-page review approved the raised starting position, visible plume, expanded ascent, hover motion, and clean exported PNG. Items 19 and 20 are complete. Version 0.1.9 reserves a 170-pixel, two-line completion-copy region on the left without changing header height, and flips only the mascot artwork when the green state begins so it faces the message without flying backward.
 - PageSweep 0.1.10 raises the completion check by 8 pixels. Its outer ring now has approximately 6 pixels of clearance from the mascot's lower glow and 10 pixels from the progress track; visual review remains pending.
+- PageSweep 0.1.10 visual review approved the protected completion copy, mascot-facing direction, raised check spacing, and overall completed card. Item 25 is complete. Version 0.1.11 adds measurement-only diagnostics for item 17 without changing any hide or show transition values.
 
 ## Parking Lot
 

@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Added
 
+- Added baseline progress-card visibility diagnostics with per-frame and aggregate measurements for hide preparation, hidden repaint, Chrome capture, and return-fade timing.
 - Failure diagnostics now report the PageSweep version, browser version and user-agent details, operating system and architecture, and relevant Chrome API availability.
 - Capture completion now identifies **Full resolution** or **Reduced to fit Chrome limits**, while console diagnostics report source scale, output scale, final dimensions, and whether downscaling occurred.
 - A four-step visual GitHub installation guide displayed prominently in the README and user guide.
@@ -26,6 +27,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Bumped the extension version to 0.1.11 for the measurement-only flashing baseline; capture transitions remain unchanged.
 - Bumped the extension version to 0.1.10 and raised the completion check by 8 pixels to balance its clearance between the mascot and progress track.
 - Bumped the extension version to 0.1.9, protected the mascot's upper-right destination with an end-state-only two-line text boundary, and flipped the mascot at completion so it faces the success message while hovering.
 - Bumped the extension version to 0.1.8 and raised the mascot's starting flight path by 12 pixels so the robot and booster plume begin visibly above the progress track.

@@ -120,6 +120,12 @@ chrome.action.onClicked.addListener(async (tab) => {
     activeCapture.captureDetails = captureDetails;
 
     console.log("PageSweep multi-frame capture complete", captureDetails);
+    if (captureDetails.progressVisibilityTiming) {
+      console.log(
+        "PageSweep progress-card visibility baseline",
+        captureDetails.progressVisibilityTiming,
+      );
+    }
 
     activeCapture.stage = "image stitching";
     await setPageProgressStatus(tab.id, "Preparing your PNG…", 100);
@@ -375,9 +381,11 @@ async function captureVisibleFrame(message, sender) {
     throw new Error("Received a frame request without a matching capture session.");
   }
 
+  const captureApiStartedAt = performance.now();
   const dataUrl = await chrome.tabs.captureVisibleTab(activeCapture.windowId, {
     format: "png",
   });
+  const captureApiDurationMs = Math.round((performance.now() - captureApiStartedAt) * 10) / 10;
   const dimensions = readPngDimensions(dataUrl);
   const frame = {
     dataUrl,
@@ -394,6 +402,7 @@ async function captureVisibleFrame(message, sender) {
     expectedY: frame.expectedY,
     capturedWidth: frame.width,
     capturedHeight: frame.height,
+    captureApiDurationMs,
   });
 
   return {
@@ -401,6 +410,7 @@ async function captureVisibleFrame(message, sender) {
     expectedY: frame.expectedY,
     width: frame.width,
     height: frame.height,
+    captureApiDurationMs,
   };
 }
 

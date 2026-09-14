@@ -2,11 +2,11 @@
 
 ## In Progress
 
-- Visually validate the protected completion copy, mascot-facing direction, and raised completion-check spacing.
+- Measure the existing progress-card hidden interval on one short page and the approximately 20-frame Fox News page before changing transition timing.
 
 ## Up Next
 
-- Reduce the repeated hide/show effect during long captures without allowing PageSweep UI into captured frames.
+- Reduce the measured hide/show interval without allowing PageSweep UI into captured frames, then repeat the same short- and long-page tests.
 - Refine the mascot cape at small sizes after capture behavior and layout are stable.
 - Run a small friend beta through the public GitHub repository before Chrome Web Store packaging.
 - Review and triage responses submitted through the private PageSweep beta feedback form.
@@ -18,6 +18,7 @@
 
 ## Recently Done
 
+- Protect the completion copy, turn the mascot toward it, and balance the completion-check spacing; visual review passed on 2026-09-13.
 - Raise the mascot's starting position so the robot and existing booster plume visibly hover above the track; long-page visual review passed on 2026-09-13.
 - Give the robot a continuous lower-left to upper-right ascent while preserving its gentle hover; short- and long-page visual review passed on 2026-09-13.
 - Replace the dotted progress treatment with one clean illuminated scan track; visual review passed on 2026-09-13.

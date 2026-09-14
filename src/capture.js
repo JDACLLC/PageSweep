@@ -24,6 +24,7 @@
   `;
   const usesOverlayScrollbar = Math.abs(window.innerWidth - documentElement.clientWidth) < 1;
   let repeatElementSuppressions = 0;
+  const progressVisibilityTimings = [];
 
   const documentWidth = Math.max(
     documentElement.scrollWidth,
@@ -119,8 +120,14 @@
 
       suppressPreviouslyCapturedRepeatElements();
       await waitForStylePaint();
+      const visibilityTiming = {
+        frameNumber: captureCount + 1,
+        hideStartedAt: performance.now(),
+      };
       await progressOverlay.hide();
+      visibilityTiming.overlayHiddenAt = performance.now();
       await waitForStylePaint();
+      visibilityTiming.captureRequestedAt = performance.now();
 
       let response;
       try {
@@ -131,7 +138,13 @@
           progressPercent: Math.min(99, ((captureCount + 1) / estimatedCaptureCount) * 100),
         });
       } finally {
-        progressOverlay.show();
+        visibilityTiming.captureReturnedAt = performance.now();
+        visibilityTiming.showRequestedAt = visibilityTiming.captureReturnedAt;
+        visibilityTiming.captureApiMs = response?.frame?.captureApiDurationMs ?? null;
+        progressVisibilityTimings.push(visibilityTiming);
+        progressOverlay.show((fadeStartedAt) => {
+          visibilityTiming.fadeStartedAt = fadeStartedAt;
+        });
       }
 
       if (!response?.ok) {
@@ -216,6 +229,7 @@
     fixedAndStickyElementsFound: repeatElements.length,
     fixedAndStickyElementsCaptured: capturedRepeatElements.size,
     repeatElementSuppressions,
+    progressVisibilityTiming: createProgressVisibilityTimingReport(progressVisibilityTimings),
     cleanupErrors,
     restoredScrollX: window.scrollX,
     restoredScrollY: window.scrollY,
@@ -532,14 +546,16 @@
         await delay(95);
         host.style.setProperty("visibility", "hidden", "important");
       },
-      show() {
+      show(onFadeStarted) {
         capturePulseAnimation?.cancel();
         capturePulseAnimation = null;
         host.style.setProperty("visibility", "visible", "important");
         host.style.setProperty("opacity", "0", "important");
         requestAnimationFrame(() => {
+          const fadeStartedAt = performance.now();
           host.style.setProperty("transition", "opacity 125ms ease-in", "important");
           host.style.setProperty("opacity", "1", "important");
+          onFadeStarted?.(fadeStartedAt);
         });
       },
       update(nextStatus, progressPercent) {
@@ -595,6 +611,54 @@
 
   async function waitForStylePaint() {
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  }
+
+  function createProgressVisibilityTimingReport(timings) {
+    const frames = timings.map((timing) => {
+      const fadeStartedAt = timing.fadeStartedAt ?? timing.showRequestedAt;
+      return {
+        frameNumber: timing.frameNumber,
+        hidePreparationMs: roundMilliseconds(timing.overlayHiddenAt - timing.hideStartedAt),
+        hiddenRepaintMs: roundMilliseconds(timing.captureRequestedAt - timing.overlayHiddenAt),
+        captureRoundTripMs: roundMilliseconds(timing.captureReturnedAt - timing.captureRequestedAt),
+        captureApiMs: timing.captureApiMs,
+        hiddenUntilFadeMs: roundMilliseconds(fadeStartedAt - timing.overlayHiddenAt),
+        totalUntilFadeMs: roundMilliseconds(fadeStartedAt - timing.hideStartedAt),
+      };
+    });
+    const metricNames = [
+      "hidePreparationMs",
+      "hiddenRepaintMs",
+      "captureRoundTripMs",
+      "captureApiMs",
+      "hiddenUntilFadeMs",
+      "totalUntilFadeMs",
+    ];
+    const summary = {};
+
+    for (const metricName of metricNames) {
+      const values = frames
+        .map((frame) => frame[metricName])
+        .filter((value) => Number.isFinite(value));
+      summary[metricName] = values.length > 0
+        ? {
+            average: roundMilliseconds(values.reduce((total, value) => total + value, 0) / values.length),
+            maximum: roundMilliseconds(Math.max(...values)),
+          }
+        : null;
+    }
+
+    return {
+      measurementBuild: "0.1.11-baseline",
+      configuredFadeInMs: 125,
+      frameCount: frames.length,
+      summary,
+      frames,
+    };
+  }
+
+  function roundMilliseconds(value) {
+    return Math.round(value * 10) / 10;
   }
 
   async function decodeVisibleImages(timeout) {

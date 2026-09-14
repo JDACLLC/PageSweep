@@ -32,6 +32,16 @@ Use this checklist before declaring a capture stage complete and before a releas
 
 **Mascot motion validation:** Passed 2026-09-13 on short and long webpages with PageSweep 0.1.6. The mascot rose throughout capture without moving backward, and its separate subtle bob and rotation retained the approved hovering feel.
 
+## Progress-card visibility timing
+
+1. Reload the measurement build and open the service-worker console.
+2. Capture one short page and one approximately 20-frame page without switching tabs.
+3. After each capture, expand **PageSweep progress-card visibility baseline**.
+4. Record `frameCount` and the average and maximum values under `summary`.
+5. Confirm the downloaded PNG contains no PageSweep interface before accepting the baseline.
+
+Use the same pages and browser window for the optimized retest. Compare `hidePreparationMs`, `hiddenUntilFadeMs`, and `totalUntilFadeMs`; treat `captureApiMs` as Chrome-controlled time rather than transition time.
+
 ## First-run guide checks
 
 - A new installation opens the PageSweep welcome guide once.
