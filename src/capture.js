@@ -537,13 +537,12 @@
           capturePulseAnimation?.cancel();
           capturePulseAnimation = scanBeam.animate(
             [{ opacity: 0.58 }, { opacity: 0.96 }],
-            { duration: 55, fill: "forwards", easing: "ease-out" },
+            { duration: 40, fill: "forwards", easing: "ease-out" },
           );
-          await delay(55);
         }
-        host.style.setProperty("transition", "opacity 85ms ease-out", "important");
+        host.style.setProperty("transition", "opacity 40ms ease-out", "important");
         host.style.setProperty("opacity", "0", "important");
-        await delay(95);
+        await delay(45);
         host.style.setProperty("visibility", "hidden", "important");
       },
       show(onFadeStarted) {
@@ -553,7 +552,7 @@
         host.style.setProperty("opacity", "0", "important");
         requestAnimationFrame(() => {
           const fadeStartedAt = performance.now();
-          host.style.setProperty("transition", "opacity 125ms ease-in", "important");
+          host.style.setProperty("transition", "opacity 80ms ease-in", "important");
           host.style.setProperty("opacity", "1", "important");
           onFadeStarted?.(fadeStartedAt);
         });
@@ -649,8 +648,8 @@
     }
 
     return {
-      measurementBuild: "0.1.11-baseline",
-      configuredFadeInMs: 125,
+      measurementBuild: "0.1.12-optimized",
+      configuredFadeInMs: 80,
       frameCount: frames.length,
       summary,
       frames,

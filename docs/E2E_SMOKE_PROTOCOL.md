@@ -36,11 +36,13 @@ Use this checklist before declaring a capture stage complete and before a releas
 
 1. Reload the measurement build and open the service-worker console.
 2. Capture one short page and one approximately 20-frame page without switching tabs.
-3. After each capture, expand **PageSweep progress-card visibility baseline**.
+3. After each capture, expand **PageSweep progress-card visibility timing**.
 4. Record `frameCount` and the average and maximum values under `summary`.
 5. Confirm the downloaded PNG contains no PageSweep interface before accepting the baseline.
 
 Use the same pages and browser window for the optimized retest. Compare `hidePreparationMs`, `hiddenUntilFadeMs`, and `totalUntilFadeMs`; treat `captureApiMs` as Chrome-controlled time rather than transition time.
+
+**PageSweep 0.1.11 baseline — 2026-09-14:** The short test averaged 152.0 milliseconds of hide preparation and 695.9 milliseconds until the return fade; the 20-frame Fox News test averaged 155.3 milliseconds of hide preparation and 608.3 milliseconds until the return fade. Chrome capture averaged 516.3 and 411.4 milliseconds respectively. Both PNG downloads completed; optimized comparison and PNG inspection remain pending.
 
 ## First-run guide checks
 
