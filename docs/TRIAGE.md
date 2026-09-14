@@ -53,6 +53,7 @@
 - PageSweep 0.1.7 moves the completion check to the lower-right above the track and lets the mascot finish in the open upper-right area. This uses substantially more vertical travel while retaining the existing card height and independent hover motion; visual review remains pending.
 - PageSweep 0.1.7 long-page review approved the expanded ascent, upper-right destination, hover motion, and clean exported PNG, but found the mascot began directly against the track. Version 0.1.8 raises the entire early path by 12 pixels while preserving the approved endpoint; plume artwork remains unchanged so clearance can be evaluated independently.
 - PageSweep 0.1.8 long-page review approved the raised starting position, visible plume, expanded ascent, hover motion, and clean exported PNG. Items 19 and 20 are complete. Version 0.1.9 reserves a 170-pixel, two-line completion-copy region on the left without changing header height, and flips only the mascot artwork when the green state begins so it faces the message without flying backward.
+- PageSweep 0.1.10 raises the completion check by 8 pixels. Its outer ring now has approximately 6 pixels of clearance from the mascot's lower glow and 10 pixels from the progress track; visual review remains pending.
 
 ## Parking Lot
 

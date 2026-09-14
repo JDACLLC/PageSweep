@@ -67,7 +67,7 @@ Provide a temporary DOM environment for image decoding and canvas composition. F
 6. After page cleanup, the service worker opens the offscreen document.
 7. The stitcher receives frames individually and draws only each frame's unique region, ending the final frame at the fixed document boundary.
 8. The stitcher exports a PNG Blob URL.
-9. The service worker starts the download using a sanitized timestamped filename, constrains completion copy to two lines on the left, flips the mascot artwork to face that message, displays the check at the lower-right above the progress track, and holds the completed state for 1.7 seconds while the mascot hovers in the protected upper-right.
+9. The service worker starts the download using a sanitized timestamped filename, constrains completion copy to two lines on the left, flips the mascot artwork to face that message, displays the check in the lower-right space between the mascot and progress track, and holds the completed state for 1.7 seconds while the mascot hovers in the protected upper-right.
 10. The temporary Blob URL and offscreen document are released.
 
 ## Current boundaries

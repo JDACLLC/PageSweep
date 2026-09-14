@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Visually validate the protected two-line completion copy and the mascot's completion-facing direction.
+- Visually validate the protected completion copy, mascot-facing direction, and raised completion-check spacing.
 
 ## Up Next
 

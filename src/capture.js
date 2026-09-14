@@ -441,7 +441,7 @@
     Object.assign(completeBadge.style, {
       position: "absolute",
       right: "2px",
-      bottom: "13px",
+      bottom: "21px",
       display: "grid",
       placeItems: "center",
       width: "22px",
