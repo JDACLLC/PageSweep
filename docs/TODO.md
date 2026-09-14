@@ -2,11 +2,10 @@
 
 ## In Progress
 
-- Confirm that the progress card, robot, scan beam, and transitions are absent from the exported PNG.
+- Reduce the repeated hide/show effect during long captures without allowing PageSweep UI into captured frames.
 
 ## Up Next
 
-- Reduce the repeated hide/show effect during long captures without allowing PageSweep UI into captured frames.
 - Remove the dotted progress treatment and retain one clean illuminated scan path.
 - Give the robot more vertical flight room and a gentle varied path while preserving forward-only progress.
 - Move the completion check away from the robot and hold the completed state for 1.5–2 seconds.
@@ -21,6 +20,7 @@
 
 ## Recently Done
 
+- Confirm that PageSweep's progress card, robot, scan beam, and capture transitions are absent from the exported 20-frame Fox News PNG.
 - Validate PageSweep 0.1.3 runtime delivery of completion details; a Fox News retest captured 20 frames with zero cleanup errors, stitched and downloaded the PNG, and displayed the green completion state.
 - Correct long-page termination and capture-count reporting; a 2026-09-13 Fox News retest stitched 20 unique frames, downloaded a 2,343 by 28,640 PNG, and displayed the green completion state.
 - Add the visual GitHub installation guide to the repository package and first-page instructions.
