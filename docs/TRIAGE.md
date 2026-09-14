@@ -19,12 +19,13 @@
 | 15 | P0 | Complete | Prevent capture status from displaying a current frame number greater than its estimated total. |
 | 16 | P0 | Complete | Verify that the robot, progress card, scan beam, and capture transition remain absent from exported PNGs. |
 | 17 | P1 | Up Next | Reduce the obvious repeated disappearance and return of the in-page progress card during long captures. |
-| 18 | P1 | In Progress | Replace the dotted progress treatment with one clean illuminated scan path. |
-| 19 | P1 | Up Next | Move the robot above the scan path and add a gentle varied vertical flight path without backward movement. |
+| 18 | P1 | Complete | Replace the dotted progress treatment with one clean illuminated scan path. |
+| 19 | P1 | In Progress | Move the robot above the scan path and add a gentle varied vertical flight path without backward movement. |
 | 20 | P1 | Up Next | Move the completion check outside the robot's path and hold the green completed state for 1.5–2 seconds. |
 | 21 | P2 | Up Next | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |
 | 22 | P1 | Parking Lot | Before Chrome Web Store release, remove beta wording and the automatic beta-feedback invitation and reminder schedule. |
 | 23 | P0 | Complete | Deliver long-page completion details independently of Chrome's intermittent injected-script result so captured frames always reach stitching. |
+| 24 | P3 | Parking Lot | Consider making the uncompleted portion of the clean scan track even fainter. |
 
 ## Notes
 
@@ -44,6 +45,8 @@
 - Item 22 is a mandatory release-preparation gate. Remove beta labels from maintained product surfaces and remove the automatic post-capture beta feedback prompt, local capture counter, and reminder cadence before packaging the Chrome Web Store release. A normal user-initiated feedback link may remain if intentionally approved for the release.
 - Item 23 was identified by a PageSweep 0.1.2 Fox News retest on 2026-09-13. Chrome delivered all 20 frame messages but intermittently omitted the injected file's final result, leaving the background worker without capture geometry and preventing stitching. Version 0.1.3 sends the same completion details explicitly through runtime messaging and retains the injection result as a fallback.
 - Item 23 passed a PageSweep 0.1.3 Fox News retest on 2026-09-13. Runtime messaging delivered completion details after 20 captured frames, cleanup reported no errors, stitching intentionally reduced the Retina source to Chrome's safe canvas limits, the 2,347 by 28,592 PNG downloaded, and the card displayed its green completion state.
+- Item 18 passed visual review in PageSweep 0.1.4 on 2026-09-13. The dots are gone, the clean scan track reads more clearly, and the subtle completion hover was positively received.
+- Item 24 records optional polish only. Revisit the opacity of the track ahead of the robot after the flight path, plume visibility, completion-check placement, and long-capture visibility behavior are settled.
 
 ## Parking Lot
 
