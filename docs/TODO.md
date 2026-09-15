@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Prepare the approved PageSweep 0.2.3 build as the stable GitHub release on `main`.
+- Nothing currently.
 
 ## Up Next
 
@@ -17,6 +17,7 @@
 
 ## Recently Done
 
+- Consolidate the approved mascot and persistent-popup work into the stable PageSweep 0.2.3 release on `main`.
 - Approve the 25-percent larger booster plume and adjusted starting clearance in PageSweep 0.2.3; visual review passed on 2026-09-15.
 - Replace the flashing in-page card with a persistent browser-owned popup; short- and long-page visual review passed on 2026-09-14.
 - Protect the completion copy, turn the mascot toward it, and balance the completion-check spacing; visual review passed on 2026-09-13.
