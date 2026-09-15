@@ -22,7 +22,7 @@
 | 18 | P1 | Complete | Replace the dotted progress treatment with one clean illuminated scan path. |
 | 19 | P1 | Complete | Move the robot above the scan path and add a gentle varied vertical flight path without backward movement. |
 | 20 | P1 | Complete | Move the completion check outside the robot's path and hold the green completed state for 1.5–2 seconds. |
-| 21 | P2 | In Progress | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |
+| 21 | P2 | Complete | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |
 | 22 | P1 | Parking Lot | Before Chrome Web Store release, remove beta wording and the automatic beta-feedback invitation and reminder schedule. |
 | 23 | P0 | Complete | Deliver long-page completion details independently of Chrome's intermittent injected-script result so captured frames always reach stitching. |
 | 24 | P3 | Parking Lot | Consider making the uncompleted portion of the clean scan track even fainter. |
@@ -64,6 +64,7 @@
 - PageSweep 0.2.5 introduces a reversible, small-size cape refinement on its own branch and removes the redundant numeric toolbar badge during capture. The robot artwork remains unchanged outside the cape region; the cape's lower silhouette is extended by 18 percent so it remains recognizable at the popup's 56-pixel width. Visual review is pending.
 - PageSweep 0.2.6 uses a transparent crop of the approved mascot helmet and visor as the normal toolbar icon. The crop fills the available width at 16, 32, 48, and 128 pixels; the existing animated capture frames and final success or error badge remain unchanged. Visual review is pending on light and dark Chrome themes.
 - PageSweep 0.2.7 tightens the helmet crop and increases its occupied height from roughly 10 pixels to 14–15 pixels in Chrome's 16-pixel toolbar slot. This preserves transparent edges while bringing its visual weight closer to neighboring extension icons. Visual review is pending.
+- Item 21 passed visual review on 2026-09-15. PageSweep 0.2.8 replaces the toolbar's detailed helmet crop with the approved option-A robot glyph, expanded to within roughly one pixel of the 16-pixel icon edges. During capture, three toolbar-only frames pulse the purple eyes every 180 milliseconds; the popup mascot animation remains independent and unchanged. Visual review is pending.
 
 ## Parking Lot
 

@@ -6,7 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
-- Bumped the extension version to 0.2.7, added a small-size mascot variant whose cape has a broader lower silhouette, removed the redundant numeric toolbar badge during capture, and replaced the blue-tile default toolbar arrow with a tightly cropped transparent helmet-and-visor icon enlarged to match neighboring toolbar icons while retaining capture animation and the final success or error symbol.
+- Bumped the extension version to 0.2.8, completed the small-size cape refinement, removed the redundant numeric toolbar badge, and replaced the toolbar arrow and detailed helmet crop with an edge-filling transparent robot glyph whose eyes pulse through three brightness levels during capture while retaining the final success or error symbol.
 
 ## [0.2.3] — 2026-09-15
 

@@ -2,8 +2,7 @@
 
 ## In Progress
 
-- Refine the mascot cape at small sizes so it reads clearly as a cape rather than a tail; PageSweep 0.2.7 test build is ready for visual review.
-- Evaluate the enlarged transparent helmet-and-visor toolbar icon in PageSweep 0.2.7 on light and dark Chrome themes.
+- Evaluate the edge-filling robot visor glyph and its pulsing-eye toolbar animation in PageSweep 0.2.8.
 
 ## Up Next
 
@@ -17,6 +16,7 @@
 
 ## Recently Done
 
+- Approve the refined small-size cape silhouette; visual review passed on 2026-09-15.
 - Consolidate the approved mascot and persistent-popup work into the stable PageSweep 0.2.3 release on `main`.
 - Approve the 25-percent larger booster plume and adjusted starting clearance in PageSweep 0.2.3; visual review passed on 2026-09-15.
 - Replace the flashing in-page card with a persistent browser-owned popup; short- and long-page visual review passed on 2026-09-14.

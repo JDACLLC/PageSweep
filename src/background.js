@@ -9,16 +9,16 @@ const MAX_STITCH_CANVAS_DIMENSION = 65000;
 const MAX_STITCH_CANVAS_PIXELS = 64 * 1024 * 1024;
 
 const DEFAULT_ACTION_ICONS = {
-  16: "icons/toolbar/mascot-face-16.png",
-  32: "icons/toolbar/mascot-face-32.png",
-  48: "icons/toolbar/mascot-face-48.png",
-  128: "icons/toolbar/mascot-face-128.png",
+  16: "icons/toolbar/mascot-glyph-16.png",
+  32: "icons/toolbar/mascot-glyph-32.png",
+  48: "icons/toolbar/mascot-glyph-48.png",
+  128: "icons/toolbar/mascot-glyph-128.png",
 };
 const CAPTURING_ACTION_ICONS = [1, 2, 3].map((frame) => ({
-  16: `icons/animation/capturing-${frame}-16.png`,
-  32: `icons/animation/capturing-${frame}-32.png`,
-  48: `icons/animation/capturing-${frame}-48.png`,
-  128: `icons/animation/capturing-${frame}-128.png`,
+  16: `icons/toolbar/mascot-capturing-${frame}-16.png`,
+  32: `icons/toolbar/mascot-capturing-${frame}-32.png`,
+  48: `icons/toolbar/mascot-capturing-${frame}-48.png`,
+  128: `icons/toolbar/mascot-capturing-${frame}-128.png`,
 }));
 
 chrome.runtime.onInstalled.addListener(({ reason }) => {
