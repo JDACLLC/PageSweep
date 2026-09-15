@@ -65,6 +65,7 @@
 - PageSweep 0.2.6 uses a transparent crop of the approved mascot helmet and visor as the normal toolbar icon. The crop fills the available width at 16, 32, 48, and 128 pixels; the existing animated capture frames and final success or error badge remain unchanged. Visual review is pending on light and dark Chrome themes.
 - PageSweep 0.2.7 tightens the helmet crop and increases its occupied height from roughly 10 pixels to 14–15 pixels in Chrome's 16-pixel toolbar slot. This preserves transparent edges while bringing its visual weight closer to neighboring extension icons. Visual review is pending.
 - Item 21 passed visual review on 2026-09-15. PageSweep 0.2.8 replaces the toolbar's detailed helmet crop with the approved option-A robot glyph, expanded to within roughly one pixel of the 16-pixel icon edges. During capture, three toolbar-only frames pulse the purple eyes every 180 milliseconds; the popup mascot animation remains independent and unchanged. Visual review is pending.
+- PageSweep 0.2.9 increases the glyph's optical size without exceeding Chrome's fixed icon canvas: the helmet now uses a solid purple fill and heavier dark edge, the visor and eyes are larger, and a restrained white crown highlight preserves its connection to the polished mascot. The surrounding pixels remain transparent. Visual review is pending.
 
 ## Parking Lot
 

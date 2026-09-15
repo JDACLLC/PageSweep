@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Evaluate the edge-filling robot visor glyph and its pulsing-eye toolbar animation in PageSweep 0.2.8.
+- Evaluate the higher-contrast, edge-filling robot visor glyph and its pulsing-eye toolbar animation in PageSweep 0.2.9.
 
 ## Up Next
 

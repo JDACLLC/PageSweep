@@ -6,7 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
-- Bumped the extension version to 0.2.8, completed the small-size cape refinement, removed the redundant numeric toolbar badge, and replaced the toolbar arrow and detailed helmet crop with an edge-filling transparent robot glyph whose eyes pulse through three brightness levels during capture while retaining the final success or error symbol.
+- Bumped the extension version to 0.2.9, completed the small-size cape refinement, removed the redundant numeric toolbar badge, and replaced the toolbar arrow with a higher-contrast, edge-filling transparent robot glyph whose larger eyes pulse through three brightness levels during capture while retaining the final success or error symbol.
 
 ## [0.2.3] — 2026-09-15
 
