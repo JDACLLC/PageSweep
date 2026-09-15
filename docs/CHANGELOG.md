@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The project uses semant
 
 ## [Unreleased]
 
+## [0.2.3] — 2026-09-15
+
 ### Added
 
 - Added a browser-owned toolbar-popup prototype that carries the mascot progress card outside captured webpage pixels.

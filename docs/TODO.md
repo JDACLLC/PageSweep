@@ -2,11 +2,10 @@
 
 ## In Progress
 
-- Visually validate the 25-percent larger plume and adjusted starting clearance in PageSweep 0.2.3.
+- Prepare the approved PageSweep 0.2.3 build as the stable GitHub release on `main`.
 
 ## Up Next
 
-- Reduce the measured hide/show interval without allowing PageSweep UI into captured frames, then repeat the same short- and long-page tests.
 - Refine the mascot cape at small sizes after capture behavior and layout are stable.
 - Run a small friend beta through the public GitHub repository before Chrome Web Store packaging.
 - Review and triage responses submitted through the private PageSweep beta feedback form.
@@ -18,6 +17,7 @@
 
 ## Recently Done
 
+- Approve the 25-percent larger booster plume and adjusted starting clearance in PageSweep 0.2.3; visual review passed on 2026-09-15.
 - Replace the flashing in-page card with a persistent browser-owned popup; short- and long-page visual review passed on 2026-09-14.
 - Protect the completion copy, turn the mascot toward it, and balance the completion-check spacing; visual review passed on 2026-09-13.
 - Raise the mascot's starting position so the robot and existing booster plume visibly hover above the track; long-page visual review passed on 2026-09-13.

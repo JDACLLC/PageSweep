@@ -59,6 +59,7 @@
 - PageSweep 0.2.1 restores the original animated gradient treatment to the popup title and status copy. The plume grows from 14 by 9 pixels to 22 by 14 pixels, remains centered under the mascot, gains a stronger glow and pulse, and keeps approximately 6 pixels of nominal clearance above the track at the starting position.
 - PageSweep 0.2.1 review approved the restored text treatment but found the plume still difficult to see. The original sprite's transparent padding and overlap behind the 43-pixel robot body concealed most of its visible flame. Version 0.2.2 uses a verified-alpha, tightly framed sprite at an effective visible height near one-quarter of the robot and mounts it lower to expose the bright core.
 - PageSweep 0.2.2 made the plume recognizable but still visually restrained. Version 0.2.3 increases its rendered dimensions from 18 by 14 pixels to 23 by 18 pixels and raises the early mascot path by 6 pixels while preserving the approved final destination.
+- PageSweep 0.2.3 passed visual review on 2026-09-15. The larger plume is clearly recognizable, the mascot keeps adequate clearance above the track, and the approved short- and long-page popup behavior remains intact.
 
 ## Parking Lot
 
