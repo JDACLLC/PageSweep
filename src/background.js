@@ -483,6 +483,7 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
         const gradientTextElements = shadow.querySelectorAll("[data-pagesweep-gradient-text]");
         const barElement = shadow.querySelector("[data-pagesweep-bar]");
         const cardElement = shadow.querySelector("[data-pagesweep-card]");
+        const robotHoverElement = shadow.querySelector("[data-pagesweep-robot-hover]");
         const robotElement = shadow.querySelector("[data-pagesweep-robot]");
         const plumeElement = shadow.querySelector("[data-pagesweep-plume]");
         const scanBeamElement = shadow.querySelector("[data-pagesweep-scan-beam]");
@@ -517,16 +518,20 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
           });
         }
         if (nextState === "complete") {
-          if (robotElement) {
-            robotElement.getAnimations().forEach((animation) => animation.cancel());
-            robotElement.animate(
+          if (robotHoverElement) {
+            robotHoverElement.getAnimations().forEach((animation) => animation.cancel());
+            robotHoverElement.animate(
               [
-                { transform: "translateY(-1px) scaleX(-1)" },
-                { transform: "translateY(-3px) scaleX(-1)" },
-                { transform: "translateY(-1px) scaleX(-1)" },
+                { transform: "translateY(-1px)" },
+                { transform: "translateY(-3px)" },
+                { transform: "translateY(-1px)" },
               ],
               { duration: 1100, iterations: Infinity, easing: "ease-in-out" },
             );
+          }
+          if (robotElement) {
+            robotElement.getAnimations().forEach((animation) => animation.cancel());
+            robotElement.style.transform = "scaleX(-1)";
           }
           if (plumeElement) {
             plumeElement.getAnimations().forEach((animation) => animation.cancel());

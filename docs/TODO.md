@@ -3,6 +3,7 @@
 ## In Progress
 
 - Evaluate the higher-contrast, edge-filling robot visor glyph and its pulsing-eye toolbar animation in PageSweep 0.2.9.
+- Verify that the mascot and plume remain physically locked together throughout normal and completion hover in PageSweep 0.2.10.
 
 ## Up Next
 

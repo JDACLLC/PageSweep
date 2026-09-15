@@ -400,6 +400,14 @@
       willChange: "left, top, transform",
     });
 
+    const robotHover = document.createElement("div");
+    robotHover.setAttribute("data-pagesweep-robot-hover", "true");
+    Object.assign(robotHover.style, {
+      position: "absolute",
+      inset: "0",
+      transformOrigin: "50% 58%",
+    });
+
     const plume = document.createElement("img");
     plume.setAttribute("data-pagesweep-plume", "true");
     plume.alt = "";
@@ -441,7 +449,7 @@
       width: "56px",
       height: "auto",
       filter: "drop-shadow(0 4px 7px rgba(7, 18, 43, 0.38))",
-      transform: "translateY(-1px)",
+      transform: "none",
       transformOrigin: "50% 58%",
     });
 
@@ -467,7 +475,8 @@
       transition: "opacity 180ms ease-out, transform 260ms cubic-bezier(0.22, 1, 0.36, 1)",
     });
 
-    robotPosition.append(plume, scanBeam, robotVisual);
+    robotHover.append(plume, scanBeam, robotVisual);
+    robotPosition.append(robotHover);
     scene.append(track, robotPosition, completeBadge);
     card.append(row, scene);
     shadow.appendChild(card);
@@ -475,7 +484,7 @@
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!reducedMotion) {
-      robotVisual.animate(
+      robotHover.animate(
         [
           { transform: "translateY(-1px) rotate(-0.35deg)" },
           { transform: "translateY(1.5px) rotate(0.25deg)" },

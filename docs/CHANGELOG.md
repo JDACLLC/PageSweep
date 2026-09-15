@@ -8,6 +8,10 @@ All notable changes to this project are documented here. The project uses semant
 
 - Bumped the extension version to 0.2.9, completed the small-size cape refinement, removed the redundant numeric toolbar badge, and replaced the toolbar arrow with a higher-contrast, edge-filling transparent robot glyph whose larger eyes pulse through three brightness levels during capture while retaining the final success or error symbol.
 
+### Fixed
+
+- Bumped the extension version to 0.2.10 and moved hover motion to a shared robot-and-plume wrapper so the mascot no longer floats independently into or away from its booster plume.
+
 ## [0.2.3] — 2026-09-15
 
 ### Added

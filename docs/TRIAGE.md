@@ -28,6 +28,7 @@
 | 24 | P3 | Parking Lot | Consider making the uncompleted portion of the clean scan track even fainter. |
 | 25 | P1 | Complete | Protect the upper-right mascot destination from completion copy and turn the mascot to face the message in the green state. |
 | 26 | P2 | In Progress | Replace the blue-tile toolbar arrow with a larger transparent helmet-and-visor icon while retaining capture animation and completion status. |
+| 27 | P1 | In Progress | Keep the mascot and booster plume physically synchronized during hover and completion animation. |
 
 ## Notes
 
@@ -66,6 +67,7 @@
 - PageSweep 0.2.7 tightens the helmet crop and increases its occupied height from roughly 10 pixels to 14–15 pixels in Chrome's 16-pixel toolbar slot. This preserves transparent edges while bringing its visual weight closer to neighboring extension icons. Visual review is pending.
 - Item 21 passed visual review on 2026-09-15. PageSweep 0.2.8 replaces the toolbar's detailed helmet crop with the approved option-A robot glyph, expanded to within roughly one pixel of the 16-pixel icon edges. During capture, three toolbar-only frames pulse the purple eyes every 180 milliseconds; the popup mascot animation remains independent and unchanged. Visual review is pending.
 - PageSweep 0.2.9 increases the glyph's optical size without exceeding Chrome's fixed icon canvas: the helmet now uses a solid purple fill and heavier dark edge, the visor and eyes are larger, and a restrained white crown highlight preserves its connection to the polished mascot. The surrounding pixels remain transparent. Visual review is pending.
+- PageSweep 0.2.10 moves hover translation and rotation from the robot image to a shared robot-and-plume wrapper in both the toolbar popup and retained in-page fallback. The plume keeps its independent size pulse and the robot keeps its completion flip, but their positional motion is now locked. Visual review is pending.
 
 ## Parking Lot
 
