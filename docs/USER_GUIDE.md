@@ -31,11 +31,13 @@ PageSweep is proprietary beta software provided for personal or internal evaluat
 
 ## Capture a webpage
 
+[Screenshot: PageSweep progress card with the flying robot rising above the illuminated progress track.]
+
 1. Open a normal webpage using an `http` or `https` address, or an enabled local `file` page.
 2. Select the **PageSweep** toolbar icon once.
-3. Watch the PageSweep progress card while the page scrolls from top to bottom. If PageSweep is pinned, its toolbar arrow and percentage badge also show progress.
+3. Keep the toolbar popup open and watch the flying robot move forward and upward while the page scrolls from top to bottom. The toolbar arrow and percentage badge also show progress.
 4. Confirm the page returns to its starting position.
-5. Wait for **Download started**, then open the PNG downloaded by Chrome.
+5. Wait for the green check above the end of the progress track and **Download started**, then open the PNG downloaded by Chrome.
 
 The filename uses the website hostname and capture time, such as `example.com_2026-08-12_14-01-32.png`.
 

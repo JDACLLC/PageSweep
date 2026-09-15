@@ -30,7 +30,7 @@ After an update, download and extract the latest ZIP again, then select **Reload
 - First-occurrence handling for fixed and sticky interface elements.
 - Bounded settling for lazy-loaded images and modest page growth.
 - Restoration of scroll position and temporary page styles after success or failure.
-- Animated in-page and toolbar progress that stays out of the downloaded PNG.
+- Persistent browser-popup and toolbar progress that stays out of the downloaded PNG.
 - No persistent website access and no `<all_urls>` permission.
 
 ## Install a local development copy
@@ -48,7 +48,7 @@ For local HTML files, open the extension's **Details** page and enable **Allow a
 
 1. Open an `http`, `https`, or enabled local `file` page.
 2. Click the **PageSweep** toolbar icon once.
-3. Keep that tab visible and follow the PageSweep progress card while the page scrolls.
+3. Keep the PageSweep popup open and follow the flying robot while the page scrolls.
 4. Wait for **Download started**, then open the PNG that Chrome downloads automatically.
 
 PageSweep uses Chrome's configured download location—normally the **Downloads** folder. If Chrome's **Ask where to save each file before downloading** setting is enabled, Chrome may ask where to save the PNG. PageSweep does not choose or create a separate folder.

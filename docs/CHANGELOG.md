@@ -4,8 +4,12 @@ All notable changes to this project are documented here. The project uses semant
 
 ## [Unreleased]
 
+## [0.2.3] — 2026-09-15
+
 ### Added
 
+- Added a browser-owned toolbar-popup prototype that carries the mascot progress card outside captured webpage pixels.
+- Added baseline progress-card visibility diagnostics with per-frame and aggregate measurements for hide preparation, hidden repaint, Chrome capture, and return-fade timing.
 - Failure diagnostics now report the PageSweep version, browser version and user-agent details, operating system and architecture, and relevant Chrome API availability.
 - Capture completion now identifies **Full resolution** or **Reduced to fit Chrome limits**, while console diagnostics report source scale, output scale, final dimensions, and whether downscaling occurred.
 - A four-step visual GitHub installation guide displayed prominently in the README and user guide.
@@ -26,6 +30,22 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Bumped the extension version to 0.2.3, enlarged the tightly framed plume by 25 percent, and raised the early flight path by 6 pixels to preserve clearance above the progress track.
+- Bumped the extension version to 0.2.2 and replaced the padded plume sprite with a verified transparent, tightly framed flame positioned lower beneath the robot body for better visibility.
+- Bumped the extension version to 0.2.1, restored the animated blue-to-purple text gradient from the approved in-page card, and enlarged the popup plume by approximately 55 percent with a stronger glow and subtle pulse.
+- Promoted the persistent browser-owned mascot progress experience to version 0.2.0 after successful short- and long-page validation, and removed temporary visibility-timing instrumentation.
+- Bumped the extension version to 0.1.12 for the isolated popup-progress experiment; the in-page card is disabled on this branch while the approved 0.1.10 milestone remains preserved.
+- Bumped the extension version to 0.1.11 for the measurement-only flashing baseline; capture transitions remain unchanged.
+- Bumped the extension version to 0.1.10 and raised the completion check by 8 pixels to balance its clearance between the mascot and progress track.
+- Bumped the extension version to 0.1.9, protected the mascot's upper-right destination with an end-state-only two-line text boundary, and flipped the mascot at completion so it faces the success message while hovering.
+- Bumped the extension version to 0.1.8 and raised the mascot's starting flight path by 12 pixels so the robot and booster plume begin visibly above the progress track.
+- Bumped the extension version to 0.1.7, moved the completion check to the lower-right above the progress track, and extended the mascot's climb into the freed upper-right area without increasing the card height.
+- Synchronized the user guide, architecture, smoke-test protocol, decision log, TODO, and triage records with the approved PageSweep 0.1.6 mascot motion.
+- Bumped the extension version to 0.1.6 and revised the mascot path to use the existing card height for a continuous, more visible ascent throughout capture.
+- Bumped the extension version to 0.1.5, added a gentle progress-driven flight path from lower-left to upper-right, moved the completion check beside the status text, and extended the completed-state hold to 1.7 seconds.
+- Bumped the extension version to 0.1.4 and replaced the dotted progress treatment with a clean illuminated scan track.
+- Bumped the extension version to 0.1.3 for reliable long-page completion delivery.
+- Bumped the extension version to 0.1.2 for the robot-progress and long-page termination test build.
 - Revised the beta invitation copy and reminder cadence to prompt at successful-capture totals 3, 9, 18, 30, and 45 before stopping automatically.
 - Reworded capture completion as **Download started** so the status remains accurate for default folders, custom download locations, and save-location prompts.
 - Smoothed the progress overlay's frame-capture transition with a short fade out and fade in instead of an abrupt flash.
@@ -39,6 +59,10 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Fixed
 
+- Delivered page-capture completion details through runtime messaging, with the injected-script return retained as a fallback, so long captures can proceed to stitching when Chrome omits the file-injection result.
+- Kept reachable-end trimming separate from lazy-load boundary growth in capture diagnostics and stopped displaying an unattempted final frame while confirming the page endpoint.
+- Treat a page that has already scrolled through multiple frames and can no longer advance as having reached its browser-accessible end, preventing duplicate final frames and allowing the captured frames to proceed to stitching.
+- Preserve injected page-script failures instead of replacing them with a misleading claim that captured frames were unusable.
 - Offscreen stitching now supports browsers without `runtime.getContexts()` through the documented service-worker client fallback, and locks document creation to prevent concurrent setup attempts.
 - Capture frames now wait for the progress overlay to be hidden and repainted so PageSweep's own interface is excluded from downloaded PNGs.
 - Allowed explicitly user-triggered capture of local `file:` test pages when Chrome's file-URL access toggle is enabled.

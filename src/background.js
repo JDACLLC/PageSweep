@@ -30,10 +30,31 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type === "start-popup-capture") {
+    chrome.tabs.query({ active: true, currentWindow: true })
+      .then(([tab]) => {
+        if (!tab) throw new Error("PageSweep could not identify the active tab.");
+        runCapture(tab);
+        sendResponse({ ok: true });
+      })
+      .catch((error) => sendResponse({ ok: false, error: error.message }));
+    return true;
+  }
+
   if (message?.type === "beta-feedback-choice") {
     handleBetaFeedbackChoice(message.choice).catch((error) => {
       console.warn("PageSweep could not save the feedback preference.", error);
     });
+    return false;
+  }
+
+  if (message?.type === "capture-complete") {
+    if (!activeCapture || sender.tab?.id !== activeCapture.tabId || !message.captureDetails) {
+      sendResponse({ ok: false, error: "Capture completion did not match the active session." });
+      return false;
+    }
+    activeCapture.captureDetails = message.captureDetails;
+    sendResponse({ ok: true });
     return false;
   }
 
@@ -48,7 +69,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true;
 });
 
-chrome.action.onClicked.addListener(async (tab) => {
+async function runCapture(tab) {
   console.log("PageSweep triggered", {
     tabId: tab.id,
     url: tab.url,
@@ -88,15 +109,26 @@ chrome.action.onClicked.addListener(async (tab) => {
     });
 
     const capturedFrames = activeCapture.frames;
+    if (injectionResult?.error) {
+      throw new Error(
+        `The page capture script failed: ${formatUnknownValue(injectionResult.error)}`,
+      );
+    }
+    const returnedCaptureDetails = injectionResult?.result || activeCapture.captureDetails;
+    if (!returnedCaptureDetails) {
+      throw new Error(
+        `The page capture script did not deliver completion details after capturing ${capturedFrames.length} frame${capturedFrames.length === 1 ? "" : "s"}.`,
+      );
+    }
+    if (capturedFrames.length === 0) {
+      throw new Error("Page capture returned no frames.");
+    }
+
     const captureDetails = {
-      ...injectionResult.result,
+      ...returnedCaptureDetails,
       framesStoredInMemory: capturedFrames.length,
     };
     activeCapture.captureDetails = captureDetails;
-
-    if (!injectionResult?.result || capturedFrames.length === 0) {
-      throw new Error("Page capture returned no usable frames.");
-    }
 
     console.log("PageSweep multi-frame capture complete", captureDetails);
 
@@ -150,7 +182,7 @@ chrome.action.onClicked.addListener(async (tab) => {
         100,
         "complete",
       );
-      await delay(900);
+      await delay(1700);
     } finally {
       await releaseStitchedImage();
     }
@@ -198,7 +230,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     }
     activeCapture = null;
   }
-});
+}
 
 async function recordSuccessfulCaptureAndMaybePrompt(tabId) {
   try {
@@ -354,6 +386,10 @@ async function captureVisibleFrame(message, sender) {
     throw new Error("Received a frame request without a matching capture session.");
   }
 
+  broadcastPopupProgress(
+    message.status || `Capturing ${activeCapture.frames.length + 1}`,
+    message.progressPercent,
+  );
   const dataUrl = await chrome.tabs.captureVisibleTab(activeCapture.windowId, {
     format: "png",
   });
@@ -437,6 +473,7 @@ async function finishToolbarProgress(tabId, succeeded, failureMessage) {
 }
 
 async function setPageProgressStatus(tabId, status, progressPercent, state = "working") {
+  broadcastPopupProgress(status, progressPercent, state);
   try {
     await chrome.scripting.executeScript({
       target: { tabId },
@@ -448,10 +485,14 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
         }
 
         const statusElement = shadow.querySelector("[data-pagesweep-status]");
+        const copyElement = shadow.querySelector("[data-pagesweep-copy]");
         const gradientTextElements = shadow.querySelectorAll("[data-pagesweep-gradient-text]");
         const barElement = shadow.querySelector("[data-pagesweep-bar]");
         const cardElement = shadow.querySelector("[data-pagesweep-card]");
-        const iconElement = shadow.querySelector("[data-pagesweep-icon]");
+        const robotElement = shadow.querySelector("[data-pagesweep-robot]");
+        const plumeElement = shadow.querySelector("[data-pagesweep-plume]");
+        const scanBeamElement = shadow.querySelector("[data-pagesweep-scan-beam]");
+        const completeBadgeElement = shadow.querySelector("[data-pagesweep-complete-badge]");
         if (statusElement) statusElement.textContent = nextStatus;
         if (barElement) {
           barElement.style.width = `${nextProgress}%`;
@@ -461,6 +502,19 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
           cardElement.dataset.state = nextState;
         }
         if (nextState === "complete") {
+          if (copyElement) {
+            copyElement.style.width = "170px";
+            copyElement.style.maxWidth = "170px";
+          }
+          if (statusElement) {
+            statusElement.style.display = "-webkit-box";
+            statusElement.style.overflow = "hidden";
+            statusElement.style.overflowWrap = "anywhere";
+            statusElement.style.textOverflow = "clip";
+            statusElement.style.whiteSpace = "normal";
+            statusElement.style.webkitBoxOrient = "vertical";
+            statusElement.style.webkitLineClamp = "2";
+          }
           gradientTextElements.forEach((textElement) => {
             textElement.getAnimations().forEach((animation) => animation.cancel());
             textElement.style.backgroundImage = "none";
@@ -468,10 +522,31 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
             textElement.style.color = "#86EFAC";
           });
         }
-        if (iconElement && nextState === "complete") {
-          iconElement.getAnimations().forEach((animation) => animation.cancel());
-          iconElement.textContent = "✓";
-          iconElement.style.background = "#18A66F";
+        if (nextState === "complete") {
+          if (robotElement) {
+            robotElement.getAnimations().forEach((animation) => animation.cancel());
+            robotElement.animate(
+              [
+                { transform: "translateY(-1px) scaleX(-1)" },
+                { transform: "translateY(-3px) scaleX(-1)" },
+                { transform: "translateY(-1px) scaleX(-1)" },
+              ],
+              { duration: 1100, iterations: Infinity, easing: "ease-in-out" },
+            );
+          }
+          if (plumeElement) {
+            plumeElement.getAnimations().forEach((animation) => animation.cancel());
+            plumeElement.style.opacity = "0.42";
+            plumeElement.style.transform = "scaleY(0.78)";
+          }
+          if (scanBeamElement) {
+            scanBeamElement.getAnimations().forEach((animation) => animation.cancel());
+            scanBeamElement.style.opacity = "0";
+          }
+          if (completeBadgeElement) {
+            completeBadgeElement.style.opacity = "1";
+            completeBadgeElement.style.transform = "scale(1)";
+          }
         }
       },
       args: [status, progressPercent, state],
@@ -479,6 +554,15 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
   } catch {
     // The tab may have navigated or closed after capture; toolbar state still reports the result.
   }
+}
+
+function broadcastPopupProgress(status, progressPercent, state = "working") {
+  chrome.runtime.sendMessage({
+    type: "popup-progress",
+    status,
+    progressPercent,
+    state,
+  }).catch(() => undefined);
 }
 
 async function removePageProgress(tabId) {

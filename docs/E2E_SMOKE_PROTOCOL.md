@@ -17,18 +17,32 @@ Use this checklist before declaring a capture stage complete and before a releas
 1. Open a test page and note the starting scroll position.
 2. Click the **PageSweep** toolbar icon once.
 3. Confirm the page scrolls automatically without manual input.
-4. Confirm the PageSweep overlay appears, its arrow moves, and its progress advances.
+4. Confirm the PageSweep toolbar popup remains open, its mascot moves forward and upward with a gentle hover, and its progress advances.
 5. If PageSweep is pinned, confirm its toolbar arrow and percentage badge also advance.
 6. Confirm exactly one PNG downloads.
 7. Confirm the filename follows `hostname_YYYY-MM-DD_HH-MM-SS.png`.
 8. Confirm the page returns to its exact starting position.
-9. Confirm the overlay reports **Download started** and then disappears.
+9. Confirm the overlay reports **Download started** in no more than two lines on the left, the mascot turns to face the message and hovers without overlapping it in the upper-right, and the completion check appears above the track for about 1.7 seconds before the card disappears.
 10. Open the PNG and inspect it from top to bottom.
 11. Confirm the PageSweep overlay does not appear anywhere in the PNG.
 12. Confirm major content is present without blank gaps or missing regions.
 13. Confirm the console contains a completion message and no uncaught error.
 
 **Progress UI validation:** Passed 2026-08-12. The in-page card, animated arrow, progress bar, toolbar animation, and completion state appeared correctly. The eased frame transition was visually acceptable, and the PageSweep interface did not appear in the downloaded PNG.
+
+**Mascot motion validation:** Passed 2026-09-13 on short and long webpages with PageSweep 0.1.6. The mascot rose throughout capture without moving backward, and its separate subtle bob and rotation retained the approved hovering feel.
+
+## Progress-card visibility timing
+
+1. Reload the measurement build and open the service-worker console.
+2. Capture one short page and one approximately 20-frame page without switching tabs.
+3. After each capture, expand **PageSweep progress-card visibility baseline**.
+4. Record `frameCount` and the average and maximum values under `summary`.
+5. Confirm the downloaded PNG contains no PageSweep interface before accepting the baseline.
+
+Use the same pages and browser window for the optimized retest. Compare `hidePreparationMs`, `hiddenUntilFadeMs`, and `totalUntilFadeMs`; treat `captureApiMs` as Chrome-controlled time rather than transition time.
+
+**Persistent popup validation — 2026-09-14:** Passed on short and long pages. The Chrome-owned mascot card remained visible and updated throughout capture without repeated disappearance, and both captures completed successfully. Version 0.2.0 removes temporary measurement instrumentation; final clean-build regression remains pending.
 
 ## First-run guide checks
 

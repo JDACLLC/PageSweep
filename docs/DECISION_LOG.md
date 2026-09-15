@@ -1,5 +1,45 @@
 # Decision Log
 
+## Move capture progress into the toolbar popup — 2026-09-14
+
+### Context
+
+The in-page card had to disappear for every screenshot. Measurements showed Chrome's capture call dominated the hidden interval, so shorter fades did not visibly reduce flashing.
+
+### Decision
+
+Display the mascot progress card in Chrome's action popup and send it progress from the service worker. Keep the earlier in-page implementation in source as a fallback.
+
+### Alternatives
+
+- Continue shortening the in-page hide and show transitions.
+- Use Chrome's larger side panel.
+- Reconstruct webpage pixels hidden behind a continuously visible in-page card.
+
+### Consequences
+
+The card remains continuously visible without entering captured webpage pixels or changing the page viewport. Capture now starts through the popup, and closing the popup hides progress without interrupting the background capture.
+
+## Separate mascot travel from hovering motion — 2026-09-13
+
+### Context
+
+The capture mascot needed to show clear progress from the lower-left toward the upper-right without following a stiff diagonal or appearing to make most of its climb only near the end.
+
+### Decision
+
+Tie the mascot's forward and upward travel to capture progress, using a continuous ascent with varied easing. Apply a separate small vertical bob and rotation to the mascot artwork so it continues to feel like it is hovering while it travels. Place the completion check above the track's lower-right endpoint so the mascot can finish in the upper-right without competing with the success indicator.
+
+### Alternatives
+
+- Use one straight diagonal transition.
+- Include a mid-flight downward movement as part of the progress path.
+- Use only local hovering motion without a visible overall ascent.
+
+### Consequences
+
+The mascot communicates progress across the full capture and never flies backward. The independent hover remains subtle, and its strength can be tuned later without changing progress accuracy or the flight destination. The success indicator remains visually tied to the completed track while the upper-right becomes the mascot's clear destination.
+
 ## Request private beta feedback after demonstrated use — 2026-08-12
 
 ### Context

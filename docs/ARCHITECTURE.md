@@ -9,6 +9,7 @@ Toolbar click
 Background service worker
     |-- injects page capture logic
     |-- receives one frame request at a time
+    |-- receives explicit capture-completion details
     |-- calls captureVisibleTab
     |-- coordinates stitching and download
     |
@@ -16,7 +17,8 @@ Background service worker
     |      |-- measures a finite document boundary
     |      |-- records original scroll state
     |      |-- scrolls and requests frames
-    |      `-- restores the original position and styles
+    |      |-- restores the original position and styles
+    |      `-- sends completion details through runtime messaging
     |
     `--> Offscreen stitch document
            |-- receives and draws frames individually
@@ -44,11 +46,11 @@ The manifest also registers `about.html` as the extension's options page. The ba
 
 ### `src/background.js`
 
-Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, reads PNG dimensions, animates the toolbar action and progress badge, controls the offscreen stitch session, downloads the result, and logs failures by stage. After successful captures it updates a local counter and may display the beta feedback invitation. Its final cleanup clears frame memory, restores the toolbar action, removes the page overlay, and closes temporary documents even after an earlier operation fails.
+Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, receives explicit page-capture completion details with the injected-script result retained as a fallback, reads PNG dimensions, animates the toolbar action and progress badge, controls the offscreen stitch session, downloads the result, and logs failures by stage. After successful captures it updates a local counter and may display the beta feedback invitation. Its final cleanup clears frame memory, restores the toolbar action, removes the page overlay, and closes temporary documents even after an earlier operation fails.
 
 ### `src/capture.js`
 
-Runs in the active webpage. It measures document and viewport geometry, establishes a bounded capture boundary, temporarily disables smooth scrolling and scrollbar painting, displays an isolated progress overlay, visits each target position, waits for layout and visible images to settle, requests a frame, and restores the original scroll position and page styles in `finally` cleanup. The overlay is hidden before each screenshot and remains hidden until the frame is returned, ensuring it cannot enter the PNG. Fixed and sticky elements remain visible for their first on-screen capture and are then hidden with `visibility`, preserving page layout while preventing repeated appearances.
+Runs in the active webpage. It measures document and viewport geometry, establishes a bounded capture boundary, visits each target position, waits for layout and visible images to settle, requests a frame, and restores the original scroll position and page styles in `finally` cleanup. Version 0.2.0 displays progress in the Chrome-owned action popup, so no progress card is inserted into captured webpage pixels. The earlier in-page implementation remains in source as a fallback. Fixed and sticky elements remain visible for their first on-screen capture and are then hidden with `visibility`, preserving page layout while preventing repeated appearances.
 
 ### `offscreen.html` and `src/stitch.js`
 
@@ -65,7 +67,7 @@ Provide a temporary DOM environment for image decoding and canvas composition. F
 6. After page cleanup, the service worker opens the offscreen document.
 7. The stitcher receives frames individually and draws only each frame's unique region, ending the final frame at the fixed document boundary.
 8. The stitcher exports a PNG Blob URL.
-9. The service worker starts the download using a sanitized timestamped filename.
+9. The service worker starts the download using a sanitized timestamped filename, constrains completion copy to two lines on the left, flips the mascot artwork to face that message, displays the check in the lower-right space between the mascot and progress track, and holds the completed state for 1.7 seconds while the mascot hovers in the protected upper-right.
 10. The temporary Blob URL and offscreen document are released.
 
 ## Current boundaries

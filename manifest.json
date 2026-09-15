@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "PageSweep",
   "description": "Capture the whole webpage as a single PNG.",
-  "version": "0.1.1",
+  "version": "0.2.3",
   "permissions": [
     "activeTab",
     "scripting",
@@ -11,6 +11,7 @@
     "storage"
   ],
   "action": {
+    "default_popup": "popup.html",
     "default_title": "PageSweep — Capture the whole page",
     "default_icon": {
       "16": "icons/icon-16.png",
@@ -31,5 +32,14 @@
   "options_ui": {
     "page": "about.html",
     "open_in_tab": true
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/progress/pagesweep-robot-body.png",
+        "icons/progress/pagesweep-plume.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
