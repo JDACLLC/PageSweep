@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Refine the mascot cape at small sizes so it reads clearly as a cape rather than a tail; PageSweep 0.2.4 test build is ready for visual review.
+- Refine the mascot cape at small sizes so it reads clearly as a cape rather than a tail; PageSweep 0.2.5 test build is ready for visual review.
 
 ## Up Next
 

@@ -60,7 +60,7 @@
 - PageSweep 0.2.1 review approved the restored text treatment but found the plume still difficult to see. The original sprite's transparent padding and overlap behind the 43-pixel robot body concealed most of its visible flame. Version 0.2.2 uses a verified-alpha, tightly framed sprite at an effective visible height near one-quarter of the robot and mounts it lower to expose the bright core.
 - PageSweep 0.2.2 made the plume recognizable but still visually restrained. Version 0.2.3 increases its rendered dimensions from 18 by 14 pixels to 23 by 18 pixels and raises the early mascot path by 6 pixels while preserving the approved final destination.
 - PageSweep 0.2.3 passed visual review on 2026-09-15. The larger plume is clearly recognizable, the mascot keeps adequate clearance above the track, and the approved short- and long-page popup behavior remains intact.
-- PageSweep 0.2.4 introduces a reversible, small-size cape refinement on its own branch. The robot artwork remains unchanged outside the cape region; the cape's lower silhouette is extended by 18 percent so it remains recognizable at the popup's 56-pixel width. Visual review is pending.
+- PageSweep 0.2.5 introduces a reversible, small-size cape refinement on its own branch and removes the redundant numeric toolbar badge during capture. The robot artwork remains unchanged outside the cape region; the cape's lower silhouette is extended by 18 percent so it remains recognizable at the popup's 56-pixel width. Visual review is pending.
 
 ## Parking Lot
 

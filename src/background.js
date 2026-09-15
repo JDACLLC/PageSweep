@@ -403,7 +403,6 @@ async function captureVisibleFrame(message, sender) {
   };
 
   activeCapture.frames.push(frame);
-  await updateToolbarProgress(activeCapture.tabId, message.progressPercent);
   console.log(`PageSweep frame ${activeCapture.frames.length}`, {
     scrollY: frame.scrollY,
     expectedY: frame.expectedY,
@@ -426,7 +425,7 @@ async function startToolbarProgress(tabId) {
 
   await Promise.allSettled([
     chrome.action.setBadgeBackgroundColor({ tabId, color: "#185ADB" }),
-    chrome.action.setBadgeText({ tabId, text: "0" }),
+    chrome.action.setBadgeText({ tabId, text: "" }),
     chrome.action.setTitle({ tabId, title: "PageSweep is capturing this page" }),
     chrome.action.setIcon({ tabId, path: CAPTURING_ACTION_ICONS[0] }),
   ]);
@@ -438,11 +437,6 @@ async function startToolbarProgress(tabId) {
       path: CAPTURING_ACTION_ICONS[toolbarAnimationFrame],
     }).catch(() => undefined);
   }, 180);
-}
-
-async function updateToolbarProgress(tabId, progressPercent) {
-  const boundedProgress = Math.max(0, Math.min(99, Math.round(progressPercent ?? 0)));
-  await chrome.action.setBadgeText({ tabId, text: String(boundedProgress) });
 }
 
 async function finishToolbarProgress(tabId, succeeded, failureMessage) {

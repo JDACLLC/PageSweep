@@ -18,7 +18,7 @@ Use this checklist before declaring a capture stage complete and before a releas
 2. Click the **PageSweep** toolbar icon once.
 3. Confirm the page scrolls automatically without manual input.
 4. Confirm the PageSweep toolbar popup remains open, its mascot moves forward and upward with a gentle hover, and its progress advances.
-5. If PageSweep is pinned, confirm its toolbar arrow and percentage badge also advance.
+5. If PageSweep is pinned, confirm its toolbar icon animates without displaying a numeric badge.
 6. Confirm exactly one PNG downloads.
 7. Confirm the filename follows `hostname_YYYY-MM-DD_HH-MM-SS.png`.
 8. Confirm the page returns to its exact starting position.

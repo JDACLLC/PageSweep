@@ -6,7 +6,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
-- Bumped the extension version to 0.2.4 and added a small-size mascot variant whose cape has a broader lower silhouette while preserving the approved robot artwork and popup layout.
+- Bumped the extension version to 0.2.5, added a small-size mascot variant whose cape has a broader lower silhouette, and removed the redundant numeric toolbar badge during capture while retaining the animated icon and final success or error symbol.
 
 ## [0.2.3] — 2026-09-15
 
