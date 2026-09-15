@@ -9,10 +9,10 @@ const MAX_STITCH_CANVAS_DIMENSION = 65000;
 const MAX_STITCH_CANVAS_PIXELS = 64 * 1024 * 1024;
 
 const DEFAULT_ACTION_ICONS = {
-  16: "icons/icon-16.png",
-  32: "icons/icon-32.png",
-  48: "icons/icon-48.png",
-  128: "icons/icon-128.png",
+  16: "icons/toolbar/mascot-face-16.png",
+  32: "icons/toolbar/mascot-face-32.png",
+  48: "icons/toolbar/mascot-face-48.png",
+  128: "icons/toolbar/mascot-face-128.png",
 };
 const CAPTURING_ACTION_ICONS = [1, 2, 3].map((frame) => ({
   16: `icons/animation/capturing-${frame}-16.png`,

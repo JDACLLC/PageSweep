@@ -27,6 +27,7 @@
 | 23 | P0 | Complete | Deliver long-page completion details independently of Chrome's intermittent injected-script result so captured frames always reach stitching. |
 | 24 | P3 | Parking Lot | Consider making the uncompleted portion of the clean scan track even fainter. |
 | 25 | P1 | Complete | Protect the upper-right mascot destination from completion copy and turn the mascot to face the message in the green state. |
+| 26 | P2 | In Progress | Replace the blue-tile toolbar arrow with a larger transparent helmet-and-visor icon while retaining capture animation and completion status. |
 
 ## Notes
 
@@ -61,6 +62,7 @@
 - PageSweep 0.2.2 made the plume recognizable but still visually restrained. Version 0.2.3 increases its rendered dimensions from 18 by 14 pixels to 23 by 18 pixels and raises the early mascot path by 6 pixels while preserving the approved final destination.
 - PageSweep 0.2.3 passed visual review on 2026-09-15. The larger plume is clearly recognizable, the mascot keeps adequate clearance above the track, and the approved short- and long-page popup behavior remains intact.
 - PageSweep 0.2.5 introduces a reversible, small-size cape refinement on its own branch and removes the redundant numeric toolbar badge during capture. The robot artwork remains unchanged outside the cape region; the cape's lower silhouette is extended by 18 percent so it remains recognizable at the popup's 56-pixel width. Visual review is pending.
+- PageSweep 0.2.6 uses a transparent crop of the approved mascot helmet and visor as the normal toolbar icon. The crop fills the available width at 16, 32, 48, and 128 pixels; the existing animated capture frames and final success or error badge remain unchanged. Visual review is pending on light and dark Chrome themes.
 
 ## Parking Lot
 
