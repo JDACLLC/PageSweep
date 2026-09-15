@@ -433,7 +433,7 @@
     const robotVisual = document.createElement("img");
     robotVisual.setAttribute("data-pagesweep-robot", "true");
     robotVisual.alt = "";
-    robotVisual.src = chrome.runtime.getURL("icons/progress/pagesweep-robot-body.png");
+    robotVisual.src = chrome.runtime.getURL("icons/progress/pagesweep-robot-body-cape-v2.png");
     Object.assign(robotVisual.style, {
       position: "absolute",
       top: "0",

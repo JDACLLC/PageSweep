@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "PageSweep",
   "description": "Capture the whole webpage as a single PNG.",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "permissions": [
     "activeTab",
     "scripting",
@@ -37,6 +37,7 @@
     {
       "resources": [
         "icons/progress/pagesweep-robot-body.png",
+        "icons/progress/pagesweep-robot-body-cape-v2.png",
         "icons/progress/pagesweep-plume.png"
       ],
       "matches": ["<all_urls>"]

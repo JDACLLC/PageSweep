@@ -2,11 +2,10 @@
 
 ## In Progress
 
-- Nothing currently.
+- Refine the mascot cape at small sizes so it reads clearly as a cape rather than a tail; PageSweep 0.2.4 test build is ready for visual review.
 
 ## Up Next
 
-- Refine the mascot cape at small sizes after capture behavior and layout are stable.
 - Run a small friend beta through the public GitHub repository before Chrome Web Store packaging.
 - Review and triage responses submitted through the private PageSweep beta feedback form.
 - Create a dedicated PageSweep webpage under JDAC Labs, then replace the About-page `JDAC.ai` link with the new PageSweep URL.

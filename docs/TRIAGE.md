@@ -22,7 +22,7 @@
 | 18 | P1 | Complete | Replace the dotted progress treatment with one clean illuminated scan path. |
 | 19 | P1 | Complete | Move the robot above the scan path and add a gentle varied vertical flight path without backward movement. |
 | 20 | P1 | Complete | Move the completion check outside the robot's path and hold the green completed state for 1.5–2 seconds. |
-| 21 | P2 | Up Next | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |
+| 21 | P2 | In Progress | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |
 | 22 | P1 | Parking Lot | Before Chrome Web Store release, remove beta wording and the automatic beta-feedback invitation and reminder schedule. |
 | 23 | P0 | Complete | Deliver long-page completion details independently of Chrome's intermittent injected-script result so captured frames always reach stitching. |
 | 24 | P3 | Parking Lot | Consider making the uncompleted portion of the clean scan track even fainter. |
@@ -60,6 +60,7 @@
 - PageSweep 0.2.1 review approved the restored text treatment but found the plume still difficult to see. The original sprite's transparent padding and overlap behind the 43-pixel robot body concealed most of its visible flame. Version 0.2.2 uses a verified-alpha, tightly framed sprite at an effective visible height near one-quarter of the robot and mounts it lower to expose the bright core.
 - PageSweep 0.2.2 made the plume recognizable but still visually restrained. Version 0.2.3 increases its rendered dimensions from 18 by 14 pixels to 23 by 18 pixels and raises the early mascot path by 6 pixels while preserving the approved final destination.
 - PageSweep 0.2.3 passed visual review on 2026-09-15. The larger plume is clearly recognizable, the mascot keeps adequate clearance above the track, and the approved short- and long-page popup behavior remains intact.
+- PageSweep 0.2.4 introduces a reversible, small-size cape refinement on its own branch. The robot artwork remains unchanged outside the cape region; the cape's lower silhouette is extended by 18 percent so it remains recognizable at the popup's 56-pixel width. Visual review is pending.
 
 ## Parking Lot
 

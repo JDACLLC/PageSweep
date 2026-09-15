@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The project uses semant
 
 ## [Unreleased]
 
+### Changed
+
+- Bumped the extension version to 0.2.4 and added a small-size mascot variant whose cape has a broader lower silhouette while preserving the approved robot artwork and popup layout.
+
 ## [0.2.3] — 2026-09-15
 
 ### Added
