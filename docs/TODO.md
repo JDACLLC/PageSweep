@@ -2,8 +2,8 @@
 
 ## In Progress
 
-- Refine the mascot cape at small sizes so it reads clearly as a cape rather than a tail; PageSweep 0.2.6 test build is ready for visual review.
-- Evaluate the transparent helmet-and-visor toolbar icon in PageSweep 0.2.6 on light and dark Chrome themes.
+- Refine the mascot cape at small sizes so it reads clearly as a cape rather than a tail; PageSweep 0.2.7 test build is ready for visual review.
+- Evaluate the enlarged transparent helmet-and-visor toolbar icon in PageSweep 0.2.7 on light and dark Chrome themes.
 
 ## Up Next
 

@@ -63,6 +63,7 @@
 - PageSweep 0.2.3 passed visual review on 2026-09-15. The larger plume is clearly recognizable, the mascot keeps adequate clearance above the track, and the approved short- and long-page popup behavior remains intact.
 - PageSweep 0.2.5 introduces a reversible, small-size cape refinement on its own branch and removes the redundant numeric toolbar badge during capture. The robot artwork remains unchanged outside the cape region; the cape's lower silhouette is extended by 18 percent so it remains recognizable at the popup's 56-pixel width. Visual review is pending.
 - PageSweep 0.2.6 uses a transparent crop of the approved mascot helmet and visor as the normal toolbar icon. The crop fills the available width at 16, 32, 48, and 128 pixels; the existing animated capture frames and final success or error badge remain unchanged. Visual review is pending on light and dark Chrome themes.
+- PageSweep 0.2.7 tightens the helmet crop and increases its occupied height from roughly 10 pixels to 14–15 pixels in Chrome's 16-pixel toolbar slot. This preserves transparent edges while bringing its visual weight closer to neighboring extension icons. Visual review is pending.
 
 ## Parking Lot
 
