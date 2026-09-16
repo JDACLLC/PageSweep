@@ -16,6 +16,8 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Fixed
 
+- Version 0.2.17 preloads toolbar frames into ImageData, applies them to the default action and captured tab, serializes animation updates, and reports accepted frames and errors instead of silently discarding icon-update failures. Live toolbar verification remains pending.
+
 - Version 0.2.13 adds a persistent pastel-amber popup failure state with refresh-and-retry guidance. A 60-second popup inactivity watchdog resets on progress and reports a stalled connection without claiming the background operation was cancelled. The toolbar failure badge also uses amber.
 
 - Version 0.2.12 explicitly requests instant scrolling, verifies the reachable scroll position before screenshots, rejects noncontiguous frames, and sends failures to the popup instead of leaving it on Preparing PNG. Regression review from top, middle, and bottom is pending.

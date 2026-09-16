@@ -2,6 +2,10 @@ let activeCapture = null;
 let toolbarAnimationTimer = null;
 let toolbarResetTimer = null;
 let toolbarAnimationFrame = 0;
+let toolbarIconFramesPromise = null;
+let toolbarIconUpdatePromise = null;
+let toolbarIconUpdateCount = 0;
+let toolbarIconUpdateErrorCount = 0;
 let offscreenDocumentCreationPromise = null;
 const BETA_FEEDBACK_FORM_URL = "https://forms.gle/f7kgk5EchbeFDP9K8";
 const BETA_FEEDBACK_REMINDER_INTERVALS = [6, 9, 12, 15];
@@ -423,32 +427,91 @@ async function captureVisibleFrame(message, sender) {
   };
 }
 
+async function loadToolbarIconFrames() {
+  if (!toolbarIconFramesPromise) {
+    toolbarIconFramesPromise = Promise.all(CAPTURING_ACTION_ICONS.map(async (paths) => {
+      const entries = await Promise.all(Object.entries(paths).map(async ([size, path]) => {
+        const response = await fetch(chrome.runtime.getURL(path));
+        if (!response.ok) throw new Error(`Could not load toolbar frame: ${path}`);
+        const bitmap = await createImageBitmap(await response.blob());
+        try {
+          const canvas = new OffscreenCanvas(Number(size), Number(size));
+          const context = canvas.getContext("2d");
+          context.drawImage(bitmap, 0, 0, Number(size), Number(size));
+          return [size, context.getImageData(0, 0, Number(size), Number(size))];
+        } finally {
+          bitmap.close();
+        }
+      }));
+      return Object.fromEntries(entries);
+    })).catch((error) => {
+      toolbarIconFramesPromise = null;
+      throw error;
+    });
+  }
+  return toolbarIconFramesPromise;
+}
+
+async function applyToolbarIconFrame(tabId, imageData) {
+  // Keep both the default action and the captured tab's override in sync.
+  await chrome.action.setIcon({ imageData });
+  await chrome.action.setIcon({ tabId, imageData });
+  toolbarIconUpdateCount += 1;
+}
+
 async function startToolbarProgress(tabId) {
-  clearInterval(toolbarAnimationTimer);
+  clearTimeout(toolbarAnimationTimer);
   clearTimeout(toolbarResetTimer);
   toolbarAnimationFrame = 0;
+  toolbarIconUpdateCount = 0;
+  toolbarIconUpdateErrorCount = 0;
 
   await Promise.allSettled([
     chrome.action.setBadgeBackgroundColor({ tabId, color: "#185ADB" }),
     chrome.action.setBadgeText({ tabId, text: "" }),
     chrome.action.setTitle({ tabId, title: "PageSweep is capturing this page" }),
-    chrome.action.setIcon({ tabId, path: CAPTURING_ACTION_ICONS[0] }),
   ]);
 
-  toolbarAnimationTimer = setInterval(() => {
-    toolbarAnimationFrame = (toolbarAnimationFrame + 1) % CAPTURING_ACTION_ICONS.length;
-    chrome.action.setIcon({
-      tabId,
-      path: CAPTURING_ACTION_ICONS[toolbarAnimationFrame],
-    }).catch(() => undefined);
-  }, 450);
+  try {
+    const frames = await loadToolbarIconFrames();
+    await applyToolbarIconFrame(tabId, frames[0]);
+    const advance = async () => {
+      if (activeCapture?.tabId !== tabId) return;
+      toolbarAnimationFrame = (toolbarAnimationFrame + 1) % frames.length;
+      try {
+        toolbarIconUpdatePromise = applyToolbarIconFrame(tabId, frames[toolbarAnimationFrame]);
+        await toolbarIconUpdatePromise;
+      } catch (error) {
+        toolbarIconUpdateErrorCount += 1;
+        if (toolbarIconUpdateErrorCount === 1) {
+          console.warn("PageSweep toolbar icon update failed", error);
+        }
+      }
+      if (activeCapture?.tabId === tabId && toolbarAnimationTimer !== null) {
+        toolbarAnimationTimer = setTimeout(advance, 450);
+      }
+    };
+    toolbarAnimationTimer = setTimeout(advance, 450);
+  } catch (error) {
+    toolbarIconUpdateErrorCount += 1;
+    console.warn("PageSweep toolbar animation could not start", error);
+  }
 }
 
 async function finishToolbarProgress(tabId, succeeded, failureMessage) {
-  clearInterval(toolbarAnimationTimer);
+  clearTimeout(toolbarAnimationTimer);
   toolbarAnimationTimer = null;
+  await toolbarIconUpdatePromise?.catch(() => undefined);
+  toolbarIconUpdatePromise = null;
+  console.log("PageSweep toolbar animation summary", {
+    appliedFrames: toolbarIconUpdateCount,
+    failedUpdates: toolbarIconUpdateErrorCount,
+    frameIntervalMs: 450,
+    iconTransport: "imageData",
+  });
 
   await Promise.allSettled([
+    chrome.action.setIcon({ path: DEFAULT_ACTION_ICONS }),
     chrome.action.setIcon({ tabId, path: DEFAULT_ACTION_ICONS }),
     chrome.action.setBadgeBackgroundColor({
       tabId,
