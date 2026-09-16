@@ -452,7 +452,7 @@ async function finishToolbarProgress(tabId, succeeded, failureMessage) {
     chrome.action.setIcon({ tabId, path: DEFAULT_ACTION_ICONS }),
     chrome.action.setBadgeBackgroundColor({
       tabId,
-      color: succeeded ? "#168A5B" : "#C83C3C",
+      color: succeeded ? "#168A5B" : "#D8A565",
     }),
     chrome.action.setBadgeText({ tabId, text: succeeded ? "✓" : "!" }),
     chrome.action.setTitle({

@@ -2,6 +2,8 @@
 
 ## In Progress
 
+- Visually verify PageSweep 0.2.13 amber failure feedback and its 60-second inactivity fallback; background cancellation remains separate from popup feedback.
+
 - Verify PageSweep 0.2.12 on the same page starting at the top, middle, and bottom; capture scroll positions must remain contiguous and restore the original position.
 - Evaluate the higher-contrast, edge-filling robot visor glyph and its pulsing-eye toolbar animation in PageSweep 0.2.9.
 - Verify that the mascot and plume remain physically locked together throughout normal and completion hover in PageSweep 0.2.10.

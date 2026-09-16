@@ -6,3 +6,5 @@ strong,#status{background:linear-gradient(90deg,#7dd3fc 0%,#818cf8 50%,#c4b5fd 1
 @keyframes text-shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 @keyframes plume-pulse{0%,100%{transform:scaleY(.86) scaleX(.96);opacity:.78}50%{transform:scaleY(1.04) scaleX(1.02);opacity:1}}
 @media(prefers-reduced-motion:reduce){strong,#status,#plume,#robot-hover{animation:none}}
+
+#card.failed{background:#493c32;border-color:#e9bd83}#card.failed #copy{height:34px;width:100%;color:#f8d9a7}#card.failed strong,#card.failed #status{background-image:none;-webkit-text-fill-color:#f8d9a7;color:#f8d9a7;animation:none}#card.failed #status{white-space:normal;font-size:11px;line-height:1.25}#card.failed #bar{background:#edbd7d;box-shadow:0 0 10px rgba(237,189,125,.4)}#card.failed #track{background:rgba(237,189,125,.2)}#card.failed #robot-hover,#card.failed #plume{animation:none}#card.failed #plume{opacity:.35}#card.failed #check{opacity:1;transform:scale(1);background:#edbd7d;color:#493c32;box-shadow:none;font-size:0}#card.failed #check::after{content:"!";font-size:16px}
