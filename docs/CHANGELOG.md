@@ -4,6 +4,30 @@ All notable changes to this project are documented here. The project uses semant
 
 ## [Unreleased]
 
+### Changed
+
+- Version 0.2.18 simplifies the verified toolbar animation to white and purple eyes, removing the dark phase.
+
+- Version 0.2.16 uses white eyes for the idle toolbar icon as well as the first capture frame, making the loaded artwork directly verifiable before capture. Capture continues white, purple, dark, then white.
+
+- Version 0.2.15 keeps toolbar eyes full size and cycles white, purple, and dark at 450 ms per state for a clearer capture indicator.
+
+- Version 0.2.14 alternates visibly dim, narrow eyes with bright full-height eyes every 450 ms in the toolbar, and halves the unfinished progress track opacity.
+
+- Across versions 0.2.4–0.2.9, completed the small-size cape refinement, removed the redundant numeric toolbar badge, and replaced the toolbar arrow with a higher-contrast, edge-filling transparent robot glyph whose larger eyes pulse through three brightness levels during capture while retaining the final success or error symbol.
+
+- User approved the working white/purple toolbar pulse in 0.2.18 on 2026-09-16. Bottom-start capture passed the earlier 0.2.13 user retest. These changes remain on the refinement branch; stable release v0.2.3 is unchanged.
+
+### Fixed
+
+- Version 0.2.17 preloads toolbar frames into ImageData, applies them to the default action and captured tab, serializes animation updates, and reports accepted frames and errors instead of silently discarding icon-update failures. Live toolbar verification remains pending.
+
+- Version 0.2.13 adds a persistent pastel-amber popup failure state with refresh-and-retry guidance. A 60-second popup inactivity watchdog resets on progress and reports a stalled connection without claiming the background operation was cancelled. The toolbar failure badge also uses amber.
+
+- Version 0.2.12 explicitly requests instant scrolling, verifies the reachable scroll position before screenshots, rejects noncontiguous frames, and sends failures to the popup instead of leaving it on Preparing PNG. Regression review from top, middle, and bottom is pending.
+- Version 0.2.11 closes the browser-owned popup 1.7 seconds after success and adds console timing fields for viewport capture and elapsed time until download; capture pacing remains unchanged.
+- Bumped the extension version to 0.2.10 and moved hover motion to a shared robot-and-plume wrapper so the mascot no longer floats independently into or away from its booster plume.
+
 ## [0.2.3] — 2026-09-15
 
 ### Added

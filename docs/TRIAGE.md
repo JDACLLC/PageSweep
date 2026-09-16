@@ -22,13 +22,21 @@
 | 18 | P1 | Complete | Replace the dotted progress treatment with one clean illuminated scan path. |
 | 19 | P1 | Complete | Move the robot above the scan path and add a gentle varied vertical flight path without backward movement. |
 | 20 | P1 | Complete | Move the completion check outside the robot's path and hold the green completed state for 1.5–2 seconds. |
-| 21 | P2 | Up Next | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |
+| 21 | P2 | Complete | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |
 | 22 | P1 | Parking Lot | Before Chrome Web Store release, remove beta wording and the automatic beta-feedback invitation and reminder schedule. |
 | 23 | P0 | Complete | Deliver long-page completion details independently of Chrome's intermittent injected-script result so captured frames always reach stitching. |
-| 24 | P3 | Parking Lot | Consider making the uncompleted portion of the clean scan track even fainter. |
+| 24 | P3 | In Progress | Consider making the uncompleted portion of the clean scan track even fainter. |
 | 25 | P1 | Complete | Protect the upper-right mascot destination from completion copy and turn the mascot to face the message in the green state. |
+| 26 | P2 | Complete | Replace the blue-tile toolbar arrow with a larger transparent helmet-and-visor icon while retaining capture animation and completion status. |
+| 27 | P1 | In Progress | Keep the mascot and booster plume physically synchronized during hover and completion animation. |
+| 28 | P1 | In Progress | Restore automatic success-popup dismissal and investigate reported slower capture using elapsed-time diagnostics. |
+| 29 | P0 | In Progress | Prevent incomplete scrolling from producing missing top content or gaps when capture begins at the bottom; surface capture failures in the popup. |
 
 ## Notes
+
+- Item 26 passed user visual review on 2026-09-16 in PageSweep 0.2.18. The transparent robot glyph starts with white eyes, alternates white and purple every 450 ms during capture, and retains success/caution badges. Preloaded ImageData frames applied to both default and tab actions resolved the previously static appearance; diagnostics report applied frames and errors.
+- Item 24 is implemented in the popup: unfinished track opacity is 7%, reduced from 14%. Explicit contrast review remains open.
+- Item 29’s reported bottom-start failure passed user retesting in 0.2.13 on 2026-09-16. Middle-start, exact restoration, and visual failure-state checks remain open; the 60-second inactivity message warns without cancelling background work.
 
 - Item 7 was identified after Stage 6. Its exact interaction and design will be decided after the capture fundamentals are stable.
 - Item 7 passed visual testing on 2026-08-12. The overlay uses eased opacity transitions, remains fully hidden while each frame is captured, is isolated from fixed-element processing, and is removed during cleanup.
@@ -60,6 +68,12 @@
 - PageSweep 0.2.1 review approved the restored text treatment but found the plume still difficult to see. The original sprite's transparent padding and overlap behind the 43-pixel robot body concealed most of its visible flame. Version 0.2.2 uses a verified-alpha, tightly framed sprite at an effective visible height near one-quarter of the robot and mounts it lower to expose the bright core.
 - PageSweep 0.2.2 made the plume recognizable but still visually restrained. Version 0.2.3 increases its rendered dimensions from 18 by 14 pixels to 23 by 18 pixels and raises the early mascot path by 6 pixels while preserving the approved final destination.
 - PageSweep 0.2.3 passed visual review on 2026-09-15. The larger plume is clearly recognizable, the mascot keeps adequate clearance above the track, and the approved short- and long-page popup behavior remains intact.
+- PageSweep 0.2.5 introduces a reversible, small-size cape refinement on its own branch and removes the redundant numeric toolbar badge during capture. The robot artwork remains unchanged outside the cape region; the cape's lower silhouette is extended by 18 percent so it remains recognizable at the popup's 56-pixel width. Visual review is pending.
+- PageSweep 0.2.6 uses a transparent crop of the approved mascot helmet and visor as the normal toolbar icon. The crop fills the available width at 16, 32, 48, and 128 pixels; the existing animated capture frames and final success or error badge remain unchanged. Visual review is pending on light and dark Chrome themes.
+- PageSweep 0.2.7 tightens the helmet crop and increases its occupied height from roughly 10 pixels to 14–15 pixels in Chrome's 16-pixel toolbar slot. This preserves transparent edges while bringing its visual weight closer to neighboring extension icons. Visual review is pending.
+- Item 21 passed visual review on 2026-09-15. PageSweep 0.2.8 replaces the toolbar's detailed helmet crop with the approved option-A robot glyph, expanded to within roughly one pixel of the 16-pixel icon edges. During capture, three toolbar-only frames pulse the purple eyes every 180 milliseconds; the popup mascot animation remains independent and unchanged. Visual review is pending.
+- PageSweep 0.2.9 increases the glyph's optical size without exceeding Chrome's fixed icon canvas: the helmet now uses a solid purple fill and heavier dark edge, the visor and eyes are larger, and a restrained white crown highlight preserves its connection to the polished mascot. The surrounding pixels remain transparent. Visual review is pending.
+- PageSweep 0.2.10 moves hover translation and rotation from the robot image to a shared robot-and-plume wrapper in both the toolbar popup and retained in-page fallback. The plume keeps its independent size pulse and the robot keeps its completion flip, but their positional motion is now locked. Visual review is pending.
 
 ## Parking Lot
 

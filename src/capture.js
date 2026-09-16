@@ -76,8 +76,9 @@
         Math.ceil(captureBoundaryHeight / window.innerHeight),
         captureCount + 1,
       );
-      window.scrollTo(originalScrollX, targetY);
+      window.scrollTo({ left: originalScrollX, top: targetY, behavior: "instant" });
       const stabilization = await waitForPageToSettle();
+      await ensureCapturePosition(targetY);
 
       if (stabilization.timedOut) {
         stabilizationTimeouts += 1;
@@ -95,7 +96,7 @@
         captureCount + 1,
       );
 
-      const actualScrollY = window.scrollY;
+      let actualScrollY = window.scrollY;
       if (
         lastCapturedScrollY !== null
         && actualScrollY <= lastCapturedScrollY + 1
@@ -121,6 +122,14 @@
       await waitForStylePaint();
       await progressOverlay.hide();
       await waitForStylePaint();
+      await ensureCapturePosition(targetY);
+      actualScrollY = window.scrollY;
+      if (lastCapturedScrollY !== null && (
+        actualScrollY <= lastCapturedScrollY + 1
+        || actualScrollY > lastCapturedScrollY + window.innerHeight + 1
+      )) {
+        throw new Error("The page moved outside the contiguous capture region before its screenshot.");
+      }
 
       let response;
       try {
@@ -400,6 +409,14 @@
       willChange: "left, top, transform",
     });
 
+    const robotHover = document.createElement("div");
+    robotHover.setAttribute("data-pagesweep-robot-hover", "true");
+    Object.assign(robotHover.style, {
+      position: "absolute",
+      inset: "0",
+      transformOrigin: "50% 58%",
+    });
+
     const plume = document.createElement("img");
     plume.setAttribute("data-pagesweep-plume", "true");
     plume.alt = "";
@@ -433,7 +450,7 @@
     const robotVisual = document.createElement("img");
     robotVisual.setAttribute("data-pagesweep-robot", "true");
     robotVisual.alt = "";
-    robotVisual.src = chrome.runtime.getURL("icons/progress/pagesweep-robot-body.png");
+    robotVisual.src = chrome.runtime.getURL("icons/progress/pagesweep-robot-body-cape-v2.png");
     Object.assign(robotVisual.style, {
       position: "absolute",
       top: "0",
@@ -441,7 +458,7 @@
       width: "56px",
       height: "auto",
       filter: "drop-shadow(0 4px 7px rgba(7, 18, 43, 0.38))",
-      transform: "translateY(-1px)",
+      transform: "none",
       transformOrigin: "50% 58%",
     });
 
@@ -467,7 +484,8 @@
       transition: "opacity 180ms ease-out, transform 260ms cubic-bezier(0.22, 1, 0.36, 1)",
     });
 
-    robotPosition.append(plume, scanBeam, robotVisual);
+    robotHover.append(plume, scanBeam, robotVisual);
+    robotPosition.append(robotHover);
     scene.append(track, robotPosition, completeBadge);
     card.append(row, scene);
     shadow.appendChild(card);
@@ -475,7 +493,7 @@
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!reducedMotion) {
-      robotVisual.animate(
+      robotHover.animate(
         [
           { transform: "translateY(-1px) rotate(-0.35deg)" },
           { transform: "translateY(1.5px) rotate(0.25deg)" },
@@ -609,6 +627,19 @@
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   }
 
+  async function ensureCapturePosition(requestedY) {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const reachableY = Math.max(0, Math.min(requestedY, getDocumentHeight() - window.innerHeight));
+      if (Math.abs(window.scrollY - reachableY) <= 1) return;
+      window.scrollTo({ left: originalScrollX, top: reachableY, behavior: "instant" });
+      await waitForStylePaint();
+    }
+    const reachableY = Math.max(0, Math.min(requestedY, getDocumentHeight() - window.innerHeight));
+    if (Math.abs(window.scrollY - reachableY) > 1) {
+      throw new Error(`The page would not stay at the requested capture position (${reachableY}px; actual ${window.scrollY}px).`);
+    }
+  }
+
   async function decodeVisibleImages(timeout) {
     const decodePromises = getVisibleImages()
       .filter((image) => image.complete && typeof image.decode === "function")
@@ -646,7 +677,7 @@
     const restoreDeadline = performance.now() + 750;
 
     do {
-      window.scrollTo(originalScrollX, originalScrollY);
+      window.scrollTo({ left: originalScrollX, top: originalScrollY, behavior: "instant" });
       await waitForStylePaint();
 
       if (
@@ -664,7 +695,7 @@
       }
     } while (performance.now() < restoreDeadline);
 
-    window.scrollTo(originalScrollX, originalScrollY);
+    window.scrollTo({ left: originalScrollX, top: originalScrollY, behavior: "instant" });
     await waitForStylePaint();
   }
 

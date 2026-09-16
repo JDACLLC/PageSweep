@@ -2,6 +2,10 @@ let activeCapture = null;
 let toolbarAnimationTimer = null;
 let toolbarResetTimer = null;
 let toolbarAnimationFrame = 0;
+let toolbarIconFramesPromise = null;
+let toolbarIconUpdatePromise = null;
+let toolbarIconUpdateCount = 0;
+let toolbarIconUpdateErrorCount = 0;
 let offscreenDocumentCreationPromise = null;
 const BETA_FEEDBACK_FORM_URL = "https://forms.gle/f7kgk5EchbeFDP9K8";
 const BETA_FEEDBACK_REMINDER_INTERVALS = [6, 9, 12, 15];
@@ -9,16 +13,16 @@ const MAX_STITCH_CANVAS_DIMENSION = 65000;
 const MAX_STITCH_CANVAS_PIXELS = 64 * 1024 * 1024;
 
 const DEFAULT_ACTION_ICONS = {
-  16: "icons/icon-16.png",
-  32: "icons/icon-32.png",
-  48: "icons/icon-48.png",
-  128: "icons/icon-128.png",
+  16: "icons/toolbar/mascot-glyph-16.png",
+  32: "icons/toolbar/mascot-glyph-32.png",
+  48: "icons/toolbar/mascot-glyph-48.png",
+  128: "icons/toolbar/mascot-glyph-128.png",
 };
-const CAPTURING_ACTION_ICONS = [1, 2, 3].map((frame) => ({
-  16: `icons/animation/capturing-${frame}-16.png`,
-  32: `icons/animation/capturing-${frame}-32.png`,
-  48: `icons/animation/capturing-${frame}-48.png`,
-  128: `icons/animation/capturing-${frame}-128.png`,
+const CAPTURING_ACTION_ICONS = [1, 2].map((frame) => ({
+  16: `icons/toolbar/mascot-capturing-${frame}-16.png`,
+  32: `icons/toolbar/mascot-capturing-${frame}-32.png`,
+  48: `icons/toolbar/mascot-capturing-${frame}-48.png`,
+  128: `icons/toolbar/mascot-capturing-${frame}-128.png`,
 }));
 
 chrome.runtime.onInstalled.addListener(({ reason }) => {
@@ -70,6 +74,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 async function runCapture(tab) {
+  const captureStartedAt = performance.now();
   console.log("PageSweep triggered", {
     tabId: tab.id,
     url: tab.url,
@@ -166,6 +171,7 @@ async function runCapture(tab) {
       });
 
       console.log("PageSweep stitched PNG downloaded", {
+        elapsedUntilDownloadMs: Math.round(performance.now() - captureStartedAt),
         downloadId,
         filename,
         width: stitchedImage.width,
@@ -216,6 +222,7 @@ async function runCapture(tab) {
       tabId: tab.id,
       capturedFrames: activeCapture?.frames.length ?? 0,
     });
+    await setPageProgressStatus(tab.id, activeCapture.failureMessage, 100, "failed");
   } finally {
     const captureSucceeded = activeCapture?.succeeded === true;
     if (activeCapture?.frames) {
@@ -390,6 +397,7 @@ async function captureVisibleFrame(message, sender) {
     message.status || `Capturing ${activeCapture.frames.length + 1}`,
     message.progressPercent,
   );
+  const captureApiStartedAt = performance.now();
   const dataUrl = await chrome.tabs.captureVisibleTab(activeCapture.windowId, {
     format: "png",
   });
@@ -403,8 +411,8 @@ async function captureVisibleFrame(message, sender) {
   };
 
   activeCapture.frames.push(frame);
-  await updateToolbarProgress(activeCapture.tabId, message.progressPercent);
   console.log(`PageSweep frame ${activeCapture.frames.length}`, {
+    captureApiMs: Math.round(performance.now() - captureApiStartedAt),
     scrollY: frame.scrollY,
     expectedY: frame.expectedY,
     capturedWidth: frame.width,
@@ -419,41 +427,95 @@ async function captureVisibleFrame(message, sender) {
   };
 }
 
+async function loadToolbarIconFrames() {
+  if (!toolbarIconFramesPromise) {
+    toolbarIconFramesPromise = Promise.all(CAPTURING_ACTION_ICONS.map(async (paths) => {
+      const entries = await Promise.all(Object.entries(paths).map(async ([size, path]) => {
+        const response = await fetch(chrome.runtime.getURL(path));
+        if (!response.ok) throw new Error(`Could not load toolbar frame: ${path}`);
+        const bitmap = await createImageBitmap(await response.blob());
+        try {
+          const canvas = new OffscreenCanvas(Number(size), Number(size));
+          const context = canvas.getContext("2d");
+          context.drawImage(bitmap, 0, 0, Number(size), Number(size));
+          return [size, context.getImageData(0, 0, Number(size), Number(size))];
+        } finally {
+          bitmap.close();
+        }
+      }));
+      return Object.fromEntries(entries);
+    })).catch((error) => {
+      toolbarIconFramesPromise = null;
+      throw error;
+    });
+  }
+  return toolbarIconFramesPromise;
+}
+
+async function applyToolbarIconFrame(tabId, imageData) {
+  // Keep both the default action and the captured tab's override in sync.
+  await chrome.action.setIcon({ imageData });
+  await chrome.action.setIcon({ tabId, imageData });
+  toolbarIconUpdateCount += 1;
+}
+
 async function startToolbarProgress(tabId) {
-  clearInterval(toolbarAnimationTimer);
+  clearTimeout(toolbarAnimationTimer);
   clearTimeout(toolbarResetTimer);
   toolbarAnimationFrame = 0;
+  toolbarIconUpdateCount = 0;
+  toolbarIconUpdateErrorCount = 0;
 
   await Promise.allSettled([
     chrome.action.setBadgeBackgroundColor({ tabId, color: "#185ADB" }),
-    chrome.action.setBadgeText({ tabId, text: "0" }),
+    chrome.action.setBadgeText({ tabId, text: "" }),
     chrome.action.setTitle({ tabId, title: "PageSweep is capturing this page" }),
-    chrome.action.setIcon({ tabId, path: CAPTURING_ACTION_ICONS[0] }),
   ]);
 
-  toolbarAnimationTimer = setInterval(() => {
-    toolbarAnimationFrame = (toolbarAnimationFrame + 1) % CAPTURING_ACTION_ICONS.length;
-    chrome.action.setIcon({
-      tabId,
-      path: CAPTURING_ACTION_ICONS[toolbarAnimationFrame],
-    }).catch(() => undefined);
-  }, 180);
-}
-
-async function updateToolbarProgress(tabId, progressPercent) {
-  const boundedProgress = Math.max(0, Math.min(99, Math.round(progressPercent ?? 0)));
-  await chrome.action.setBadgeText({ tabId, text: String(boundedProgress) });
+  try {
+    const frames = await loadToolbarIconFrames();
+    await applyToolbarIconFrame(tabId, frames[0]);
+    const advance = async () => {
+      if (activeCapture?.tabId !== tabId) return;
+      toolbarAnimationFrame = (toolbarAnimationFrame + 1) % frames.length;
+      try {
+        toolbarIconUpdatePromise = applyToolbarIconFrame(tabId, frames[toolbarAnimationFrame]);
+        await toolbarIconUpdatePromise;
+      } catch (error) {
+        toolbarIconUpdateErrorCount += 1;
+        if (toolbarIconUpdateErrorCount === 1) {
+          console.warn("PageSweep toolbar icon update failed", error);
+        }
+      }
+      if (activeCapture?.tabId === tabId && toolbarAnimationTimer !== null) {
+        toolbarAnimationTimer = setTimeout(advance, 450);
+      }
+    };
+    toolbarAnimationTimer = setTimeout(advance, 450);
+  } catch (error) {
+    toolbarIconUpdateErrorCount += 1;
+    console.warn("PageSweep toolbar animation could not start", error);
+  }
 }
 
 async function finishToolbarProgress(tabId, succeeded, failureMessage) {
-  clearInterval(toolbarAnimationTimer);
+  clearTimeout(toolbarAnimationTimer);
   toolbarAnimationTimer = null;
+  await toolbarIconUpdatePromise?.catch(() => undefined);
+  toolbarIconUpdatePromise = null;
+  console.log("PageSweep toolbar animation summary", {
+    appliedFrames: toolbarIconUpdateCount,
+    failedUpdates: toolbarIconUpdateErrorCount,
+    frameIntervalMs: 450,
+    iconTransport: "imageData",
+  });
 
   await Promise.allSettled([
+    chrome.action.setIcon({ path: DEFAULT_ACTION_ICONS }),
     chrome.action.setIcon({ tabId, path: DEFAULT_ACTION_ICONS }),
     chrome.action.setBadgeBackgroundColor({
       tabId,
-      color: succeeded ? "#168A5B" : "#C83C3C",
+      color: succeeded ? "#168A5B" : "#D8A565",
     }),
     chrome.action.setBadgeText({ tabId, text: succeeded ? "✓" : "!" }),
     chrome.action.setTitle({
@@ -489,6 +551,7 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
         const gradientTextElements = shadow.querySelectorAll("[data-pagesweep-gradient-text]");
         const barElement = shadow.querySelector("[data-pagesweep-bar]");
         const cardElement = shadow.querySelector("[data-pagesweep-card]");
+        const robotHoverElement = shadow.querySelector("[data-pagesweep-robot-hover]");
         const robotElement = shadow.querySelector("[data-pagesweep-robot]");
         const plumeElement = shadow.querySelector("[data-pagesweep-plume]");
         const scanBeamElement = shadow.querySelector("[data-pagesweep-scan-beam]");
@@ -523,16 +586,20 @@ async function setPageProgressStatus(tabId, status, progressPercent, state = "wo
           });
         }
         if (nextState === "complete") {
-          if (robotElement) {
-            robotElement.getAnimations().forEach((animation) => animation.cancel());
-            robotElement.animate(
+          if (robotHoverElement) {
+            robotHoverElement.getAnimations().forEach((animation) => animation.cancel());
+            robotHoverElement.animate(
               [
-                { transform: "translateY(-1px) scaleX(-1)" },
-                { transform: "translateY(-3px) scaleX(-1)" },
-                { transform: "translateY(-1px) scaleX(-1)" },
+                { transform: "translateY(-1px)" },
+                { transform: "translateY(-3px)" },
+                { transform: "translateY(-1px)" },
               ],
               { duration: 1100, iterations: Infinity, easing: "ease-in-out" },
             );
+          }
+          if (robotElement) {
+            robotElement.getAnimations().forEach((animation) => animation.cancel());
+            robotElement.style.transform = "scaleX(-1)";
           }
           if (plumeElement) {
             plumeElement.getAnimations().forEach((animation) => animation.cancel());

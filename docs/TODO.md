@@ -2,11 +2,15 @@
 
 ## In Progress
 
-- Nothing currently.
+- Visually verify PageSweep 0.2.13 amber failure feedback and its 60-second inactivity fallback; background cancellation remains separate from popup feedback.
+
+- Complete the remaining middle-start and exact scroll-restoration checks; the reported bottom-start failure passed user retesting in 0.2.13.
+- Confirm the fainter unfinished track meets the intended contrast; opacity was reduced from 14% to 7% in 0.2.14.
+- Verify that the mascot and plume remain physically locked together throughout normal and completion hover in PageSweep 0.2.10.
+- Verify automatic popup dismissal after 1.7 seconds and inspect capture timing diagnostics in PageSweep 0.2.11; a slower 15-frame run was reported.
 
 ## Up Next
 
-- Refine the mascot cape at small sizes after capture behavior and layout are stable.
 - Run a small friend beta through the public GitHub repository before Chrome Web Store packaging.
 - Review and triage responses submitted through the private PageSweep beta feedback form.
 - Create a dedicated PageSweep webpage under JDAC Labs, then replace the About-page `JDAC.ai` link with the new PageSweep URL.
@@ -17,6 +21,13 @@
 
 ## Recently Done
 
+- Approve the white/purple toolbar-eye pulse in PageSweep 0.2.18; user visual review passed on 2026-09-16.
+
+- Verify visible toolbar-eye animation in PageSweep 0.2.17; user confirmed white, purple, and dark phases on 2026-09-16.
+
+- Verify successful capture starting at the bottom of the page in PageSweep 0.2.13; user retest passed on 2026-09-16.
+
+- Approve the refined small-size cape silhouette; visual review passed on 2026-09-15.
 - Consolidate the approved mascot and persistent-popup work into the stable PageSweep 0.2.3 release on `main`.
 - Approve the 25-percent larger booster plume and adjusted starting clearance in PageSweep 0.2.3; visual review passed on 2026-09-15.
 - Replace the flashing in-page card with a persistent browser-owned popup; short- and long-page visual review passed on 2026-09-14.

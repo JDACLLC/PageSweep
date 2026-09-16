@@ -176,3 +176,21 @@ Keep normal captures at their source device-pixel scale. When native canvas dime
 ### Consequences
 
 V1 reliably preserves the entire page as one PNG, but exceptionally tall pages can be less sharp when enlarged. Full-resolution tiled encoding remains a future option.
+
+## Use a transparent glyph with white/purple capture eyes — 2026-09-16
+
+### Context
+
+The detailed mascot helmet was difficult to recognize in Chrome’s small toolbar slot. Subtle brightness and shape changes remained imperceptible, and the white/purple/dark sequence felt awkward once the animation worked.
+
+### Decision
+
+Keep the edge-filling transparent robot glyph, use white eyes at rest, and alternate white/purple eyes every 450 ms during capture. Preload pixel frames, update default and captured-tab actions sequentially, expose update failures, and restore the idle glyph after stopping. User approved 0.2.18.
+
+### Alternatives
+
+Retain the detailed helmet, use subtle eye brightness alone, or include a dark phase.
+
+### Consequences
+
+The toolbar state is legible without a numeric badge and remains separate from the popup mascot. The unfinished track is reduced to 7% opacity; its explicit contrast review remains open. Stable main and v0.2.3 remain unchanged until release consolidation.
