@@ -18,7 +18,7 @@ Use this checklist before declaring a capture stage complete and before a releas
 2. Click the **PageSweep** toolbar icon once.
 3. Confirm the page scrolls automatically without manual input.
 4. Confirm the PageSweep toolbar popup remains open, its mascot moves forward and upward with a gentle hover, and its progress advances.
-5. If PageSweep is pinned, confirm its toolbar icon animates without displaying a numeric badge.
+5. If PageSweep is pinned, confirm its white idle eyes alternate white/purple during capture without displaying a numeric badge.
 6. Confirm exactly one PNG downloads.
 7. Confirm the filename follows `hostname_YYYY-MM-DD_HH-MM-SS.png`.
 8. Confirm the page returns to its exact starting position.
@@ -150,3 +150,11 @@ Capture the full console error and record:
 - Whether the page state was restored.
 - Whether a partial or incorrect file downloaded.
 - Smallest correction applied and regression page retested.
+
+## Refinement-branch validation — 2026-09-16
+
+- Bottom-start capture: user reported a correct completed capture in 0.2.13. Middle-start and exact restoration checks remain pending.
+- Toolbar animation: user confirmed visible white/purple/dark phases in 0.2.17 and approved the simplified white/purple cycle in 0.2.18.
+- Automated checks: JavaScript syntax, diff whitespace, scroll-position regression, and mocked toolbar sequence/stop/idle restoration passed during implementation. Mock checks do not establish Chrome rendering; the user retest supplies that evidence.
+- Still pending: amber failure/inactivity visual review, fainter track contrast, synchronized plume motion, popup dismissal and comparative capture timing.
+- If toolbar animation regresses, inspect **PageSweep toolbar animation summary** and toolbar warnings in service-worker DevTools. Successful API updates do not alone prove visible rendering.

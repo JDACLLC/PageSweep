@@ -35,9 +35,11 @@ PageSweep is proprietary beta software provided for personal or internal evaluat
 
 1. Open a normal webpage using an `http` or `https` address, or an enabled local `file` page.
 2. Select the **PageSweep** toolbar icon once.
-3. Keep the toolbar popup open and watch the flying robot move forward and upward while the page scrolls from top to bottom. The toolbar icon also animates during capture; progress numbers remain inside the popup status copy.
+3. Keep the toolbar popup open and watch the flying robot move forward and upward while the page scrolls from top to bottom. The toolbar robot has white eyes when idle and alternates white and purple during capture; progress numbers remain inside the popup status copy.
 4. Confirm the page returns to its starting position.
 5. Wait for the green check above the end of the progress track and **Download started**, then open the PNG downloaded by Chrome.
+
+The green success popup closes after about 1.7 seconds. An amber card and exclamation mark indicate a capture problem. If no progress arrives for 60 seconds, the popup shows a retry message; a slow background capture can still finish and replace that warning. Refresh the page before retrying a confirmed failure.
 
 The filename uses the website hostname and capture time, such as `example.com_2026-08-12_14-01-32.png`.
 

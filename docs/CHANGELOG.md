@@ -14,7 +14,9 @@ All notable changes to this project are documented here. The project uses semant
 
 - Version 0.2.14 alternates visibly dim, narrow eyes with bright full-height eyes every 450 ms in the toolbar, and halves the unfinished progress track opacity.
 
-- Bumped the extension version to 0.2.9, completed the small-size cape refinement, removed the redundant numeric toolbar badge, and replaced the toolbar arrow with a higher-contrast, edge-filling transparent robot glyph whose larger eyes pulse through three brightness levels during capture while retaining the final success or error symbol.
+- Across versions 0.2.4–0.2.9, completed the small-size cape refinement, removed the redundant numeric toolbar badge, and replaced the toolbar arrow with a higher-contrast, edge-filling transparent robot glyph whose larger eyes pulse through three brightness levels during capture while retaining the final success or error symbol.
+
+- User approved the working white/purple toolbar pulse in 0.2.18 on 2026-09-16. Bottom-start capture passed the earlier 0.2.13 user retest. These changes remain on the refinement branch; stable release v0.2.3 is unchanged.
 
 ### Fixed
 

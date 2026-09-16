@@ -4,8 +4,8 @@
 
 - Visually verify PageSweep 0.2.13 amber failure feedback and its 60-second inactivity fallback; background cancellation remains separate from popup feedback.
 
-- Verify PageSweep 0.2.12 on the same page starting at the top, middle, and bottom; capture scroll positions must remain contiguous and restore the original position.
-- Visually verify the simplified white/purple toolbar-eye cycle in PageSweep 0.2.18 and the fainter unfinished track.
+- Complete the remaining middle-start and exact scroll-restoration checks; the reported bottom-start failure passed user retesting in 0.2.13.
+- Confirm the fainter unfinished track meets the intended contrast; opacity was reduced from 14% to 7% in 0.2.14.
 - Verify that the mascot and plume remain physically locked together throughout normal and completion hover in PageSweep 0.2.10.
 - Verify automatic popup dismissal after 1.7 seconds and inspect capture timing diagnostics in PageSweep 0.2.11; a slower 15-frame run was reported.
 
@@ -20,6 +20,8 @@
 - Nothing currently.
 
 ## Recently Done
+
+- Approve the white/purple toolbar-eye pulse in PageSweep 0.2.18; user visual review passed on 2026-09-16.
 
 - Verify visible toolbar-eye animation in PageSweep 0.2.17; user confirmed white, purple, and dark phases on 2026-09-16.
 

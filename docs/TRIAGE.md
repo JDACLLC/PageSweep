@@ -25,14 +25,18 @@
 | 21 | P2 | Complete | Refine the small mascot asset so its cape reads clearly as a cape rather than a tail. |
 | 22 | P1 | Parking Lot | Before Chrome Web Store release, remove beta wording and the automatic beta-feedback invitation and reminder schedule. |
 | 23 | P0 | Complete | Deliver long-page completion details independently of Chrome's intermittent injected-script result so captured frames always reach stitching. |
-| 24 | P3 | Parking Lot | Consider making the uncompleted portion of the clean scan track even fainter. |
+| 24 | P3 | In Progress | Consider making the uncompleted portion of the clean scan track even fainter. |
 | 25 | P1 | Complete | Protect the upper-right mascot destination from completion copy and turn the mascot to face the message in the green state. |
-| 26 | P2 | In Progress | Replace the blue-tile toolbar arrow with a larger transparent helmet-and-visor icon while retaining capture animation and completion status. |
+| 26 | P2 | Complete | Replace the blue-tile toolbar arrow with a larger transparent helmet-and-visor icon while retaining capture animation and completion status. |
 | 27 | P1 | In Progress | Keep the mascot and booster plume physically synchronized during hover and completion animation. |
 | 28 | P1 | In Progress | Restore automatic success-popup dismissal and investigate reported slower capture using elapsed-time diagnostics. |
 | 29 | P0 | In Progress | Prevent incomplete scrolling from producing missing top content or gaps when capture begins at the bottom; surface capture failures in the popup. |
 
 ## Notes
+
+- Item 26 passed user visual review on 2026-09-16 in PageSweep 0.2.18. The transparent robot glyph starts with white eyes, alternates white and purple every 450 ms during capture, and retains success/caution badges. Preloaded ImageData frames applied to both default and tab actions resolved the previously static appearance; diagnostics report applied frames and errors.
+- Item 24 is implemented in the popup: unfinished track opacity is 7%, reduced from 14%. Explicit contrast review remains open.
+- Item 29’s reported bottom-start failure passed user retesting in 0.2.13 on 2026-09-16. Middle-start, exact restoration, and visual failure-state checks remain open; the 60-second inactivity message warns without cancelling background work.
 
 - Item 7 was identified after Stage 6. Its exact interaction and design will be decided after the capture fundamentals are stable.
 - Item 7 passed visual testing on 2026-08-12. The overlay uses eased opacity transitions, remains fully hidden while each frame is captured, is isolated from fixed-element processing, and is removed during cleanup.

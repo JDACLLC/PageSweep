@@ -46,11 +46,17 @@ The manifest also registers `about.html` as the extension's options page. The ba
 
 ### `src/background.js`
 
-Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, receives explicit page-capture completion details with the injected-script result retained as a fallback, reads PNG dimensions, animates the toolbar action and progress badge, controls the offscreen stitch session, downloads the result, and logs failures by stage. After successful captures it updates a local counter and may display the beta feedback invitation. Its final cleanup clears frame memory, restores the toolbar action, removes the page overlay, and closes temporary documents even after an earlier operation fails.
+Owns Chrome API calls and capture-session coordination. It prevents concurrent captures, rejects unsupported browser-controlled URLs, stores viewport frames in memory, receives explicit page-capture completion details with the injected-script result retained as a fallback, reads PNG dimensions, animates the toolbar action and displays terminal status badges, controls the offscreen stitch session, downloads the result, and logs failures by stage. After successful captures it updates a local counter and may display the beta feedback invitation. Its final cleanup clears frame memory, restores the toolbar action, removes the page overlay, and closes temporary documents even after an earlier operation fails.
+
+Toolbar frames are decoded once into ImageData through OffscreenCanvas, then applied sequentially to both default and captured-tab actions every 450 ms. The active sequence is white/purple; completion stops updates, waits for an outstanding update, and restores the white-eye idle glyph. Console diagnostics summarize applied frames and failures. No percentage badge is displayed.
+
+### `popup.html`, `popup.js`, and `popup.css`
+
+The browser-owned popup renders the robot and plume in one hover wrapper, shows runtime progress, and closes 1.7 seconds after success. Confirmed failures use persistent pastel-amber guidance. A resettable 60-second inactivity timer shows a stall warning without cancelling background work; later progress can recover the UI. The unfinished track uses 7% white opacity.
 
 ### `src/capture.js`
 
-Runs in the active webpage. It measures document and viewport geometry, establishes a bounded capture boundary, visits each target position, waits for layout and visible images to settle, requests a frame, and restores the original scroll position and page styles in `finally` cleanup. Version 0.2.0 displays progress in the Chrome-owned action popup, so no progress card is inserted into captured webpage pixels. The earlier in-page implementation remains in source as a fallback. Fixed and sticky elements remain visible for their first on-screen capture and are then hidden with `visibility`, preserving page layout while preventing repeated appearances.
+Runs in the active webpage. It measures document and viewport geometry, establishes a bounded capture boundary, visits each target position using instant scrolling and verifies the reachable position before capture, waits for layout and visible images to settle, requests a frame, and restores the original scroll position and page styles in `finally` cleanup. Version 0.2.0 displays progress in the Chrome-owned action popup, so no progress card is inserted into captured webpage pixels. The earlier in-page implementation remains in source as a fallback. Fixed and sticky elements remain visible for their first on-screen capture and are then hidden with `visibility`, preserving page layout while preventing repeated appearances.
 
 ### `offscreen.html` and `src/stitch.js`
 
@@ -62,7 +68,7 @@ Provide a temporary DOM environment for image decoding and canvas composition. F
 2. The service worker opens a capture session and injects `capture.js`.
 3. The page script establishes dimensions and scroll targets.
 4. At each target, the page settles and requests a visible-tab capture.
-   The progress overlay is hidden across a two-frame repaint before the request and restored only after the screenshot returns.
+   The browser-owned popup remains outside captured pixels. Only the retained in-page fallback requires hiding its overlay for screenshot capture.
 5. The service worker stores the PNG data URL and frame metadata.
 6. After page cleanup, the service worker opens the offscreen document.
 7. The stitcher receives frames individually and draws only each frame's unique region, ending the final frame at the fixed document boundary.
