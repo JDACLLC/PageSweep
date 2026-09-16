@@ -5,7 +5,7 @@
 - Visually verify PageSweep 0.2.13 amber failure feedback and its 60-second inactivity fallback; background cancellation remains separate from popup feedback.
 
 - Verify PageSweep 0.2.12 on the same page starting at the top, middle, and bottom; capture scroll positions must remain contiguous and restore the original position.
-- Evaluate the higher-contrast, edge-filling robot visor glyph and its pulsing-eye toolbar animation in PageSweep 0.2.9.
+- Visually verify the distinct dim/bright toolbar-eye blink and fainter unfinished track in PageSweep 0.2.14.
 - Verify that the mascot and plume remain physically locked together throughout normal and completion hover in PageSweep 0.2.10.
 - Verify automatic popup dismissal after 1.7 seconds and inspect capture timing diagnostics in PageSweep 0.2.11; a slower 15-frame run was reported.
 
@@ -20,6 +20,8 @@
 - Nothing currently.
 
 ## Recently Done
+
+- Verify successful capture starting at the bottom of the page in PageSweep 0.2.13; user retest passed on 2026-09-16.
 
 - Approve the refined small-size cape silhouette; visual review passed on 2026-09-15.
 - Consolidate the approved mascot and persistent-popup work into the stable PageSweep 0.2.3 release on `main`.

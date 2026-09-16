@@ -14,7 +14,7 @@ const DEFAULT_ACTION_ICONS = {
   48: "icons/toolbar/mascot-glyph-48.png",
   128: "icons/toolbar/mascot-glyph-128.png",
 };
-const CAPTURING_ACTION_ICONS = [1, 2, 3].map((frame) => ({
+const CAPTURING_ACTION_ICONS = [1, 3].map((frame) => ({
   16: `icons/toolbar/mascot-capturing-${frame}-16.png`,
   32: `icons/toolbar/mascot-capturing-${frame}-32.png`,
   48: `icons/toolbar/mascot-capturing-${frame}-48.png`,
@@ -441,7 +441,7 @@ async function startToolbarProgress(tabId) {
       tabId,
       path: CAPTURING_ACTION_ICONS[toolbarAnimationFrame],
     }).catch(() => undefined);
-  }, 180);
+  }, 450);
 }
 
 async function finishToolbarProgress(tabId, succeeded, failureMessage) {
