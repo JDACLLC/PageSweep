@@ -5,7 +5,7 @@
 - Visually verify PageSweep 0.2.13 amber failure feedback and its 60-second inactivity fallback; background cancellation remains separate from popup feedback.
 
 - Verify PageSweep 0.2.12 on the same page starting at the top, middle, and bottom; capture scroll positions must remain contiguous and restore the original position.
-- Visually verify the white/purple/dark toolbar-eye cycle in PageSweep 0.2.15 and fainter unfinished track.
+- Visually verify the white/purple/dark toolbar-eye cycle in PageSweep 0.2.16 (idle eyes must appear white after reload) and fainter unfinished track.
 - Verify that the mascot and plume remain physically locked together throughout normal and completion hover in PageSweep 0.2.10.
 - Verify automatic popup dismissal after 1.7 seconds and inspect capture timing diagnostics in PageSweep 0.2.11; a slower 15-frame run was reported.
 

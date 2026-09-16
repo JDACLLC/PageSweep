@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Version 0.2.16 uses white eyes for the idle toolbar icon as well as the first capture frame, making the loaded artwork directly verifiable before capture. Capture continues white, purple, dark, then white.
+
 - Version 0.2.15 keeps toolbar eyes full size and cycles white, purple, and dark at 450 ms per state for a clearer capture indicator.
 
 - Version 0.2.14 alternates visibly dim, narrow eyes with bright full-height eyes every 450 ms in the toolbar, and halves the unfinished progress track opacity.
