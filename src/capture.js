@@ -76,8 +76,9 @@
         Math.ceil(captureBoundaryHeight / window.innerHeight),
         captureCount + 1,
       );
-      window.scrollTo(originalScrollX, targetY);
+      window.scrollTo({ left: originalScrollX, top: targetY, behavior: "instant" });
       const stabilization = await waitForPageToSettle();
+      await ensureCapturePosition(targetY);
 
       if (stabilization.timedOut) {
         stabilizationTimeouts += 1;
@@ -95,7 +96,7 @@
         captureCount + 1,
       );
 
-      const actualScrollY = window.scrollY;
+      let actualScrollY = window.scrollY;
       if (
         lastCapturedScrollY !== null
         && actualScrollY <= lastCapturedScrollY + 1
@@ -121,6 +122,14 @@
       await waitForStylePaint();
       await progressOverlay.hide();
       await waitForStylePaint();
+      await ensureCapturePosition(targetY);
+      actualScrollY = window.scrollY;
+      if (lastCapturedScrollY !== null && (
+        actualScrollY <= lastCapturedScrollY + 1
+        || actualScrollY > lastCapturedScrollY + window.innerHeight + 1
+      )) {
+        throw new Error("The page moved outside the contiguous capture region before its screenshot.");
+      }
 
       let response;
       try {
@@ -618,6 +627,19 @@
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   }
 
+  async function ensureCapturePosition(requestedY) {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const reachableY = Math.max(0, Math.min(requestedY, getDocumentHeight() - window.innerHeight));
+      if (Math.abs(window.scrollY - reachableY) <= 1) return;
+      window.scrollTo({ left: originalScrollX, top: reachableY, behavior: "instant" });
+      await waitForStylePaint();
+    }
+    const reachableY = Math.max(0, Math.min(requestedY, getDocumentHeight() - window.innerHeight));
+    if (Math.abs(window.scrollY - reachableY) > 1) {
+      throw new Error(`The page would not stay at the requested capture position (${reachableY}px; actual ${window.scrollY}px).`);
+    }
+  }
+
   async function decodeVisibleImages(timeout) {
     const decodePromises = getVisibleImages()
       .filter((image) => image.complete && typeof image.decode === "function")
@@ -655,7 +677,7 @@
     const restoreDeadline = performance.now() + 750;
 
     do {
-      window.scrollTo(originalScrollX, originalScrollY);
+      window.scrollTo({ left: originalScrollX, top: originalScrollY, behavior: "instant" });
       await waitForStylePaint();
 
       if (
@@ -673,7 +695,7 @@
       }
     } while (performance.now() < restoreDeadline);
 
-    window.scrollTo(originalScrollX, originalScrollY);
+    window.scrollTo({ left: originalScrollX, top: originalScrollY, behavior: "instant" });
     await waitForStylePaint();
   }
 

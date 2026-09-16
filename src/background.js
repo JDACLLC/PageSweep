@@ -218,6 +218,7 @@ async function runCapture(tab) {
       tabId: tab.id,
       capturedFrames: activeCapture?.frames.length ?? 0,
     });
+    await setPageProgressStatus(tab.id, activeCapture.failureMessage, 100, "failed");
   } finally {
     const captureSucceeded = activeCapture?.succeeded === true;
     if (activeCapture?.frames) {

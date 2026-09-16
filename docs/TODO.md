@@ -2,6 +2,7 @@
 
 ## In Progress
 
+- Verify PageSweep 0.2.12 on the same page starting at the top, middle, and bottom; capture scroll positions must remain contiguous and restore the original position.
 - Evaluate the higher-contrast, edge-filling robot visor glyph and its pulsing-eye toolbar animation in PageSweep 0.2.9.
 - Verify that the mascot and plume remain physically locked together throughout normal and completion hover in PageSweep 0.2.10.
 - Verify automatic popup dismissal after 1.7 seconds and inspect capture timing diagnostics in PageSweep 0.2.11; a slower 15-frame run was reported.
