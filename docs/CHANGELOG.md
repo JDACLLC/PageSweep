@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Changed
 
+- Version 0.2.18 simplifies the verified toolbar animation to white and purple eyes, removing the dark phase.
+
 - Version 0.2.16 uses white eyes for the idle toolbar icon as well as the first capture frame, making the loaded artwork directly verifiable before capture. Capture continues white, purple, dark, then white.
 
 - Version 0.2.15 keeps toolbar eyes full size and cycles white, purple, and dark at 450 ms per state for a clearer capture indicator.
