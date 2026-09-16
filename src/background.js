@@ -70,6 +70,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 async function runCapture(tab) {
+  const captureStartedAt = performance.now();
   console.log("PageSweep triggered", {
     tabId: tab.id,
     url: tab.url,
@@ -166,6 +167,7 @@ async function runCapture(tab) {
       });
 
       console.log("PageSweep stitched PNG downloaded", {
+        elapsedUntilDownloadMs: Math.round(performance.now() - captureStartedAt),
         downloadId,
         filename,
         width: stitchedImage.width,
@@ -390,6 +392,7 @@ async function captureVisibleFrame(message, sender) {
     message.status || `Capturing ${activeCapture.frames.length + 1}`,
     message.progressPercent,
   );
+  const captureApiStartedAt = performance.now();
   const dataUrl = await chrome.tabs.captureVisibleTab(activeCapture.windowId, {
     format: "png",
   });
@@ -404,6 +407,7 @@ async function captureVisibleFrame(message, sender) {
 
   activeCapture.frames.push(frame);
   console.log(`PageSweep frame ${activeCapture.frames.length}`, {
+    captureApiMs: Math.round(performance.now() - captureApiStartedAt),
     scrollY: frame.scrollY,
     expectedY: frame.expectedY,
     capturedWidth: frame.width,

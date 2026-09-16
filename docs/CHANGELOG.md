@@ -10,6 +10,7 @@ All notable changes to this project are documented here. The project uses semant
 
 ### Fixed
 
+- Version 0.2.11 closes the browser-owned popup 1.7 seconds after success and adds console timing fields for viewport capture and elapsed time until download; capture pacing remains unchanged.
 - Bumped the extension version to 0.2.10 and moved hover motion to a shared robot-and-plume wrapper so the mascot no longer floats independently into or away from its booster plume.
 
 ## [0.2.3] — 2026-09-15

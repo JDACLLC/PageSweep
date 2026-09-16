@@ -29,6 +29,7 @@
 | 25 | P1 | Complete | Protect the upper-right mascot destination from completion copy and turn the mascot to face the message in the green state. |
 | 26 | P2 | In Progress | Replace the blue-tile toolbar arrow with a larger transparent helmet-and-visor icon while retaining capture animation and completion status. |
 | 27 | P1 | In Progress | Keep the mascot and booster plume physically synchronized during hover and completion animation. |
+| 28 | P1 | In Progress | Restore automatic success-popup dismissal and investigate reported slower capture using elapsed-time diagnostics. |
 
 ## Notes
 
