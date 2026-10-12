@@ -39,12 +39,12 @@
     body?.clientWidth ?? 0,
   );
 
+  const captureStep = scrollSurface.kind === "panel"
+    ? scrollSurface.element.clientHeight : window.innerHeight;
   const initialDocumentHeight = captureHeight();
   const maximumBoundaryGrowth = Math.min(5000, initialDocumentHeight * 0.2);
   const maximumCaptureBoundary = initialDocumentHeight + maximumBoundaryGrowth;
   let captureBoundaryHeight = initialDocumentHeight;
-  const captureStep = scrollSurface.kind === "panel"
-    ? scrollSurface.element.clientHeight : window.innerHeight;
   let maximumObservedHeight = initialDocumentHeight;
   let stabilizationTimeouts = 0;
   let dynamicallyRenderedFrames = 0;
