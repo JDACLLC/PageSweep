@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "PageSweep (Adaptive Capture Test)",
-  "description": "Test build: adaptive capture stabilization for dynamically rendered webpages.",
-  "version": "0.2.19",
+  "description": "Development test build: nested, reverse and embedded scroll capture; not a production release.",
+  "version": "1.2.20",
   "permissions": [
     "activeTab",
     "scripting",
@@ -12,7 +12,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "PageSweep — Adaptive Capture Test",
+    "default_title": "PageSweep 1.2.20 — Adaptive Capture Test",
     "default_icon": {
       "16": "icons/toolbar/mascot-glyph-16.png",
       "32": "icons/toolbar/mascot-glyph-32.png",
