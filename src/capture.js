@@ -12,6 +12,11 @@
       value: element.style.getPropertyValue("overflow-anchor"),
       priority: element.style.getPropertyPriority("overflow-anchor"),
     }));
+  const scrollSurface = selectScrollSurface();
+  const embeddedOriginalPositions = new Map();
+  const surfaceOriginalY = scrollSurface.element?.scrollTop ?? null;
+  const surfaceOriginalBehavior = scrollSurface.element?.style.getPropertyValue("scroll-behavior");
+  const surfaceOriginalAnchor = scrollSurface.element?.style.getPropertyValue("overflow-anchor");
   const repeatElements = findFixedAndStickyElements();
   const capturedRepeatElements = new Set();
   const progressOverlay = createProgressOverlay();
@@ -34,10 +39,12 @@
     body?.clientWidth ?? 0,
   );
 
-  const initialDocumentHeight = getDocumentHeight();
+  const initialDocumentHeight = captureHeight();
   const maximumBoundaryGrowth = Math.min(5000, initialDocumentHeight * 0.2);
   const maximumCaptureBoundary = initialDocumentHeight + maximumBoundaryGrowth;
   let captureBoundaryHeight = initialDocumentHeight;
+  const captureStep = scrollSurface.kind === "panel"
+    ? scrollSurface.element.clientHeight : window.innerHeight;
   let maximumObservedHeight = initialDocumentHeight;
   let stabilizationTimeouts = 0;
   let dynamicallyRenderedFrames = 0;
@@ -57,7 +64,7 @@
   let captureCount = 0;
   let targetY = 0;
   let lastCapturedScrollY = null;
-  const maximumCaptureCount = Math.ceil(maximumCaptureBoundary / window.innerHeight) + 2;
+  const maximumCaptureCount = Math.ceil(maximumCaptureBoundary / captureStep) + 3;
   let pageCaptureCompleted = false;
   let reachedCaptureBoundary = false;
   let boundaryAdjustedToReachableEnd = false;
@@ -67,6 +74,10 @@
     for (const scrollAnchoringStyle of scrollAnchoringStyles) {
       scrollAnchoringStyle.element.style.setProperty("overflow-anchor", "none", "important");
     }
+    if (scrollSurface.element) {
+      scrollSurface.element.style.setProperty("scroll-behavior", "auto", "important");
+      scrollSurface.element.style.setProperty("overflow-anchor", "none", "important");
+    }
     if (usesOverlayScrollbar) {
       (document.head || documentElement).appendChild(scrollbarSuppressionStyle);
     }
@@ -74,10 +85,10 @@
     while (captureCount < maximumCaptureCount) {
       let estimatedCaptureCount = Math.max(
         1,
-        Math.ceil(captureBoundaryHeight / window.innerHeight),
+        Math.ceil(captureBoundaryHeight / captureStep),
         captureCount + 1,
       );
-      window.scrollTo({ left: originalScrollX, top: targetY, behavior: "instant" });
+      moveCaptureSurface(targetY);
       const stabilization = await waitForPageToSettle();
       await ensureCapturePosition(targetY);
 
@@ -88,7 +99,7 @@
         throw new Error("Incomplete capture: dynamically rendered content did not stabilize before the screenshot. Try again after the page finishes loading.");
       }
 
-      const observedHeight = getDocumentHeight();
+      const observedHeight = captureHeight();
       maximumObservedHeight = Math.max(maximumObservedHeight, observedHeight);
       captureBoundaryHeight = Math.max(
         captureBoundaryHeight,
@@ -96,16 +107,16 @@
       );
       estimatedCaptureCount = Math.max(
         1,
-        Math.ceil(captureBoundaryHeight / window.innerHeight),
+        Math.ceil(captureBoundaryHeight / captureStep),
         captureCount + 1,
       );
 
-      let actualScrollY = window.scrollY;
+      let actualScrollY = captureOffset();
       if (
         lastCapturedScrollY !== null
         && actualScrollY <= lastCapturedScrollY + 1
       ) {
-        const capturedThroughY = lastCapturedScrollY + window.innerHeight;
+        const capturedThroughY = lastCapturedScrollY + captureStep;
         if (lastCapturedScrollY > 0) {
           captureBoundaryHeight = Math.min(captureBoundaryHeight, capturedThroughY);
           boundaryAdjustedToReachableEnd = true;
@@ -127,10 +138,10 @@
       await progressOverlay.hide();
       await waitForStylePaint();
       await ensureCapturePosition(targetY);
-      actualScrollY = window.scrollY;
+      actualScrollY = captureOffset();
       if (lastCapturedScrollY !== null && (
         actualScrollY <= lastCapturedScrollY + 1
-        || actualScrollY > lastCapturedScrollY + window.innerHeight + 1
+        || actualScrollY > lastCapturedScrollY + captureStep + 1
       )) {
         throw new Error("The page moved outside the contiguous capture region before its screenshot.");
       }
@@ -141,7 +152,7 @@
           type: "capture-visible-frame",
           status: `Capturing ${captureCount + 1} of ${estimatedCaptureCount}`,
           expectedY: targetY,
-          scrollY: window.scrollY,
+          scrollY: actualScrollY,
           progressPercent: Math.min(99, ((captureCount + 1) / estimatedCaptureCount) * 100),
         });
       } finally {
@@ -156,13 +167,13 @@
       captureCount += 1;
       lastCapturedScrollY = actualScrollY;
 
-      const maximumScrollY = Math.max(0, captureBoundaryHeight - window.innerHeight);
+      const maximumScrollY = Math.max(0, captureBoundaryHeight - (scrollSurface.kind === 'panel' ? window.innerHeight - captureStep : captureStep) - captureStep);
       if (maximumScrollY - actualScrollY <= 1) {
         reachedCaptureBoundary = true;
         break;
       }
 
-      const nextTargetY = Math.min(actualScrollY + window.innerHeight, maximumScrollY);
+      const nextTargetY = Math.min(actualScrollY + captureStep, maximumScrollY);
       if (nextTargetY <= actualScrollY + 1) {
         throw new Error(
           `PageSweep could not advance beyond ${actualScrollY}px toward the ${captureBoundaryHeight}px capture boundary.`,
@@ -207,6 +218,14 @@
     });
 
     await runCleanupStep("original scroll position", () => restoreOriginalScrollPosition());
+    if (scrollSurface.element) {
+      await runCleanupStep("nested panel position and styles", async () => {
+        restoreInline(scrollSurface.element, "scroll-behavior", surfaceOriginalBehavior);
+        restoreInline(scrollSurface.element, "overflow-anchor", surfaceOriginalAnchor);
+        scrollSurface.element.scrollTop = surfaceOriginalY;
+        await waitForStylePaint();
+      });
+    }
     if (!pageCaptureCompleted) {
       await runCleanupStep("capture progress overlay", () => progressOverlay.remove());
     }
@@ -216,6 +235,9 @@
 
   const captureDetails = {
     ...measurements,
+    scrollSurface: scrollSurface.kind,
+    panelRect: scrollSurface.kind === 'panel' ? scrollSurface.rect : null,
+    captureStep,
     documentHeight: captureBoundaryHeight,
     initialDocumentHeight,
     maximumObservedHeight,
@@ -255,6 +277,82 @@
   }
 
   return captureDetails;
+
+  function restoreInline(element, property, previous) {
+    if (previous) element.style.setProperty(property, previous);
+    else element.style.removeProperty(property);
+  }
+
+  // Bounded viewport sampling avoids an expensive full DOM traversal and
+  // preserves the original document scrolling path on ordinary pages.
+  function selectScrollSurface() {
+    const height = getDocumentHeight();
+    if (height > window.innerHeight + 100) {
+      return { kind: "document", element: null, rect: null };
+    }
+    const candidates = new Set();
+    for (const x of [0.25, 0.5, 0.75]) {
+      for (const y of [0.2, 0.45, 0.7, 0.9]) {
+        let node = document.elementFromPoint(window.innerWidth * x, window.innerHeight * y);
+        while (node && node !== document.body && node !== document.documentElement) {
+          if (node.scrollHeight > node.clientHeight + 120
+            && node.clientHeight > 160
+            && /^(auto|scroll|overlay)$/.test(getComputedStyle(node).overflowY)) {
+            candidates.add(node);
+          }
+          node = node.parentElement;
+        }
+      }
+    }
+    const ordered = [...candidates].map(element => {
+      const r = element.getBoundingClientRect();
+      const width = Math.max(0, Math.min(window.innerWidth, r.right) - Math.max(0, r.left));
+      const height = Math.max(0, Math.min(window.innerHeight, r.bottom) - Math.max(0, r.top));
+      return { element, rect: r, area: width * height };
+    }).filter(c => c.area > window.innerWidth * window.innerHeight * 0.15)
+      .sort((a, b) => b.area - a.area);
+    if (!ordered.length) return { kind: "document", element: null, rect: null };
+    const best = ordered[0];
+    if (ordered[1] && ordered[1].area > best.area * 0.85
+      && !best.element.contains(ordered[1].element)
+      && !ordered[1].element.contains(best.element)) {
+      throw new Error("Incomplete capture: multiple independent scrolling panels are equally prominent.");
+    }
+    const rect = {
+      left: Math.max(0, Math.round(best.rect.left)),
+      top: Math.max(0, Math.round(best.rect.top)),
+      width: Math.min(window.innerWidth, Math.round(best.rect.right)) - Math.max(0, Math.round(best.rect.left)),
+      height: best.element.clientHeight,
+    };
+    const element = best.element;
+    // Probe negative scrolling without relying on a particular CSS class.
+    const prior = element.scrollTop;
+    element.scrollTop = -1;
+    const reverse = element.scrollTop < -0.5;
+    element.scrollTop = prior;
+    return { kind: "panel", element, rect, reverse };
+  }
+
+  function captureHeight() {
+    if (scrollSurface.kind !== "panel") return getDocumentHeight();
+    return scrollSurface.element.scrollHeight + window.innerHeight - captureStep;
+  }
+
+  function captureOffset() {
+    if (scrollSurface.kind !== "panel") return window.scrollY;
+    const range = Math.max(0, scrollSurface.element.scrollHeight - captureStep);
+    return scrollSurface.reverse ? range + scrollSurface.element.scrollTop
+      : scrollSurface.element.scrollTop;
+  }
+
+  function moveCaptureSurface(offset) {
+    if (scrollSurface.kind !== "panel") {
+      window.scrollTo({ left: originalScrollX, top: offset, behavior: "instant" });
+      return;
+    }
+    const range = Math.max(0, scrollSurface.element.scrollHeight - captureStep);
+    scrollSurface.element.scrollTop = scrollSurface.reverse ? offset - range : offset;
+  }
 
   function getDocumentHeight() {
     return Math.max(
@@ -671,15 +769,29 @@
   }
 
   async function ensureCapturePosition(requestedY) {
-    for (let attempt = 0; attempt < 3; attempt += 1) {
+    if (scrollSurface.kind === "document") {
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        const reachableY = Math.max(0, Math.min(requestedY, getDocumentHeight() - window.innerHeight));
+        if (Math.abs(window.scrollY - reachableY) <= 1) return;
+        window.scrollTo({ left: originalScrollX, top: reachableY, behavior: "instant" });
+        await waitForStylePaint();
+      }
       const reachableY = Math.max(0, Math.min(requestedY, getDocumentHeight() - window.innerHeight));
-      if (Math.abs(window.scrollY - reachableY) <= 1) return;
-      window.scrollTo({ left: originalScrollX, top: reachableY, behavior: "instant" });
+      if (Math.abs(window.scrollY - reachableY) > 1) {
+        throw new Error(`The page would not stay at the requested capture position (${reachableY}px; actual ${window.scrollY}px).`);
+      }
+      return;
+    }
+    // A content-height change can move the negative endpoint; remeasure on every attempt.
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const reachable = Math.max(0, Math.min(requestedY, scrollSurface.element.scrollHeight - captureStep));
+      if (Math.abs(captureOffset() - reachable) <= 1) return;
+      moveCaptureSurface(reachable);
       await waitForStylePaint();
     }
-    const reachableY = Math.max(0, Math.min(requestedY, getDocumentHeight() - window.innerHeight));
-    if (Math.abs(window.scrollY - reachableY) > 1) {
-      throw new Error(`The page would not stay at the requested capture position (${reachableY}px; actual ${window.scrollY}px).`);
+    const reachable = Math.max(0, Math.min(requestedY, scrollSurface.element.scrollHeight - captureStep));
+    if (Math.abs(captureOffset() - reachable) > 1) {
+      throw new Error(`The nested panel would not stay at capture offset ${reachable}px (actual ${captureOffset()}px).`);
     }
   }
 
