@@ -362,10 +362,8 @@
   // Bounded viewport sampling avoids an expensive full DOM traversal and
   // preserves the original document scrolling path on ordinary pages.
   function selectScrollSurface() {
-    const height = getDocumentHeight();
-    if (height > window.innerHeight + 100) {
-      return { kind: "document", element: null, rect: null };
-    }
+    const documentHeight = getDocumentHeight();
+    const documentScrollable = documentHeight > window.innerHeight + 100;
     const candidates = new Set();
     for (const x of [0.25, 0.5, 0.75]) {
       for (const y of [0.2, 0.45, 0.7, 0.9]) {
@@ -389,6 +387,14 @@
       .sort((a, b) => b.area - a.area);
     if (!ordered.length) return { kind: "document", element: null, rect: null };
     const best = ordered[0];
+    // A normally scrollable document remains the preferred fast path unless
+    // a dominant inner panel has substantially more scrollable content.
+    if (documentScrollable && !(
+      best.area > window.innerWidth * window.innerHeight * 0.45
+      && best.element.scrollHeight > documentHeight * 1.5
+    )) {
+      return { kind: "document", element: null, rect: null };
+    }
     if (ordered[1] && ordered[1].area > best.area * 0.85
       && !best.element.contains(ordered[1].element)
       && !ordered[1].element.contains(best.element)) {
