@@ -313,6 +313,14 @@
     for (const element of found) {
       if (embeddedOriginalPositions.has(element) || !host.contains(element)) continue;
       if (element.closest("nav, aside, [role='navigation'], [role='menu'], [role='dialog']")) continue;
+      if ([...embeddedOriginalPositions.keys()].some(parent => parent.contains(element))) {
+        const style = getComputedStyle(element);
+        if (/^(auto|scroll|overlay)$/.test(style.overflowY)
+          && element.scrollHeight > element.clientHeight + 50) {
+          throw new Error("Incomplete capture: a third-level embedded scrolling region requires additional support.");
+        }
+        continue;
+      }
       const css = getComputedStyle(element);
       if (!/^(auto|scroll|overlay)$/.test(css.overflowY)) continue;
       const bounds = element.getBoundingClientRect();
@@ -338,6 +346,9 @@
       element.style.setProperty("overflow-y", "hidden", "important");
       element.style.setProperty("scroll-behavior", "auto", "important");
       element.style.setProperty("overflow-anchor", "none", "important");
+      if (element.clientHeight < element.scrollHeight - 2) {
+        throw new Error("Incomplete capture: an embedded pane could not be expanded into the primary content.");
+      }
       totalEmbeddedExpansion += delta;
       added += delta;
     }
