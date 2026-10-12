@@ -9,7 +9,10 @@ const styles = new Map([['height',['180px','']], ['max-height',['180px','']], ['
 let savedScrollTop = 44;
 const pane = {
   scrollHeight: 1800,
-  clientHeight: 180,
+  get clientHeight() {
+    return styles.get('height')?.[1] === 'important'
+      ? Number.parseInt(styles.get('height')[0], 10) : 180;
+  },
   get scrollTop() {return savedScrollTop;},
   set scrollTop(v) {savedScrollTop = v;},
   closest: () => null,
