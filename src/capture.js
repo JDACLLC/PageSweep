@@ -14,6 +14,9 @@
     }));
   const scrollSurface = selectScrollSurface();
   const embeddedOriginalPositions = new Map();
+  const maxEmbeddedExpansion = 12000;
+  const maxEmbeddedRegions = 20;
+  let totalEmbeddedExpansion = 0;
   const surfaceOriginalY = scrollSurface.element?.scrollTop ?? null;
   const surfaceOriginalBehavior = scrollSurface.element?.style.getPropertyValue("scroll-behavior");
   const surfaceOriginalAnchor = scrollSurface.element?.style.getPropertyValue("overflow-anchor");
@@ -43,7 +46,7 @@
     ? scrollSurface.element.clientHeight : window.innerHeight;
   const initialDocumentHeight = captureHeight();
   const maximumBoundaryGrowth = Math.min(5000, initialDocumentHeight * 0.2);
-  const maximumCaptureBoundary = initialDocumentHeight + maximumBoundaryGrowth;
+  let maximumCaptureBoundary = initialDocumentHeight + maximumBoundaryGrowth;
   let captureBoundaryHeight = initialDocumentHeight;
   let maximumObservedHeight = initialDocumentHeight;
   let stabilizationTimeouts = 0;
@@ -64,7 +67,7 @@
   let captureCount = 0;
   let targetY = 0;
   let lastCapturedScrollY = null;
-  const maximumCaptureCount = Math.ceil(maximumCaptureBoundary / captureStep) + 3;
+  let maximumCaptureCount = Math.ceil(maximumCaptureBoundary / captureStep) + 3;
   let pageCaptureCompleted = false;
   let reachedCaptureBoundary = false;
   let boundaryAdjustedToReachableEnd = false;
@@ -89,7 +92,14 @@
         captureCount + 1,
       );
       moveCaptureSurface(targetY);
-      const stabilization = await waitForPageToSettle();
+      let stabilization = await waitForPageToSettle();
+      const expanded = expandVisibleEmbeddedScrollers();
+      if (expanded > 0) {
+        maximumCaptureBoundary += expanded;
+        maximumCaptureCount = Math.min(200,
+          Math.ceil(maximumCaptureBoundary / captureStep) + 3);
+        stabilization = await waitForPageToSettle();
+      }
       await ensureCapturePosition(targetY);
 
       if (stabilization.dynamicContent) dynamicallyRenderedFrames += 1;
@@ -192,6 +202,7 @@
   } finally {
     await runCleanupStep("scrollbar suppression style", () => scrollbarSuppressionStyle.remove());
     await runCleanupStep("fixed and sticky element styles", () => restoreRepeatElements());
+    await runCleanupStep("embedded scroll regions", () => restoreEmbeddedScrollers());
     await runCleanupStep("smooth scrolling style", () => {
       if (originalScrollBehavior) {
         documentElement.style.setProperty(
@@ -249,6 +260,8 @@
       : 0,
     stabilizationTimeouts,
     dynamicallyRenderedFrames,
+    embeddedRegionsExpanded: embeddedOriginalPositions.size,
+    embeddedHeightAdded: totalEmbeddedExpansion,
     captureCount,
     fixedAndStickyElementsFound: repeatElements.length,
     fixedAndStickyElementsCaptured: capturedRepeatElements.size,
@@ -277,6 +290,69 @@
   }
 
   return captureDetails;
+
+  function expandVisibleEmbeddedScrollers() {
+    // Secondary content is expanded *in place* so the existing frame geometry
+    // naturally incorporates it; no second screenshot pipeline is required.
+    const found = new Set();
+    const host = scrollSurface.element || document.body;
+    for (const element of host.querySelectorAll("pre, textarea, [role='textbox']")) found.add(element);
+    if (typeof document.elementsFromPoint === "function") {
+      for (const x of [0.3, 0.5, 0.7]) {
+        for (const y of [0.2, 0.4, 0.6, 0.8]) {
+          for (let node of document.elementsFromPoint(window.innerWidth * x, window.innerHeight * y)) {
+            while (node && node !== host && node !== document.body) {
+              found.add(node);
+              node = node.parentElement;
+            }
+          }
+        }
+      }
+    }
+    let added = 0;
+    for (const element of found) {
+      if (embeddedOriginalPositions.has(element) || !host.contains(element)) continue;
+      if (element.closest("nav, aside, [role='navigation'], [role='menu'], [role='dialog']")) continue;
+      const css = getComputedStyle(element);
+      if (!/^(auto|scroll|overlay)$/.test(css.overflowY)) continue;
+      const bounds = element.getBoundingClientRect();
+      if (bounds.width < 140 || bounds.height < 60
+        || bounds.bottom < 0 || bounds.top > window.innerHeight) continue;
+      const delta = Math.ceil(element.scrollHeight - element.clientHeight);
+      if (delta <= 50) continue;
+      if (element.scrollHeight > 6000
+        || embeddedOriginalPositions.size >= maxEmbeddedRegions
+        || totalEmbeddedExpansion + delta > maxEmbeddedExpansion) {
+        throw new Error("Incomplete capture: an embedded scrolling region exceeds the safe expansion budget.");
+      }
+      const record = { scrollTop: element.scrollTop, properties: {} };
+      for (const property of ["height", "max-height", "overflow-y", "scroll-behavior", "overflow-anchor"]) {
+        record.properties[property] = [
+          element.style.getPropertyValue(property),
+          element.style.getPropertyPriority(property),
+        ];
+      }
+      embeddedOriginalPositions.set(element, record);
+      element.style.setProperty("height", `${Math.ceil(element.scrollHeight)}px`, "important");
+      element.style.setProperty("max-height", "none", "important");
+      element.style.setProperty("overflow-y", "hidden", "important");
+      element.style.setProperty("scroll-behavior", "auto", "important");
+      element.style.setProperty("overflow-anchor", "none", "important");
+      totalEmbeddedExpansion += delta;
+      added += delta;
+    }
+    return added;
+  }
+
+  function restoreEmbeddedScrollers() {
+    for (const [element, record] of embeddedOriginalPositions) {
+      for (const [property, [value, priority]] of Object.entries(record.properties)) {
+        if (value) element.style.setProperty(property, value, priority);
+        else element.style.removeProperty(property);
+      }
+      element.scrollTop = record.scrollTop;
+    }
+  }
 
   function restoreInline(element, property, previous) {
     if (previous) element.style.setProperty(property, previous);
