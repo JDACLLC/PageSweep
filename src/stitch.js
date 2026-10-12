@@ -76,6 +76,10 @@ function startStitch(firstFrame, captureDetails) {
   }, { outputWidth, outputHeight });
 
   stitchState = {
+    panelRect: captureDetails.panelRect || null,
+    panelHeight: captureDetails.captureStep || captureDetails.viewportHeight,
+    pageViewportHeight: captureDetails.viewportHeight,
+    chromeFrame: null,
     canvas,
     context,
     inputScaleX: scaleX,
@@ -106,30 +110,65 @@ async function addFrame(frame) {
     () => loadImage(frame.dataUrl),
     { frameIndex: frame.frameIndex },
   );
-  const destinationY = Math.round(frame.scrollY * stitchState.outputScale);
+  const panel = stitchState.panelRect;
+  const destinationY = Math.round((frame.scrollY + (panel?.top || 0)) * stitchState.outputScale);
   const remainingHeight = stitchState.outputHeight - destinationY;
   const scaledFrameWidth = frame.width * (stitchState.outputScale / stitchState.inputScaleX);
   const uniqueEndY = Math.round(
-    (frame.scrollY + frame.uniqueHeight) * stitchState.outputScale,
+    (frame.scrollY + frame.uniqueHeight + (panel?.top || 0)) * stitchState.outputScale,
   );
   const uniqueOutputHeight = uniqueEndY - destinationY;
-  const drawWidth = Math.min(scaledFrameWidth, stitchState.outputWidth);
+  const drawWidth = Math.min(
+    panel ? panel.width * stitchState.outputScale : scaledFrameWidth,
+    stitchState.outputWidth - (panel ? Math.round(panel.left * stitchState.outputScale) : 0),
+  );
   const drawHeight = Math.min(uniqueOutputHeight, remainingHeight);
   const sourceWidth = drawWidth * (stitchState.inputScaleX / stitchState.outputScale);
   const sourceHeight = Math.min(
     frame.uniqueHeight * stitchState.inputScaleY,
-    frame.height,
+    frame.height - (panel ? panel.top * stitchState.inputScaleY : 0),
   );
+  if (panel && frame.frameIndex === 0) {
+    // Draw outer chrome only once. Its footer is moved to the end of the
+    // long panel; the panel itself is rendered in successive cropped strips.
+    stitchState.chromeFrame = image;
+    const chrome = stitchState.context;
+    chrome.fillStyle = "#fff";
+    chrome.fillRect(0, 0, stitchState.outputWidth, stitchState.outputHeight);
+    const h = stitchState.pageViewportHeight;
+    const left = Math.round(panel.left * stitchState.outputScale);
+    const right = Math.round((panel.left + panel.width) * stitchState.outputScale);
+    const top = Math.round(panel.top * stitchState.outputScale);
+    const visibleBottom = Math.min(h, panel.top + panel.height);
+    const sourceScaleY = stitchState.inputScaleY;
+    const sourceScaleX = stitchState.inputScaleX;
+    const ratio = stitchState.outputScale;
+    if (top > 0) chrome.drawImage(image, 0, 0, image.width, panel.top * sourceScaleY,
+      0, 0, stitchState.outputWidth, top);
+    if (left > 0) chrome.drawImage(image, 0, 0, panel.left * sourceScaleX, h * sourceScaleY,
+      0, 0, left, Math.round(h * ratio));
+    if (right < stitchState.outputWidth) chrome.drawImage(image,
+      (panel.left + panel.width) * sourceScaleX, 0,
+      image.width - (panel.left + panel.width) * sourceScaleX, h * sourceScaleY,
+      right, 0, stitchState.outputWidth - right, Math.round(h * ratio));
+    const footerHeight = Math.max(0, h - visibleBottom);
+    if (footerHeight > 0) {
+      const footerY = stitchState.outputHeight - Math.round(footerHeight * ratio);
+      chrome.drawImage(image, 0, visibleBottom * sourceScaleY,
+        image.width, footerHeight * sourceScaleY,
+        0, footerY, stitchState.outputWidth, Math.round(footerHeight * ratio));
+    }
+  }
 
   if (drawHeight > 0) {
     runStitchOperation("drawing a frame onto the canvas", () => {
       stitchState.context.drawImage(
         image,
-        0,
-        0,
+        panel ? panel.left * stitchState.inputScaleX : 0,
+        panel ? panel.top * stitchState.inputScaleY : 0,
         sourceWidth,
         sourceHeight,
-        0,
+        panel ? Math.round(panel.left * stitchState.outputScale) : 0,
         destinationY,
         drawWidth,
         drawHeight,
