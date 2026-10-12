@@ -4,6 +4,25 @@ All notable changes to this project are documented here. The project uses semant
 
 ## [Unreleased]
 
+## [1.2.20-test] — Development only (2026-10-12)
+
+### In progress
+
+- Added general-purpose primary scroll-surface discovery for conventional and internal panels, including negative scroll coordinates.
+- Added nested viewport strip compositing to the existing PNG stitcher, preserving surrounding interface chrome once.
+- Added bounded one-level expansion and restoration of vertically scrolling code/prompt panes so their content can be included in-place.
+- Preserved the existing toolbar/popup mascot code, automatic PNG download, offscreen compatibility fallbacks, and conventional capture path.
+- Added deterministic scroll/embedded fixtures and regression tests.
+
+### Verification needed before release
+
+- **Not Chrome end-to-end validated.** Recheck complete ChatGPT and Base44 captures, including negative scrolling, growth, accurate PNG content and restoration.
+- Validate embedded code/prompt expansion on a real conversation; inspect final PNG and verify no clipped surrounding content.
+- Re-run Fox News/static pages, mascot, automatic download and Windows smoke tests.
+- Measure performance against production 0.2.18, resolve failures, and merge only after approval.
+- This version label identifies an isolated development test; production remains 0.2.18.
+
+
 ## [0.2.18] — 2026-09-16
 
 ### Changed
