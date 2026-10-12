@@ -40,6 +40,7 @@
   let captureBoundaryHeight = initialDocumentHeight;
   let maximumObservedHeight = initialDocumentHeight;
   let stabilizationTimeouts = 0;
+  let dynamicallyRenderedFrames = 0;
   const cleanupErrors = [];
 
   const measurements = {
@@ -80,8 +81,11 @@
       const stabilization = await waitForPageToSettle();
       await ensureCapturePosition(targetY);
 
+      if (stabilization.dynamicContent) dynamicallyRenderedFrames += 1;
       if (stabilization.timedOut) {
         stabilizationTimeouts += 1;
+        // Never silently export a frame whose visible content kept changing.
+        throw new Error("Incomplete capture: dynamically rendered content did not stabilize before the screenshot. Try again after the page finishes loading.");
       }
 
       const observedHeight = getDocumentHeight();
@@ -222,6 +226,7 @@
       ? Math.max(0, observedBoundaryHeight - captureBoundaryHeight)
       : 0,
     stabilizationTimeouts,
+    dynamicallyRenderedFrames,
     captureCount,
     fixedAndStickyElementsFound: repeatElements.length,
     fixedAndStickyElementsCaptured: capturedRepeatElements.size,
@@ -589,38 +594,76 @@
     };
   }
 
+  // Sample a few viewport points instead of scanning the entire DOM. This detects
+  // recycled/virtualized content without penalizing ordinary static pages.
+  function visibleContentSignature() {
+    const points = [[0.2, 0.2], [0.5, 0.35], [0.8, 0.5], [0.35, 0.7], [0.65, 0.85]];
+    return points.map(([x, y]) => {
+      const element = document.elementFromPoint(
+        Math.floor(window.innerWidth * x),
+        Math.floor(window.innerHeight * y),
+      );
+      if (!element || element.closest("[data-pagesweep-progress], [data-pagesweep-feedback]")) {
+        return "";
+      }
+      const bounds = element.getBoundingClientRect();
+      const text = (element.innerText || element.textContent || "").slice(0, 120);
+      return `${element.tagName}:${Math.round(bounds.top)}:${Math.round(bounds.height)}:${text}`;
+    }).join("|");
+  }
+
   async function waitForPageToSettle() {
+    // Preserve the established fast path. Only add extra time when visible
+    // content or layout actually changes after the scroll.
     const minimumWait = 550;
-    const maximumWait = 1600;
+    const normalMaximumWait = 1600;
+    const dynamicMaximumWait = 3600;
     const startedAt = performance.now();
     let previousHeight = getDocumentHeight();
+    let previousSignature = visibleContentSignature();
     let stableSamples = 0;
+    let sawDynamicContent = false;
+    let lastChangeAt = startedAt;
 
-    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await waitForStylePaint();
 
-    while (performance.now() - startedAt < maximumWait) {
+    while (performance.now() - startedAt < (sawDynamicContent ? dynamicMaximumWait : normalMaximumWait)) {
       await delay(100);
       const currentHeight = getDocumentHeight();
+      const currentSignature = visibleContentSignature();
       const pendingVisibleImages = getVisibleImages().filter((image) => !image.complete).length;
+      const changed = Math.abs(currentHeight - previousHeight) >= 1
+        || currentSignature !== previousSignature;
 
-      if (Math.abs(currentHeight - previousHeight) < 1 && pendingVisibleImages === 0) {
+      if (changed) {
+        sawDynamicContent = true;
+        lastChangeAt = performance.now();
+        stableSamples = 0;
+      } else if (pendingVisibleImages === 0) {
         stableSamples += 1;
       } else {
         stableSamples = 0;
       }
 
       previousHeight = currentHeight;
+      previousSignature = currentSignature;
 
-      if (performance.now() - startedAt >= minimumWait && stableSamples >= 2) {
+      if (
+        performance.now() - startedAt >= minimumWait
+        && stableSamples >= (sawDynamicContent ? 3 : 2)
+        && (!sawDynamicContent || performance.now() - lastChangeAt >= 300)
+      ) {
         break;
       }
     }
 
-    const remainingTime = Math.max(0, maximumWait - (performance.now() - startedAt));
+    const elapsed = performance.now() - startedAt;
+    const timeout = sawDynamicContent ? dynamicMaximumWait : normalMaximumWait;
+    const timedOut = elapsed >= timeout && stableSamples < (sawDynamicContent ? 3 : 2);
+    const remainingTime = Math.max(0, timeout - elapsed);
     await decodeVisibleImages(Math.min(remainingTime, 300));
     await waitForStylePaint();
-
-    return { timedOut: performance.now() - startedAt >= maximumWait };
+    return { timedOut, dynamicContent: sawDynamicContent };
   }
 
   async function waitForStylePaint() {
