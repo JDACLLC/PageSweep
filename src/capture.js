@@ -182,8 +182,36 @@
       captureCount += 1;
       lastCapturedScrollY = actualScrollY;
 
-      const maximumScrollY = Math.max(0, captureBoundaryHeight - (scrollSurface.kind === 'panel' ? window.innerHeight - captureStep : captureStep) - captureStep);
+      // A page may add more content while we capture its footer. Check the
+      // actual reachable end again before marking the page complete.
+      const endObservedHeight = captureHeight();
+      maximumObservedHeight = Math.max(maximumObservedHeight, endObservedHeight);
+      captureBoundaryHeight = Math.max(
+        captureBoundaryHeight,
+        Math.min(endObservedHeight, maximumCaptureBoundary),
+      );
+      const effectiveViewport = scrollSurface.kind === "panel" ? captureStep : window.innerHeight;
+      const scrollableHeight = scrollSurface.kind === "panel"
+        ? captureBoundaryHeight - (window.innerHeight - captureStep)
+        : captureBoundaryHeight;
+      const maximumScrollY = Math.max(0, scrollableHeight - effectiveViewport);
       if (maximumScrollY - actualScrollY <= 1) {
+        // A second measurement avoids claiming success when dynamic content
+        // expands between the frame and the exit test.
+        await waitForStylePaint();
+        const confirmedHeight = captureHeight();
+        maximumObservedHeight = Math.max(maximumObservedHeight, confirmedHeight);
+        captureBoundaryHeight = Math.max(
+          captureBoundaryHeight,
+          Math.min(confirmedHeight, maximumCaptureBoundary),
+        );
+        if (captureBoundaryHeight > actualScrollY + (scrollSurface.kind === "panel"
+          ? window.innerHeight : captureStep) + 1) {
+          targetY = Math.min(actualScrollY + captureStep,
+            Math.max(0, captureBoundaryHeight - (scrollSurface.kind === "panel"
+              ? window.innerHeight : captureStep)));
+          continue;
+        }
         reachedCaptureBoundary = true;
         break;
       }
@@ -200,6 +228,17 @@
     if (!reachedCaptureBoundary) {
       throw new Error(
         `PageSweep reached its ${maximumCaptureCount}-frame safety limit before the page boundary.`,
+      );
+    }
+    // Keep the stitcher's strict frame-height invariant. Incomplete coverage
+    // must never be represented as a finished PNG.
+    const capturedThrough = lastCapturedScrollY + captureStep;
+    const requiredThrough = scrollSurface.kind === "panel"
+      ? captureBoundaryHeight - (window.innerHeight - captureStep)
+      : captureBoundaryHeight;
+    if (requiredThrough - capturedThrough > 1) {
+      throw new Error(
+        `Incomplete capture: the page still has ${Math.ceil(requiredThrough - capturedThrough)}px beyond the final screenshot. Its content changed while capturing.`,
       );
     }
     pageCaptureCompleted = true;
