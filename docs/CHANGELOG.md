@@ -4,6 +4,24 @@ All notable changes to this project are documented here. The project uses semant
 
 ## [Unreleased]
 
+### Planned; not shipped
+
+- Investigate standard-page pixelation after zoom beyond 100% (issue #9); screenshot evidence from Fox News. Native-resolution multipart output (#6), capture/time ceiling (#13), and footer contact email (#15) are pending, not implemented.
+
+## [1.2.25] — Adaptive history reliability and license viewer (2026-10-12)
+
+### Changed
+
+- Adaptive, bounded oldest-history probing extends beyond the ordinary 16-second window only while a nested conversation genuinely loads older history, with a maximum 90-second progression allowance.
+- Enhanced phase-specific capture failure diagnostics and frame-stability counters without changing the underlying ordinary-page capture mechanism.
+- Updated welcome-page mascot and beta license viewer presentation; legal terms retained.
+
+### Validation and limitations
+
+- Live consecutive Chrome/macOS checks: Fox News twice, Base44 long, Fox News after Base44, ChatGPT 92 frames; user confirmed successful stitches and original scroll restoration on Base44 and ChatGPT.
+- Significant PNG pixelation remains even for shorter Fox News captures when zoomed; multipart native-resolution files and 300-screen limit are not included.
+
+
 ## [1.2.24] — Nested-scrolling release and icon alignment (2026-10-12)
 
 - Primary support for nested and reverse-scrolling long pages, including bounded history discovery and verified initial-view restoration.
