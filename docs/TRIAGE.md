@@ -32,6 +32,14 @@
 | 28 | P1 | In Progress | Restore automatic success-popup dismissal and investigate reported slower capture using elapsed-time diagnostics. |
 | 29 | P0 | In Progress | Prevent incomplete scrolling from producing missing top content or gaps when capture begins at the bottom; surface capture failures in the popup. |
 
+## IP-12 current follow-up priorities — 2026-10-12
+
+- **P1 / issue #9 — Image-quality regression (open, next-touch).** User supplied zoomed Fox News screenshot showing distinctly pixelated headline and story image one click beyond 100%. Capturing, stitching, and restoration still function; diagnose native frame size, DPR/zoom, source/output scaling and prior sharpness fix before changing output limits. No live patch requested.
+- **P1 / issue #6 — Native-resolution multipart (open).** Keep pixels readable, automatically segment at canvas limits, preserve one-click download and name convention; no silent downscaling.
+- **P1 / issue #13 — Workload guardrails (open).** 300 captured screens maximum, time/history discovery budgets and clear incomplete status; never claim uncollected content is captured.
+- **P3 / issue #15 — License viewer footer (deferred).** Confirmed display address `jonathan@jdacllc.org`; implement when license viewer is next updated, not by changing the canonical legal terms.
+- **Release status:** v1.2.25 published; regression sequence Fox News, Fox News, Base44 long, Fox News, ChatGPT 92 frames completed with original-position restoration on Base44 and ChatGPT. This does not establish native-resolution output or proven elimination of all intermittent timing issues.
+
 ## Notes
 
 - Item 26 passed user visual review on 2026-09-16 in PageSweep 0.2.18. The transparent robot glyph starts with white eyes, alternates white and purple every 450 ms during capture, and retains success/caution badges. Preloaded ImageData frames applied to both default and tab actions resolved the previously static appearance; diagnostics report applied frames and errors.
