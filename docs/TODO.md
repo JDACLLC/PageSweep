@@ -2,6 +2,9 @@
 
 ## In Progress
 
+- **Current supported version:** PageSweep v1.2.25, released 2026-10-12. No active code change approved; preserve this tested baseline.
+
+
 - Visually verify PageSweep 0.2.13 amber failure feedback and its 60-second inactivity fallback; background cancellation remains separate from popup feedback.
 
 - Complete the remaining middle-start and exact scroll-restoration checks; the reported bottom-start failure passed user retesting in 0.2.13.
@@ -10,6 +13,12 @@
 - Verify automatic popup dismissal after 1.7 seconds and inspect capture timing diagnostics in PageSweep 0.2.11; a slower 15-frame run was reported.
 
 ## Up Next
+
+- **P1 image-quality regression (GitHub #9):** Even the Fox News capture is visibly pixelated at one zoom increment beyond 100% in the user's screenshot. Investigate loss of earlier restored sharpness, scaling measurements and source/output PNG dimensions. Non-breaking; next engineering touch, not emergency hotfix.
+- **Native-resolution multipart exporter (#6):** Automatically split by safe canvas pixel and dimension capacity, not arbitrary viewport count; keep one-click UX.
+- **300-screen hard ceiling and time/history discovery budget (#13):** Explicit incomplete-capture messaging; don't silently truncate.
+- **License footer (#15):** On the next change to the Beta Evaluation License viewer, show `jonathan@jdacllc.org` while preserving copyright/legal text; not part of current release.
+
 
 - Run a small friend beta through the public GitHub repository before Chrome Web Store packaging.
 - Review and triage responses submitted through the private PageSweep beta feedback form.
