@@ -1,10 +1,17 @@
-> Branch note for **release-candidate/primary-scroll-1.2.20**: This branch intentionally excludes embedded code/prompt expansion. The fuller implementation remains on `test/chatgpt-capture`. Do not merge until remaining regression and reporter tests pass.
-
 # Changelog
 
 All notable changes to this project are documented here. The project uses semantic versioning.
 
 ## [Unreleased]
+
+## [1.2.24] — Nested-scrolling release and icon alignment (2026-10-12)
+
+- Primary support for nested and reverse-scrolling long pages, including bounded history discovery and verified initial-view restoration.
+- Ordinary document footer coverage guard retains strict PNG stitching frame checks.
+- Change Chrome extension listing/manager icon to the **existing mascot-glyph robot icon** at 16, 32, 48 and 128 px; toolbar animated icons are unchanged.
+- Keep existing single-PNG `hostname_YYYY-MM-DD_HH-MM-SS.png` naming and behavior; multipart output is deferred to another project/release.
+- Tester reported successful Fox News 1.2.23 capture and Base44 1.2.22 restoration. The 1.2.23 Base44 167-screen run was in progress at last report; Chrome Web Store upload and external user validation are separate requirements.
+
 
 ## [1.2.23-test] — Ordinary-page end coverage (2026-10-12)
 
