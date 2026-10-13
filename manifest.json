@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "PageSweep (Footer Regression Test)",
-  "description": "Experimental nested and reverse capture with history discovery, restoration and document-footer coverage safeguards.",
-  "version": "1.2.23",
+  "name": "PageSweep",
+  "description": "Capture the whole webpage as a single PNG.",
+  "version": "1.2.24",
   "permissions": [
     "activeTab",
     "scripting",
@@ -12,7 +12,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "PageSweep 1.2.23 — Footer Regression Test",
+    "default_title": "PageSweep — Capture the whole page",
     "default_icon": {
       "16": "icons/toolbar/mascot-glyph-16.png",
       "32": "icons/toolbar/mascot-glyph-32.png",
@@ -21,10 +21,10 @@
     }
   },
   "icons": {
-    "16": "icons/icon-16.png",
-    "32": "icons/icon-32.png",
-    "48": "icons/icon-48.png",
-    "128": "icons/icon-128.png"
+    "16": "icons/toolbar/mascot-glyph-16.png",
+    "32": "icons/toolbar/mascot-glyph-32.png",
+    "48": "icons/toolbar/mascot-glyph-48.png",
+    "128": "icons/toolbar/mascot-glyph-128.png"
   },
   "background": {
     "service_worker": "src/background.js"
