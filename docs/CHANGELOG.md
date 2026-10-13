@@ -6,6 +6,14 @@ All notable changes to this project are documented here. The project uses semant
 
 ## [Unreleased]
 
+## [1.2.23-test] — Ordinary-page end coverage (2026-10-12)
+
+- Fox News Chrome 154 macOS 1.2.22 incident: 15 frames, last frame at y=18,326, viewport height 1,323, reported page height 20,972. Stitcher rejected a last-frame unique height of 2,646; 1,323px were not represented.
+- Re-measure page height before declaring capture complete, and enforce final-frame coverage against the declared output extent. Continue if accessible; otherwise reject as incomplete *before* stitching rather than silently truncate.
+- Preserve strict stitch safety check, existing nested/restoration paths, mascot and download behavior.
+- Six focused source tests pass under isolated JS harness, including a Fox News arithmetic regression. **No live Chrome validation yet.**
+
+
 ## [1.2.22-test] — Verified nested panel restoration (2026-10-12)
 
 - Restore original nested-panel viewing content using a visual anchor, with bounded reattempts after layout shifts.
