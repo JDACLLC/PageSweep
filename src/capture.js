@@ -42,7 +42,7 @@
     ? scrollSurface.element.clientHeight : window.innerHeight;
   const initialDocumentHeight = captureHeight();
   const maximumBoundaryGrowth = Math.min(5000, initialDocumentHeight * 0.2);
-  const maximumCaptureBoundary = initialDocumentHeight + maximumBoundaryGrowth;
+  let maximumCaptureBoundary = initialDocumentHeight + maximumBoundaryGrowth;
   let captureBoundaryHeight = initialDocumentHeight;
   let maximumObservedHeight = initialDocumentHeight;
   let stabilizationTimeouts = 0;
@@ -63,7 +63,8 @@
   let captureCount = 0;
   let targetY = 0;
   let lastCapturedScrollY = null;
-  const maximumCaptureCount = Math.ceil(maximumCaptureBoundary / captureStep) + 3;
+  let maximumCaptureCount = Math.ceil(maximumCaptureBoundary / captureStep) + 3;
+  let historyDiscovery = { attempts: 0, growth: 0, elapsedMs: 0, settled: true };
   let pageCaptureCompleted = false;
   let reachedCaptureBoundary = false;
   let boundaryAdjustedToReachableEnd = false;
@@ -79,6 +80,17 @@
     }
     if (usesOverlayScrollbar) {
       (document.head || documentElement).appendChild(scrollbarSuppressionStyle);
+    }
+
+    if (scrollSurface.kind === "panel") {
+      progressOverlay.update("Finding the beginning of the conversation…", 1);
+      historyDiscovery = await discoverOldestReachableContent();
+      const discoveredHeight = captureHeight();
+      captureBoundaryHeight = discoveredHeight;
+      maximumObservedHeight = Math.max(maximumObservedHeight, discoveredHeight);
+      // The capture's growth budget begins AFTER history discovery, not before.
+      maximumCaptureBoundary = discoveredHeight + Math.min(5000, discoveredHeight * 0.2);
+      maximumCaptureCount = Math.ceil(maximumCaptureBoundary / captureStep) + 3;
     }
 
     while (captureCount < maximumCaptureCount) {
@@ -248,6 +260,7 @@
       : 0,
     stabilizationTimeouts,
     dynamicallyRenderedFrames,
+    historyDiscovery,
     captureCount,
     fixedAndStickyElementsFound: repeatElements.length,
     fixedAndStickyElementsCaptured: capturedRepeatElements.size,
@@ -276,6 +289,86 @@
   }
 
   return captureDetails;
+
+  async function discoverOldestReachableContent() {
+    // Only nested scroll panels take this preflight. Ordinary document captures
+    // keep their existing timings. The budget is bounded to prevent endless
+    // infinite-history feeds from consuming resources indefinitely.
+    const started = performance.now();
+    const timeBudgetMs = 16000;
+    const maxProbes = 25;
+    const quietPeriodMs = 1600;
+    const stableProbesNeeded = 3;
+    const initialHeight = scrollSurface.element.scrollHeight;
+    const maximumHistoryHeight = initialHeight + Math.max(30000, initialHeight * 4);
+    let previousHeight = initialHeight;
+    let previousVisual = "";
+    let stableProbes = 0;
+    let attempts = 0;
+    let lastChange = started;
+    let sawBusy = false;
+
+    while (attempts < maxProbes && performance.now() - started < timeBudgetMs) {
+      attempts += 1;
+      moveCaptureSurface(0);
+      await waitForStylePaint();
+      // Allow asynchronous loading triggered by reaching the oldest edge.
+      await delay(450);
+      const currentHeight = scrollSurface.element.scrollHeight;
+      const visual = visibleContentSignature();
+      const busy = hasVisibleTopLoadingIndicator();
+
+      if (currentHeight > maximumHistoryHeight) {
+        throw new Error("Incomplete capture: older content exceeded the bounded history-discovery range.");
+      }
+      const heightChanged = Math.abs(currentHeight - previousHeight) > 1;
+      const visualChanged = previousVisual !== "" && previousVisual !== visual;
+      if (heightChanged || visualChanged || busy) {
+        stableProbes = 0;
+        lastChange = performance.now();
+      } else {
+        stableProbes += 1;
+      }
+      sawBusy ||= busy;
+      previousHeight = currentHeight;
+      previousVisual = visual;
+      if (stableProbes >= stableProbesNeeded
+        && performance.now() - lastChange >= quietPeriodMs) {
+        // Revisit the latest negative endpoint even if height grew just as
+        // the async render settled.
+        moveCaptureSurface(0);
+        await waitForStylePaint();
+        return {
+          attempts, growth: currentHeight - initialHeight,
+          elapsedMs: Math.round(performance.now() - started),
+          loadingObserved: sawBusy, settled: true,
+        };
+      }
+    }
+    throw new Error("Incomplete capture: the start of the scrolling content did not stabilize within the history-discovery safety limit.");
+  }
+
+  function hasVisibleTopLoadingIndicator() {
+    const element = scrollSurface.element;
+    if (!element) return false;
+    // Intentionally generic: do not hardcode ChatGPT or another application's
+    // class names. Limit candidates to visible loading/status elements in the
+    // selected scrolling surface, not arbitrary page activity.
+    const rect = element.getBoundingClientRect();
+    const topBand = Math.min(rect.bottom, rect.top + Math.min(250, rect.height * 0.45));
+    const candidates = element.querySelectorAll(
+      '[aria-busy="true"], [role="progressbar"], [role="status"], [aria-label*="loading" i], [aria-label*="spinner" i]',
+    );
+    for (const candidate of candidates) {
+      const candidateRect = candidate.getBoundingClientRect();
+      if (candidateRect.width <= 0 || candidateRect.height <= 0
+        || candidateRect.bottom < rect.top || candidateRect.top > topBand) continue;
+      const busy = candidate.matches('[aria-busy="true"], [role="progressbar"], [aria-label*="loading" i], [aria-label*="spinner" i]')
+        || /load|fetch|retriev/i.test((candidate.innerText || candidate.textContent || "").slice(0, 100));
+      if (busy) return true;
+    }
+    return false;
+  }
 
   function restoreInline(element, property, previous) {
     if (previous) element.style.setProperty(property, previous);
