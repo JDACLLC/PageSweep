@@ -9,7 +9,7 @@
   <body>
     <main class="page-shell">
       <section class="welcome-card" aria-labelledby="welcome-title">
-        <img class="brand-icon" src="icons/icon-128.png" alt="">
+        <img class="brand-icon" src="icons/toolbar/mascot-glyph-128.png" alt="">
         <p class="eyebrow">Welcome to PageSweep</p>
         <h1 id="welcome-title">Capture the whole page.</h1>
         <p class="intro">Select the PageSweep toolbar icon once. Keep the tab visible while PageSweep scrolls, captures, and prepares one PNG.</p>
@@ -30,9 +30,9 @@
             <h2>Current limitations</h2>
             <ul>
               <li>Chrome-controlled pages such as <code>chrome://</code> pages cannot be captured.</li>
-              <li>Exceptionally tall pages may be reduced in resolution to fit Chrome's image limits.</li>
-              <li>Infinite feeds stop at a safe, finite boundary.</li>
-              <li>Slow-loading content receives a limited opportunity to finish loading.</li>
+              <li>Exceptionally tall captures are scaled down to fit Chrome's image limits, so text may become difficult to read. Shorter captures work best until multipart PNG support is available.</li>
+              <li>Infinite feeds use safety limits and may not include every item.</li>
+              <li>PageSweep allows some time for delayed content to load, but may not capture every older message or embedded scrolling area.</li>
             </ul>
           </article>
 
