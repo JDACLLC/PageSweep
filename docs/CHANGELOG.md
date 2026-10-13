@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The project uses semant
 
 ## [Unreleased]
 
+## [1.2.21-test] — Oldest-history discovery (2026-10-12)
+
+- Primary nested-scroll release candidate now probes the oldest reachable scroll boundary before the first frame, repeats after async growth and requires a quiet period.
+- Bounded to 16 seconds / 25 probes with a finite maximum expansion; unresolved history shows an incomplete-capture error instead of silently delivering a truncated PNG.
+- Conventional document capture bypasses history discovery. Embedded code/prompt expansion remains deferred.
+- Isolated simulations passed for delayed older content, stable content and never-settling history. **Real Chrome full-history capture, regular-page regression and Windows checks are still required.**
+- GitHub issues: #3 (primary history loading), #4 (embedded code/prompt follow-up).
+
+
 ## [1.2.20-test] — Development only (2026-10-12)
 
 ### In progress
