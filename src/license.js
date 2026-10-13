@@ -15,7 +15,12 @@
     const metaLines = [...headerLines.slice(1), ...(blocks.shift() || "").split("\n")];
     for (const line of metaLines) {
       const item = document.createElement("p");
-      item.textContent = line;
+      // Clarify legal-document metadata without changing the source license.
+      // Extension version is shown separately on the welcome page.
+      const versionMatch = /^Version (\S+) — (.+)$/.exec(line);
+      item.textContent = versionMatch
+        ? `License version ${versionMatch[1]} | Effective ${versionMatch[2]}`
+        : line.replace(/^Copyright \(c\)/, "©");
       meta.appendChild(item);
     }
     content.replaceChildren();
