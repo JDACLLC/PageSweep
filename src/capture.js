@@ -252,7 +252,6 @@
     pageCaptureCompleted = true;
     progressOverlay.update("Preparing your PNG…", 100);
   } finally {
-    pageSweepPhase = "scroll restoration and cleanup";
     await runCleanupStep("scrollbar suppression style", () => scrollbarSuppressionStyle.remove());
     await runCleanupStep("fixed and sticky element styles", () => restoreRepeatElements());
     await runCleanupStep("smooth scrolling style", () => {
