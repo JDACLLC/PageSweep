@@ -15,7 +15,11 @@
   const scrollSurface = selectScrollSurface();
   const surfaceOriginalY = scrollSurface.element?.scrollTop ?? null;
   const surfaceOriginalBehavior = scrollSurface.element?.style.getPropertyValue("scroll-behavior");
+  const surfaceOriginalBehaviorPriority = scrollSurface.element?.style.getPropertyPriority("scroll-behavior");
   const surfaceOriginalAnchor = scrollSurface.element?.style.getPropertyValue("overflow-anchor");
+  const surfaceOriginalAnchorPriority = scrollSurface.element?.style.getPropertyPriority("overflow-anchor");
+  const originalPanelAnchor = findOriginalPanelAnchor();
+  let panelRestoration = null;
   const repeatElements = findFixedAndStickyElements();
   const capturedRepeatElements = new Set();
   const progressOverlay = createProgressOverlay();
@@ -231,10 +235,17 @@
     await runCleanupStep("original scroll position", () => restoreOriginalScrollPosition());
     if (scrollSurface.element) {
       await runCleanupStep("nested panel position and styles", async () => {
-        restoreInline(scrollSurface.element, "scroll-behavior", surfaceOriginalBehavior);
-        restoreInline(scrollSurface.element, "overflow-anchor", surfaceOriginalAnchor);
-        scrollSurface.element.scrollTop = surfaceOriginalY;
-        await waitForStylePaint();
+        const element = scrollSurface.element;
+        try {
+          // Keep scrolling instantaneous and disable browser anchoring until
+          // the original *visible content* has been restored and verified.
+          element.style.setProperty("scroll-behavior", "auto", "important");
+          element.style.setProperty("overflow-anchor", "none", "important");
+          panelRestoration = await restoreOriginalPanelPosition();
+        } finally {
+          restoreInline(element, "scroll-behavior", surfaceOriginalBehavior, surfaceOriginalBehaviorPriority);
+          restoreInline(element, "overflow-anchor", surfaceOriginalAnchor, surfaceOriginalAnchorPriority);
+        }
       });
     }
     if (!pageCaptureCompleted) {
@@ -242,6 +253,12 @@
     }
   }
 
+  // A screenshot can be correct while leaving the user's app in the wrong
+  // place. Never report that capture as a successful completed operation.
+  const restorationError = cleanupErrors.find(entry => entry.name === "nested panel position and styles");
+  if (restorationError) {
+    throw new Error(`Capture finished, but PageSweep could not restore your original viewing position: ${restorationError.message}`);
+  }
   const observedBoundaryHeight = Math.min(maximumObservedHeight, maximumCaptureBoundary);
 
   const captureDetails = {
@@ -261,6 +278,7 @@
     stabilizationTimeouts,
     dynamicallyRenderedFrames,
     historyDiscovery,
+    panelRestoration,
     captureCount,
     fixedAndStickyElementsFound: repeatElements.length,
     fixedAndStickyElementsCaptured: capturedRepeatElements.size,
@@ -370,9 +388,58 @@
     return false;
   }
 
-  function restoreInline(element, property, previous) {
-    if (previous) element.style.setProperty(property, previous);
+  function restoreInline(element, property, previous, priority = "") {
+    if (previous) element.style.setProperty(property, previous, priority);
     else element.style.removeProperty(property);
+  }
+
+  function findOriginalPanelAnchor() {
+    const panel = scrollSurface.element;
+    if (!panel) return null;
+    const rect = panel.getBoundingClientRect();
+    const x = Math.max(0, Math.min(window.innerWidth - 1, rect.left + rect.width * 0.5));
+    const y = Math.max(0, Math.min(window.innerHeight - 1, rect.top + Math.min(rect.height * 0.45, 180)));
+    let anchor = document.elementFromPoint(x, y);
+    if (!anchor || !panel.contains(anchor)) return null;
+    // Prefer a stable content block over a span or app-shell wrapper.
+    while (anchor.parentElement && anchor.parentElement !== panel
+      && !/^(ARTICLE|P|PRE|LI|BLOCKQUOTE|SECTION|TR|TD)$/.test(anchor.tagName)
+      && anchor.getBoundingClientRect().height < 30) {
+      anchor = anchor.parentElement;
+    }
+    return { element: anchor, top: anchor.getBoundingClientRect().top };
+  }
+
+  async function restoreOriginalPanelPosition() {
+    const panel = scrollSurface.element;
+    const deadline = performance.now() + 2100;
+    const anchor = originalPanelAnchor;
+    let consecutiveStable = 0;
+    let attempts = 0;
+    let lastHeight = panel.scrollHeight;
+    while (performance.now() < deadline && attempts < 22) {
+      attempts += 1;
+      const anchored = anchor && anchor.element.isConnected && panel.contains(anchor.element);
+      if (anchored) {
+        const displacement = anchor.element.getBoundingClientRect().top - anchor.top;
+        if (Math.abs(displacement) > 1) panel.scrollTop += displacement;
+      } else {
+        panel.scrollTop = surfaceOriginalY;
+      }
+      await waitForStylePaint();
+      await delay(90);
+      const stillAnchored = anchor && anchor.element.isConnected && panel.contains(anchor.element);
+      const positionError = stillAnchored
+        ? Math.abs(anchor.element.getBoundingClientRect().top - anchor.top)
+        : Math.abs(panel.scrollTop - surfaceOriginalY);
+      const heightStable = Math.abs(panel.scrollHeight - lastHeight) <= 1;
+      consecutiveStable = positionError <= 3 && heightStable ? consecutiveStable + 1 : 0;
+      lastHeight = panel.scrollHeight;
+      if (consecutiveStable >= 3) {
+        return { restored: true, attempts, anchored: Boolean(stillAnchored), scrollTop: panel.scrollTop };
+      }
+    }
+    throw new Error("Nested panel did not settle back to its original visible position within the restoration limit.");
   }
 
   // Bounded viewport sampling avoids an expensive full DOM traversal and
