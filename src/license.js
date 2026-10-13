@@ -8,10 +8,11 @@
     if (!response.ok) throw new Error("License file unavailable");
     const raw = (await response.text()).replace(/\r\n/g, "\n").trim();
     const blocks = raw.split(/\n\s*\n/);
-    const title = blocks.shift();
-    if (title !== "PageSweep Beta Evaluation License") throw new Error("Unexpected license format");
-    const versionAndCopyright = blocks.shift();
-    const metaLines = versionAndCopyright.split("\n");
+    const headerLines = (blocks.shift() || "").split("\n");
+    if (headerLines[0] !== "PageSweep Beta Evaluation License") throw new Error("Unexpected license format");
+    // The authoritative LICENSE has the version directly under its title,
+    // followed by a blank line and a separate copyright block.
+    const metaLines = [...headerLines.slice(1), ...(blocks.shift() || "").split("\n")];
     for (const line of metaLines) {
       const item = document.createElement("p");
       item.textContent = line;
