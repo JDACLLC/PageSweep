@@ -1,3 +1,5 @@
+> Branch note for **release-candidate/primary-scroll-1.2.20**: This branch intentionally excludes embedded code/prompt expansion. The fuller implementation remains on `test/chatgpt-capture`. Do not merge until remaining regression and reporter tests pass.
+
 # Changelog
 
 All notable changes to this project are documented here. The project uses semantic versioning.
@@ -10,7 +12,7 @@ All notable changes to this project are documented here. The project uses semant
 
 - Added general-purpose primary scroll-surface discovery for conventional and internal panels, including negative scroll coordinates.
 - Added nested viewport strip compositing to the existing PNG stitcher, preserving surrounding interface chrome once.
-- Added bounded one-level expansion and restoration of vertically scrolling code/prompt panes so their content can be included in-place.
+- Embedded code/prompt expansion **excluded from this RC**; reserved for the follow-up development branch.
 - Preserved the existing toolbar/popup mascot code, automatic PNG download, offscreen compatibility fallbacks, and conventional capture path.
 - Added deterministic scroll/embedded fixtures and regression tests.
 
