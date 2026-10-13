@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "PageSweep (Restoration Test)",
-  "description": "Experimental nested/reverse capture with bounded history discovery and verified original viewing position restoration.",
-  "version": "1.2.22",
+  "name": "PageSweep (Footer Regression Test)",
+  "description": "Experimental nested and reverse capture with history discovery, restoration and document-footer coverage safeguards.",
+  "version": "1.2.23",
   "permissions": [
     "activeTab",
     "scripting",
@@ -12,7 +12,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "PageSweep 1.2.22 — Restoration Test",
+    "default_title": "PageSweep 1.2.23 — Footer Regression Test",
     "default_icon": {
       "16": "icons/toolbar/mascot-glyph-16.png",
       "32": "icons/toolbar/mascot-glyph-32.png",
