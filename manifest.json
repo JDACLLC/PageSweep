@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "PageSweep (History Discovery Test)",
-  "description": "Experimental primary nested/reverse scrolling with bounded oldest-history loading; embedded code windows deferred.",
-  "version": "1.2.21",
+  "name": "PageSweep (Restoration Test)",
+  "description": "Experimental nested/reverse capture with bounded history discovery and verified original viewing position restoration.",
+  "version": "1.2.22",
   "permissions": [
     "activeTab",
     "scripting",
@@ -12,7 +12,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "PageSweep 1.2.21 — History Discovery Test",
+    "default_title": "PageSweep 1.2.22 — Restoration Test",
     "default_icon": {
       "16": "icons/toolbar/mascot-glyph-16.png",
       "32": "icons/toolbar/mascot-glyph-32.png",
