@@ -1,5 +1,27 @@
 # Decision Log
 
+## Preserve one-click capture and native image fidelity as separate guardrails — 2026-10-12
+
+### Context
+
+PageSweep v1.2.25 completed a Fox News/Base44/Fox News/ChatGPT consecutive-capture test sequence, including a 92-frame ChatGPT screenshot and scroll restoration. However, even a Fox News screenshot visibly pixelates when viewed one zoom increment beyond 100%; user supplied a screenshot. Lengthy history discovery and hundreds of frames also impose unwanted waits.
+
+### Decision
+
+Keep one-click user experience with no Full Page versus Quick Capture mode selector. Automatically choose PNG boundaries based on actual canvas pixel/dimension safety limits and preserve source resolution. Add a 300-screen hard capture ceiling and bounded overall/history work, with explicit partial/incomplete warnings; retain v1.2.25 while investigating non-breaking fidelity regressions. Next license viewer update should display `jonathan@jdacllc.org` in the footer, without altering the canonical legal license text.
+
+### Alternatives
+
+- Ask users to select capture modes (rejected).
+- Fit arbitrary numbers of screenshots into one downscaled PNG (rejected as quality standard).
+- Treat 92 screens as a hard limit (rejected: pixel budget is the natural multipart boundary).
+- Hotfix image rendering immediately without measured evidence (deferred).
+
+### Consequences
+
+GitHub issues #6, #9, #13, and #15 track work separately. No immediate code deployment; verify fidelity and continuous capture/restoration before shipping follow-up.
+
+
 ## Move capture progress into the toolbar popup — 2026-09-14
 
 ### Context
