@@ -682,11 +682,14 @@ async function stitchCapturedFrames(frames, captureDetails) {
       currentFrameIndex = frameIndex;
       const frame = frames[frameIndex];
       const nextFrame = frames[frameIndex + 1];
+      const scrollableHeight = captureDetails.panelRect
+        ? captureDetails.documentHeight - (captureDetails.viewportHeight - captureDetails.captureStep)
+        : captureDetails.documentHeight;
       const uniqueHeight = nextFrame
         ? nextFrame.scrollY - frame.scrollY
-        : captureDetails.documentHeight - frame.scrollY;
+        : scrollableHeight - frame.scrollY;
 
-      if (uniqueHeight <= 0 || uniqueHeight > captureDetails.viewportHeight + 1) {
+      if (uniqueHeight <= 0 || uniqueHeight > (captureDetails.captureStep || captureDetails.viewportHeight) + 1) {
         throw new Error(`Frame ${frameIndex + 1} has an invalid unique height (${uniqueHeight}px).`);
       }
 

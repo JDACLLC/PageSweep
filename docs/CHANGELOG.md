@@ -4,6 +4,60 @@ All notable changes to this project are documented here. The project uses semant
 
 ## [Unreleased]
 
+## [1.2.24] — Nested-scrolling release and icon alignment (2026-10-12)
+
+- Primary support for nested and reverse-scrolling long pages, including bounded history discovery and verified initial-view restoration.
+- Ordinary document footer coverage guard retains strict PNG stitching frame checks.
+- Change Chrome extension listing/manager icon to the **existing mascot-glyph robot icon** at 16, 32, 48 and 128 px; toolbar animated icons are unchanged.
+- Keep existing single-PNG `hostname_YYYY-MM-DD_HH-MM-SS.png` naming and behavior; multipart output is deferred to another project/release.
+- Tester reported successful Fox News 1.2.23 capture and Base44 1.2.22 restoration. The 1.2.23 Base44 167-screen run was in progress at last report; Chrome Web Store upload and external user validation are separate requirements.
+
+
+## [1.2.23-test] — Ordinary-page end coverage (2026-10-12)
+
+- Fox News Chrome 154 macOS 1.2.22 incident: 15 frames, last frame at y=18,326, viewport height 1,323, reported page height 20,972. Stitcher rejected a last-frame unique height of 2,646; 1,323px were not represented.
+- Re-measure page height before declaring capture complete, and enforce final-frame coverage against the declared output extent. Continue if accessible; otherwise reject as incomplete *before* stitching rather than silently truncate.
+- Preserve strict stitch safety check, existing nested/restoration paths, mascot and download behavior.
+- Six focused source tests pass under isolated JS harness, including a Fox News arithmetic regression. **No live Chrome validation yet.**
+
+
+## [1.2.22-test] — Verified nested panel restoration (2026-10-12)
+
+- Restore original nested-panel viewing content using a visual anchor, with bounded reattempts after layout shifts.
+- Fall back to raw initial panel coordinate when content nodes are replaced; preserve CSS declarations and priorities after restoration.
+- Explicit incomplete-capture error if original position cannot be verified rather than claiming success.
+- Added deterministic restoration cases for shifted content, detached nodes, and scroll refusal.
+- **Not Chrome end-to-end tested; hold production and draft PR pending live Base44/ChatGPT, conventional-page and Windows regressions.**
+
+
+## [1.2.21-test] — Oldest-history discovery (2026-10-12)
+
+- Primary nested-scroll release candidate now probes the oldest reachable scroll boundary before the first frame, repeats after async growth and requires a quiet period.
+- Bounded to 16 seconds / 25 probes with a finite maximum expansion; unresolved history shows an incomplete-capture error instead of silently delivering a truncated PNG.
+- Conventional document capture bypasses history discovery. Embedded code/prompt expansion remains deferred.
+- Isolated simulations passed for delayed older content, stable content and never-settling history. **Real Chrome full-history capture, regular-page regression and Windows checks are still required.**
+- GitHub issues: #3 (primary history loading), #4 (embedded code/prompt follow-up).
+
+
+## [1.2.20-test] — Development only (2026-10-12)
+
+### In progress
+
+- Added general-purpose primary scroll-surface discovery for conventional and internal panels, including negative scroll coordinates.
+- Added nested viewport strip compositing to the existing PNG stitcher, preserving surrounding interface chrome once.
+- Embedded code/prompt expansion **excluded from this RC**; reserved for the follow-up development branch.
+- Preserved the existing toolbar/popup mascot code, automatic PNG download, offscreen compatibility fallbacks, and conventional capture path.
+- Added deterministic scroll/embedded fixtures and regression tests.
+
+### Verification needed before release
+
+- **Not Chrome end-to-end validated.** Recheck complete ChatGPT and Base44 captures, including negative scrolling, growth, accurate PNG content and restoration.
+- Validate embedded code/prompt expansion on a real conversation; inspect final PNG and verify no clipped surrounding content.
+- Re-run Fox News/static pages, mascot, automatic download and Windows smoke tests.
+- Measure performance against production 0.2.18, resolve failures, and merge only after approval.
+- This version label identifies an isolated development test; production remains 0.2.18.
+
+
 ## [0.2.18] — 2026-09-16
 
 ### Changed

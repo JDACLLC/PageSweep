@@ -10,7 +10,7 @@ function fixture(initialY, move = (w, options) => { w.scrollY = options.top; }) 
   const window = { scrollY: initialY, innerHeight: 1251, scrollTo(options) {
     assert.equal(options.behavior, 'instant'); calls.push(options); move(this, options);
   }};
-  const context = { window, originalScrollX: 0, getDocumentHeight: () => 14669,
+  const context = { window, originalScrollX: 0, scrollSurface: { kind: 'document' }, getDocumentHeight: () => 14669,
     waitForStylePaint: async () => {} };
   vm.createContext(context);
   vm.runInContext(source.slice(start, end), context);
