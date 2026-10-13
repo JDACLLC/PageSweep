@@ -1,6 +1,6 @@
 # Real-World Capture Test Matrix
 
-**Last Updated:** 2026-08-12
+**Last Updated:** 2026-10-12
 
 This matrix records browser-tested evidence for substantially different page types. A result is marked **Pass** only after the downloaded PNG and page restoration have been inspected. Known V1 limitations are recorded as qualified passes rather than hidden.
 
@@ -16,6 +16,18 @@ This matrix records browser-tested evidence for substantially different page typ
 | 8 | Very long webpage | Bored Panda | Pass with limitation | Native canvas could not export full Retina dimensions | Complete page in one PNG | Per-frame messaging and safe uniform downscaling |
 | 9 | Page shorter than viewport | Example Domain | Pass | None | One frame with no stitching gap or crop | One frame at `1810 x 1942`, `outputScale: 2` |
 | 10 | Complex responsive web app | Google News | Pass | No cleanup errors; full device-pixel output | Complete finite dashboard state and reusable session | `cleanupErrors: []`; immediate CNN capture also succeeded |
+
+## PageSweep v1.2.25 consecutive Chrome/macOS regression — 2026-10-12
+
+| Sequence | Site | Observation | Status |
+|---:|---|---|---|
+| 1 | Fox News | PNG capture and stitch completed | Pass, fidelity limitation |
+| 2 | Fox News | Repeat capture completed | Pass, fidelity limitation |
+| 3 | Base44 | Long capture stitched, downloaded and restored original position | Pass, fidelity limitation |
+| 4 | Fox News | Capture succeeded after Base44 | Pass, fidelity limitation |
+| 5 | ChatGPT | 92 frames stitched, original position restored | Pass, fidelity limitation |
+
+**Fidelity regression:** User-supplied Fox News story-card screenshot shows significant text/image pixelation at one zoom increment beyond 100%. **Do not mark image-quality acceptance as passed**. Issue #9 tracks root-cause analysis, with #6 native multipart. No measurements yet establish the exact scale at which output was downsampled.
 
 ## Stage 10 cleanup evidence
 
