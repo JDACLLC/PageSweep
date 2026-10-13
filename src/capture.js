@@ -1136,7 +1136,7 @@
       }
     }
   }
-}})();
+})();
   } catch (error) {
     const failure = {
       name: error?.name || "Error",
