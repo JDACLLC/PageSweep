@@ -1,4 +1,9 @@
 (async () => {
+  // Diagnostic wrapper only: preserve capture engine behavior while exposing
+  // failures that used to disappear into an undefined injected-script result.
+  let pageSweepPhase = "initialization";
+  try {
+    return await (async () => {
   const documentElement = document.documentElement;
   const body = document.body;
   const originalScrollX = window.scrollX;
@@ -74,6 +79,7 @@
   let boundaryAdjustedToReachableEnd = false;
 
   try {
+    pageSweepPhase = "capture setup";
     documentElement.style.setProperty("scroll-behavior", "auto", "important");
     for (const scrollAnchoringStyle of scrollAnchoringStyles) {
       scrollAnchoringStyle.element.style.setProperty("overflow-anchor", "none", "important");
@@ -88,6 +94,7 @@
 
     if (scrollSurface.kind === "panel") {
       progressOverlay.update("Finding the beginning of the conversation…", 1);
+      pageSweepPhase = "oldest-history discovery";
       historyDiscovery = await discoverOldestReachableContent();
       const discoveredHeight = captureHeight();
       captureBoundaryHeight = discoveredHeight;
@@ -97,6 +104,7 @@
       maximumCaptureCount = Math.ceil(maximumCaptureBoundary / captureStep) + 3;
     }
 
+    pageSweepPhase = "frame capture";
     while (captureCount < maximumCaptureCount) {
       let estimatedCaptureCount = Math.max(
         1,
@@ -244,6 +252,7 @@
     pageCaptureCompleted = true;
     progressOverlay.update("Preparing your PNG…", 100);
   } finally {
+    pageSweepPhase = "scroll restoration and cleanup";
     await runCleanupStep("scrollbar suppression style", () => scrollbarSuppressionStyle.remove());
     await runCleanupStep("fixed and sticky element styles", () => restoreRepeatElements());
     await runCleanupStep("smooth scrolling style", () => {
@@ -300,6 +309,7 @@
   }
   const observedBoundaryHeight = Math.min(maximumObservedHeight, maximumCaptureBoundary);
 
+  pageSweepPhase = "completion reporting";
   const captureDetails = {
     ...measurements,
     scrollSurface: scrollSurface.kind,
@@ -1125,5 +1135,23 @@
         repeatElement.element.style.removeProperty("visibility");
       }
     }
+  }
+}})();
+  } catch (error) {
+    const failure = {
+      name: error?.name || "Error",
+      message: error?.message || String(error),
+      stack: typeof error?.stack === "string" ? error.stack : null,
+      phase: pageSweepPhase,
+    };
+    // Primary signal: report the actual page-side failure to the service worker.
+    // If the tab closes or the message fails, return the same diagnostic data
+    // through chrome.scripting.executeScript's original result channel.
+    try {
+      await chrome.runtime.sendMessage({ type: "capture-failed", failure });
+    } catch (messagingError) {
+      console.warn("PageSweep failure diagnostic message unavailable.", messagingError);
+    }
+    return { pageSweepError: failure };
   }
 })();
