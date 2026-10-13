@@ -8,19 +8,21 @@ PageSweep is a Chrome Manifest V3 extension that captures an entire scrollable w
 
 One toolbar click measures a finite page boundary, scrolls through the page, captures each viewport, removes overlap, stitches the frames, downloads the PNG, and restores the original page state.
 
-## Install PageSweep from GitHub
+## Official supported download
+
+**[Download PageSweep v1.2.24 (GitHub Release)](https://github.com/JDACLLC/PageSweep/releases/tag/v1.2.24)**
+
+PageSweep **v1.2.24 is the only supported public download**. Do not install development branch ZIPs or older tags. The GitHub release provides the fixed-version **Source code (zip)** archive; unpack it before installing. This is a GitHub-distributed Chrome extension, not yet a Chrome Web Store listing.
 
 ![Four-step visual guide for installing PageSweep from GitHub](docs/images/pagesweep-github-install.png)
 
-1. Select **Code**, then select **Download ZIP**.
-2. Open the downloaded ZIP and extract its contents.
-3. Open `chrome://extensions` in Google Chrome.
-4. Turn on **Developer mode** in the upper-right corner.
-5. Select **Load unpacked**.
-6. Choose the extracted project folder that contains `manifest.json`.
-7. Open Chrome's extensions menu and pin **PageSweep** to the toolbar.
+1. Open the [official v1.2.24 release](https://github.com/JDACLLC/PageSweep/releases/tag/v1.2.24) and under **Assets** select **Source code (zip)**.
+2. Extract the ZIP.
+3. Open `chrome://extensions` in Google Chrome and enable **Developer mode**.
+4. Click **Load unpacked** and choose the extracted project folder that contains `manifest.json`.
+5. Pin **PageSweep** to the toolbar.
 
-After an update, download and extract the latest ZIP again, then select **Reload** on the PageSweep card at `chrome://extensions`.
+When updating a previously installed development copy, remove or disable the old version before loading v1.2.24. The extension should display **PageSweep**, version **1.2.24**.
 
 ## Features
 
