@@ -10,19 +10,19 @@ One toolbar click measures a finite page boundary, scrolls through the page, cap
 
 ## Official supported download
 
-**[Download PageSweep v1.2.24 (GitHub Release)](https://github.com/JDACLLC/PageSweep/releases/tag/v1.2.24)**
+**[Download PageSweep v1.2.25 (GitHub Release)](https://github.com/JDACLLC/PageSweep/releases/tag/v1.2.25)**
 
-PageSweep **v1.2.24 is the only supported public download**. Do not install development branch ZIPs or older tags. The GitHub release provides the fixed-version **Source code (zip)** archive; unpack it before installing. This is a GitHub-distributed Chrome extension, not yet a Chrome Web Store listing.
+PageSweep **v1.2.25 is the currently supported public download**. Do not install development branch ZIPs or older tags. The GitHub release provides the fixed-version **Source code (zip)** archive; unpack it before installing. This is a GitHub-distributed Chrome extension, not yet a Chrome Web Store listing.
 
 ![Four-step visual guide for installing PageSweep from GitHub](docs/images/pagesweep-github-install.png)
 
-1. Open the [official v1.2.24 release](https://github.com/JDACLLC/PageSweep/releases/tag/v1.2.24) and under **Assets** select **Source code (zip)**.
+1. Open the [official v1.2.25 release](https://github.com/JDACLLC/PageSweep/releases/tag/v1.2.25) and under **Assets** select **Source code (zip)**.
 2. Extract the ZIP.
 3. Open `chrome://extensions` in Google Chrome and enable **Developer mode**.
 4. Click **Load unpacked** and choose the extracted project folder that contains `manifest.json`.
 5. Pin **PageSweep** to the toolbar.
 
-When updating a previously installed development copy, remove or disable the old version before loading v1.2.24. The extension should display **PageSweep**, version **1.2.24**.
+When updating a previously installed development copy, remove or disable the old version before loading v1.2.25. The extension should display **PageSweep**, version **1.2.25**.
 
 ## Features
 
@@ -30,7 +30,7 @@ When updating a previously installed development copy, remove or disable the old
 - One automatically downloaded PNG named `hostname_YYYY-MM-DD_HH-MM-SS.png`.
 - Accurate high-DPI, zoom, fractional-scroll, and final-viewport handling.
 - First-occurrence handling for fixed and sticky interface elements.
-- Bounded settling for lazy-loaded images and modest page growth.
+- Bounded settling for lazy-loaded images and modest page growth, with adaptive history discovery when older conversation content is actively loading.
 - Restoration of scroll position and temporary page styles after success or failure.
 - Persistent browser-popup progress that stays out of the downloaded PNG, with a transparent robot toolbar icon whose eyes pulse white and purple during capture.
 - Pastel-amber retry guidance for failures or prolonged inactivity.
@@ -156,8 +156,8 @@ Use [`docs/E2E_SMOKE_PROTOCOL.md`](docs/E2E_SMOKE_PROTOCOL.md) for the complete 
 
 ## Known limitations
 
-- Exceptionally tall pages may be downscaled because Chrome cannot export a single canvas beyond its native dimension and memory limits. The extension logs a warning with the source and output scale when this happens.
-- Infinite or continuously growing feeds are limited to a finite boundary. Normal lazy-load growth is allowed only within a bounded cap.
+- Long captures (sometimes even around 16 screens on high-DPI displays) may be downscaled and become difficult or impossible to read when exported as one PNG. Native-resolution multipart output is planned but **not yet included** in v1.2.25. The extension logs source and output scale when this happens.
+- Infinite or continuously growing feeds are limited by bounded discovery rules. The planned 300-screen hard capture cap is **not yet implemented**.
 - Content that takes longer than the bounded render timeout may not appear fully loaded.
 - Chrome-protected pages cannot be captured.
 
