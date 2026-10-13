@@ -373,6 +373,10 @@
     let attempts = 0;
     let lastChange = started;
     let sawBusy = false;
+    let heightChangeCount = 0;
+    let visualChangeCount = 0;
+    let busyProbeCount = 0;
+    let maximumStableProbes = 0;
 
     while (attempts < maxProbes && performance.now() - started < timeBudgetMs) {
       attempts += 1;
@@ -389,12 +393,16 @@
       }
       const heightChanged = Math.abs(currentHeight - previousHeight) > 1;
       const visualChanged = previousVisual !== "" && previousVisual !== visual;
+      if (heightChanged) heightChangeCount += 1;
+      if (visualChanged) visualChangeCount += 1;
+      if (busy) busyProbeCount += 1;
       if (heightChanged || visualChanged || busy) {
         stableProbes = 0;
         lastChange = performance.now();
       } else {
         stableProbes += 1;
       }
+      maximumStableProbes = Math.max(maximumStableProbes, stableProbes);
       sawBusy ||= busy;
       previousHeight = currentHeight;
       previousVisual = visual;
@@ -411,7 +419,17 @@
         };
       }
     }
-    throw new Error("Incomplete capture: the start of the scrolling content did not stabilize within the history-discovery safety limit.");
+    const reasons = [];
+    if (heightChangeCount) reasons.push(`height changes=${heightChangeCount}`);
+    if (visualChangeCount) reasons.push(`visual changes=${visualChangeCount}`);
+    if (busyProbeCount) reasons.push(`busy indicator probes=${busyProbeCount}`);
+    throw new Error(
+      "Incomplete capture: the start of the scrolling content did not stabilize within the history-discovery safety limit. "
+      + `Discovery diagnostics: attempts=${attempts}, elapsedMs=${Math.round(performance.now() - started)}, `
+      + `heightGrowth=${previousHeight - initialHeight}px, maxStableProbes=${maximumStableProbes}, `
+      + `quietForMs=${Math.round(performance.now() - lastChange)}, `
+      + (reasons.join(", ") || "no identified change signals") + ".",
+    );
   }
 
   function hasVisibleTopLoadingIndicator() {
