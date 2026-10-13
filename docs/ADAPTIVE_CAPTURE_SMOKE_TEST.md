@@ -1,4 +1,4 @@
-# PageSweep 1.2.21 History Discovery Test — Manual Chrome Smoke Protocol
+# PageSweep 1.2.22 Restoration Test — Manual Chrome Smoke Protocol
 
 **Development only. Do not replace production 0.2.18 or merge until results are reviewed.**
 
@@ -7,7 +7,7 @@
 1. Download the `test/chatgpt-capture` branch ZIP; expand into a clean folder.
 2. At `chrome://extensions`, disable previous PageSweep installations (do not uninstall production).
 3. Load the unpacked development folder containing `manifest.json`.
-4. Verify extension card says **PageSweep (History Discovery Test)**, **1.2.21**.
+4. Verify extension card says **PageSweep (Restoration Test)**, **1.2.22**.
 5. Capture using the usual one-click popup. Only one PageSweep instance should be active.
 6. Inspect actual downloaded PNG and on-screen progress; note whether current location was restored.
 
@@ -18,6 +18,10 @@
 Before capturing the long ChatGPT conversation, note the actual first message by manually navigating to the oldest history and waiting for any spinner to finish. The new build should navigate to that same beginning before its first captured frame, include that first message and subsequent content in chronological order, and return to the starting position. A loading spinner still visible at the top of the PNG is a **failure**, not a passing capture.
 
 If the app keeps loading more content beyond the safety budget, PageSweep must surface an incomplete-capture error rather than silently download a shortened PNG.
+
+## Restoration test requirement
+
+Before running a capture, note a recognizable passage halfway through the nested page. After the download and feedback popup, **that same passage must be at the same visible location**. Repeat from the top, middle and bottom of the page. If the page updates during capture and exact restoration is not possible, the extension must report that as a failure instead of silently reporting completion. This is a release blocker.
 
 ## Tests, in order
 
