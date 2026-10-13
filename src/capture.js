@@ -1,4 +1,9 @@
 (async () => {
+  // Diagnostic wrapper only: preserve capture engine behavior while exposing
+  // failures that used to disappear into an undefined injected-script result.
+  let pageSweepPhase = "initialization";
+  try {
+    return await (async () => {
   const documentElement = document.documentElement;
   const body = document.body;
   const originalScrollX = window.scrollX;
@@ -74,6 +79,7 @@
   let boundaryAdjustedToReachableEnd = false;
 
   try {
+    pageSweepPhase = "capture setup";
     documentElement.style.setProperty("scroll-behavior", "auto", "important");
     for (const scrollAnchoringStyle of scrollAnchoringStyles) {
       scrollAnchoringStyle.element.style.setProperty("overflow-anchor", "none", "important");
@@ -88,6 +94,7 @@
 
     if (scrollSurface.kind === "panel") {
       progressOverlay.update("Finding the beginning of the conversation…", 1);
+      pageSweepPhase = "oldest-history discovery";
       historyDiscovery = await discoverOldestReachableContent();
       const discoveredHeight = captureHeight();
       captureBoundaryHeight = discoveredHeight;
@@ -97,6 +104,7 @@
       maximumCaptureCount = Math.ceil(maximumCaptureBoundary / captureStep) + 3;
     }
 
+    pageSweepPhase = "frame capture";
     while (captureCount < maximumCaptureCount) {
       let estimatedCaptureCount = Math.max(
         1,
@@ -111,7 +119,11 @@
       if (stabilization.timedOut) {
         stabilizationTimeouts += 1;
         // Never silently export a frame whose visible content kept changing.
-        throw new Error("Incomplete capture: dynamically rendered content did not stabilize before the screenshot. Try again after the page finishes loading.");
+        throw new Error(
+          "Incomplete capture: dynamically rendered content did not stabilize before the screenshot. "
+          + "Try again after the page finishes loading. "
+          + "Settle diagnostics: " + JSON.stringify(stabilization.settleDiagnostics),
+        );
       }
 
       const observedHeight = captureHeight();
@@ -300,6 +312,7 @@
   }
   const observedBoundaryHeight = Math.min(maximumObservedHeight, maximumCaptureBoundary);
 
+  pageSweepPhase = "completion reporting";
   const captureDetails = {
     ...measurements,
     scrollSurface: scrollSurface.kind,
@@ -353,7 +366,8 @@
     // infinite-history feeds from consuming resources indefinitely.
     const started = performance.now();
     const timeBudgetMs = 16000;
-    const maxProbes = 25;
+    const progressingTimeBudgetMs = 90000;
+    const maxProbes = 90;
     const quietPeriodMs = 1600;
     const stableProbesNeeded = 3;
     const initialHeight = scrollSurface.element.scrollHeight;
@@ -364,8 +378,13 @@
     let attempts = 0;
     let lastChange = started;
     let sawBusy = false;
+    let heightChangeCount = 0;
+    let visualChangeCount = 0;
+    let busyProbeCount = 0;
+    let maximumStableProbes = 0;
+    let meaningfulGrowthObserved = false;
 
-    while (attempts < maxProbes && performance.now() - started < timeBudgetMs) {
+    while (attempts < maxProbes && performance.now() - started < (meaningfulGrowthObserved ? progressingTimeBudgetMs : timeBudgetMs)) {
       attempts += 1;
       moveCaptureSurface(0);
       await waitForStylePaint();
@@ -380,12 +399,19 @@
       }
       const heightChanged = Math.abs(currentHeight - previousHeight) > 1;
       const visualChanged = previousVisual !== "" && previousVisual !== visual;
+      if (heightChanged) heightChangeCount += 1;
+      // Extend discovery only when older history demonstrably adds substantial
+      // scrollable content. Mere text animation or spinners cannot extend it.
+      if (currentHeight - initialHeight >= 1000) meaningfulGrowthObserved = true;
+      if (visualChanged) visualChangeCount += 1;
+      if (busy) busyProbeCount += 1;
       if (heightChanged || visualChanged || busy) {
         stableProbes = 0;
         lastChange = performance.now();
       } else {
         stableProbes += 1;
       }
+      maximumStableProbes = Math.max(maximumStableProbes, stableProbes);
       sawBusy ||= busy;
       previousHeight = currentHeight;
       previousVisual = visual;
@@ -402,7 +428,17 @@
         };
       }
     }
-    throw new Error("Incomplete capture: the start of the scrolling content did not stabilize within the history-discovery safety limit.");
+    const reasons = [];
+    if (heightChangeCount) reasons.push(`height changes=${heightChangeCount}`);
+    if (visualChangeCount) reasons.push(`visual changes=${visualChangeCount}`);
+    if (busyProbeCount) reasons.push(`busy indicator probes=${busyProbeCount}`);
+    throw new Error(
+      "Incomplete capture: the start of the scrolling content did not stabilize within the history-discovery safety limit. "
+      + `Discovery diagnostics: attempts=${attempts}, elapsedMs=${Math.round(performance.now() - started)}, `
+      + `heightGrowth=${previousHeight - initialHeight}px, extendedForHistoryGrowth=${meaningfulGrowthObserved}, maxStableProbes=${maximumStableProbes}, `
+      + `quietForMs=${Math.round(performance.now() - lastChange)}, `
+      + (reasons.join(", ") || "no identified change signals") + ".",
+    );
   }
 
   function hasVisibleTopLoadingIndicator() {
@@ -926,6 +962,13 @@
     let stableSamples = 0;
     let sawDynamicContent = false;
     let lastChangeAt = startedAt;
+    // Diagnostic counters only: do not change settle timing or safety rules.
+    let heightChangeSamples = 0;
+    let signatureChangeSamples = 0;
+    let pendingImageSamples = 0;
+    let lastPendingVisibleImages = 0;
+    let lastSignatureChanged = false;
+    let lastHeightChanged = false;
 
     await waitForStylePaint();
 
@@ -934,8 +977,15 @@
       const currentHeight = getDocumentHeight();
       const currentSignature = visibleContentSignature();
       const pendingVisibleImages = getVisibleImages().filter((image) => !image.complete).length;
-      const changed = Math.abs(currentHeight - previousHeight) >= 1
-        || currentSignature !== previousSignature;
+      const heightChanged = Math.abs(currentHeight - previousHeight) >= 1;
+      const signatureChanged = currentSignature !== previousSignature;
+      const changed = heightChanged || signatureChanged;
+      if (heightChanged) heightChangeSamples += 1;
+      if (signatureChanged) signatureChangeSamples += 1;
+      if (pendingVisibleImages) pendingImageSamples += 1;
+      lastPendingVisibleImages = pendingVisibleImages;
+      lastSignatureChanged = signatureChanged;
+      lastHeightChanged = heightChanged;
 
       if (changed) {
         sawDynamicContent = true;
@@ -965,7 +1015,24 @@
     const remainingTime = Math.max(0, timeout - elapsed);
     await decodeVisibleImages(Math.min(remainingTime, 300));
     await waitForStylePaint();
-    return { timedOut, dynamicContent: sawDynamicContent };
+    return {
+      timedOut,
+      dynamicContent: sawDynamicContent,
+      // Counts refer to samples within this single viewport's settle window.
+      // Kept out of frame-capture flow except for failures.
+      settleDiagnostics: timedOut ? {
+        elapsedMs: Math.round(elapsed),
+        heightChangeSamples,
+        signatureChangeSamples,
+        pendingImageSamples,
+        pendingVisibleImages: lastPendingVisibleImages,
+        lastHeightChanged,
+        lastSignatureChanged,
+        stableSamples,
+        heightAtTimeout: previousHeight,
+        scrollSurface: scrollSurface.kind,
+      } : null,
+    };
   }
 
   async function waitForStylePaint() {
@@ -1125,5 +1192,23 @@
         repeatElement.element.style.removeProperty("visibility");
       }
     }
+  }
+})();
+  } catch (error) {
+    const failure = {
+      name: error?.name || "Error",
+      message: error?.message || String(error),
+      stack: typeof error?.stack === "string" ? error.stack : null,
+      phase: pageSweepPhase,
+    };
+    // Primary signal: report the actual page-side failure to the service worker.
+    // If the tab closes or the message fails, return the same diagnostic data
+    // through chrome.scripting.executeScript's original result channel.
+    try {
+      await chrome.runtime.sendMessage({ type: "capture-failed", failure });
+    } catch (messagingError) {
+      console.warn("PageSweep failure diagnostic message unavailable.", messagingError);
+    }
+    return { pageSweepError: failure };
   }
 })();
