@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The project uses semant
 
 ## [Unreleased]
 
+## [1.2.22-test] — Verified nested panel restoration (2026-10-12)
+
+- Restore original nested-panel viewing content using a visual anchor, with bounded reattempts after layout shifts.
+- Fall back to raw initial panel coordinate when content nodes are replaced; preserve CSS declarations and priorities after restoration.
+- Explicit incomplete-capture error if original position cannot be verified rather than claiming success.
+- Added deterministic restoration cases for shifted content, detached nodes, and scroll refusal.
+- **Not Chrome end-to-end tested; hold production and draft PR pending live Base44/ChatGPT, conventional-page and Windows regressions.**
+
+
 ## [1.2.21-test] — Oldest-history discovery (2026-10-12)
 
 - Primary nested-scroll release candidate now probes the oldest reachable scroll boundary before the first frame, repeats after async growth and requires a quiet period.
