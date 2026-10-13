@@ -366,7 +366,8 @@
     // infinite-history feeds from consuming resources indefinitely.
     const started = performance.now();
     const timeBudgetMs = 16000;
-    const maxProbes = 25;
+    const progressingTimeBudgetMs = 90000;
+    const maxProbes = 90;
     const quietPeriodMs = 1600;
     const stableProbesNeeded = 3;
     const initialHeight = scrollSurface.element.scrollHeight;
@@ -381,8 +382,9 @@
     let visualChangeCount = 0;
     let busyProbeCount = 0;
     let maximumStableProbes = 0;
+    let meaningfulGrowthObserved = false;
 
-    while (attempts < maxProbes && performance.now() - started < timeBudgetMs) {
+    while (attempts < maxProbes && performance.now() - started < (meaningfulGrowthObserved ? progressingTimeBudgetMs : timeBudgetMs)) {
       attempts += 1;
       moveCaptureSurface(0);
       await waitForStylePaint();
@@ -398,6 +400,9 @@
       const heightChanged = Math.abs(currentHeight - previousHeight) > 1;
       const visualChanged = previousVisual !== "" && previousVisual !== visual;
       if (heightChanged) heightChangeCount += 1;
+      // Extend discovery only when older history demonstrably adds substantial
+      // scrollable content. Mere text animation or spinners cannot extend it.
+      if (currentHeight - initialHeight >= 1000) meaningfulGrowthObserved = true;
       if (visualChanged) visualChangeCount += 1;
       if (busy) busyProbeCount += 1;
       if (heightChanged || visualChanged || busy) {
@@ -430,7 +435,7 @@
     throw new Error(
       "Incomplete capture: the start of the scrolling content did not stabilize within the history-discovery safety limit. "
       + `Discovery diagnostics: attempts=${attempts}, elapsedMs=${Math.round(performance.now() - started)}, `
-      + `heightGrowth=${previousHeight - initialHeight}px, maxStableProbes=${maximumStableProbes}, `
+      + `heightGrowth=${previousHeight - initialHeight}px, extendedForHistoryGrowth=${meaningfulGrowthObserved}, maxStableProbes=${maximumStableProbes}, `
       + `quietForMs=${Math.round(performance.now() - lastChange)}, `
       + (reasons.join(", ") || "no identified change signals") + ".",
     );
