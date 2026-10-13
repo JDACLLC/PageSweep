@@ -1,6 +1,6 @@
 # Adaptive Scroll Capture: Requirements and Release Gates
 
-Status: **Development implementation in progress; Chrome end-to-end validation pending**  
+Status: **Full target scope specification. RC implements primary nested/reverse scrolling only; embedded pane functionality deferred to `test/chatgpt-capture`.**  
 Target: **1.2.20 Adaptive Capture Test** (test branch only; not production).  
 Scope: existing PageSweep capture engine; no second engine or user experience redesign.  
 Branch: `test/chatgpt-capture`; production `main` must remain unchanged until acceptance.
@@ -122,4 +122,4 @@ A passing unit/simulation test is **not** evidence of a passing end-to-end Chrom
 - How will full embedded content be composed **in place** without overpainting surrounding primary content, losing later paragraphs/messages, or duplicating frames?
 - Which cheap heuristics can separate meaningful code/prompt panes from small utility scrollers, and how will output limits be surfaced?
 
-**Current state:** initial generic primary nested/reverse scroll implementation and one-level in-place embedded expansion are present on the test branch. Automated syntax and selected isolated model checks passed; real Chrome PNG correctness, Base44 behavior, complex virtualization, embedded display and performance are **not yet verified**. Do not release or merge based on these checks alone.
+**Current state:** generic primary nested/reverse scrolling is present on this release-candidate branch; one-level embedded expansion remains only on `test/chatgpt-capture`. Automated syntax and selected isolated model checks passed; real Chrome PNG correctness, Base44 behavior, complex virtualization, embedded display and performance are **not yet verified**. Do not release or merge based on these checks alone.
