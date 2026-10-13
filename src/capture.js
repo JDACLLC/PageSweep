@@ -119,7 +119,11 @@
       if (stabilization.timedOut) {
         stabilizationTimeouts += 1;
         // Never silently export a frame whose visible content kept changing.
-        throw new Error("Incomplete capture: dynamically rendered content did not stabilize before the screenshot. Try again after the page finishes loading.");
+        throw new Error(
+          "Incomplete capture: dynamically rendered content did not stabilize before the screenshot. "
+          + "Try again after the page finishes loading. "
+          + "Settle diagnostics: " + JSON.stringify(stabilization.settleDiagnostics),
+        );
       }
 
       const observedHeight = captureHeight();
@@ -953,6 +957,13 @@
     let stableSamples = 0;
     let sawDynamicContent = false;
     let lastChangeAt = startedAt;
+    // Diagnostic counters only: do not change settle timing or safety rules.
+    let heightChangeSamples = 0;
+    let signatureChangeSamples = 0;
+    let pendingImageSamples = 0;
+    let lastPendingVisibleImages = 0;
+    let lastSignatureChanged = false;
+    let lastHeightChanged = false;
 
     await waitForStylePaint();
 
@@ -961,8 +972,15 @@
       const currentHeight = getDocumentHeight();
       const currentSignature = visibleContentSignature();
       const pendingVisibleImages = getVisibleImages().filter((image) => !image.complete).length;
-      const changed = Math.abs(currentHeight - previousHeight) >= 1
-        || currentSignature !== previousSignature;
+      const heightChanged = Math.abs(currentHeight - previousHeight) >= 1;
+      const signatureChanged = currentSignature !== previousSignature;
+      const changed = heightChanged || signatureChanged;
+      if (heightChanged) heightChangeSamples += 1;
+      if (signatureChanged) signatureChangeSamples += 1;
+      if (pendingVisibleImages) pendingImageSamples += 1;
+      lastPendingVisibleImages = pendingVisibleImages;
+      lastSignatureChanged = signatureChanged;
+      lastHeightChanged = heightChanged;
 
       if (changed) {
         sawDynamicContent = true;
@@ -992,7 +1010,24 @@
     const remainingTime = Math.max(0, timeout - elapsed);
     await decodeVisibleImages(Math.min(remainingTime, 300));
     await waitForStylePaint();
-    return { timedOut, dynamicContent: sawDynamicContent };
+    return {
+      timedOut,
+      dynamicContent: sawDynamicContent,
+      // Counts refer to samples within this single viewport's settle window.
+      // Kept out of frame-capture flow except for failures.
+      settleDiagnostics: timedOut ? {
+        elapsedMs: Math.round(elapsed),
+        heightChangeSamples,
+        signatureChangeSamples,
+        pendingImageSamples,
+        pendingVisibleImages: lastPendingVisibleImages,
+        lastHeightChanged,
+        lastSignatureChanged,
+        stableSamples,
+        heightAtTimeout: previousHeight,
+        scrollSurface: scrollSurface.kind,
+      } : null,
+    };
   }
 
   async function waitForStylePaint() {
