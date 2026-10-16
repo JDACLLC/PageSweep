@@ -52,6 +52,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return false;
   }
 
+  if (message?.type === "capture-failed") {
+    if (!activeCapture || sender.tab?.id !== activeCapture.tabId || !message.failure) {
+      sendResponse({ ok: false, error: "Capture failure did not match the active session." });
+      return false;
+    }
+    activeCapture.pageFailure = message.failure;
+    sendResponse({ ok: true });
+    return false;
+  }
+
   if (message?.type === "capture-complete") {
     if (!activeCapture || sender.tab?.id !== activeCapture.tabId || !message.captureDetails) {
       sendResponse({ ok: false, error: "Capture completion did not match the active session." });
@@ -114,6 +124,14 @@ async function runCapture(tab) {
     });
 
     const capturedFrames = activeCapture.frames;
+    const pageFailure = activeCapture.pageFailure || injectionResult?.result?.pageSweepError;
+    if (pageFailure) {
+      const error = new Error(`The page capture script failed during ${pageFailure.phase || "unknown phase"}: ${pageFailure.message || "Unknown failure"}`);
+      error.name = pageFailure.name || "Error";
+      if (pageFailure.stack) error.stack = pageFailure.stack;
+      error.capturePhase = pageFailure.phase || null;
+      throw error;
+    }
     if (injectionResult?.error) {
       throw new Error(
         `The page capture script failed: ${formatUnknownValue(injectionResult.error)}`,
